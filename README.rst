@@ -27,21 +27,21 @@ Installation using pip
 ----------------------
 For easy installation, use *pip* (http://www.pip-installer.org/) as root::
 
-    $ [sudo] pip install pybobyqa
+    $ [sudo] pip install Py-BOBYQA
 
 or alternatively *easy_install*::
 
-    $ [sudo] easy_install pybobyqa
+    $ [sudo] easy_install Py-BOBYQA
 
 If you do not have root privileges or you want to install Py-BOBYQA for your private use, you can use::
 
-    $ pip install --user pybobyqa
+    $ pip install --user Py-BOBYQA
 
 which will install Py-BOBYQA in your home directory.
 
 Note that if an older install of Py-BOBYQA is present on your system you can use::
 
-    $ [sudo] pip install --upgrade pybobyqa
+    $ [sudo] pip install --upgrade Py-BOBYQA
 
 to upgrade Py-BOBYQA to the latest version.
 
@@ -88,7 +88,7 @@ If Py-BOBYQA was installed using *pip* you can uninstall as follows:
 
  .. code-block:: bash
 
-    $ [sudo] pip uninstall pybobyqa
+    $ [sudo] pip uninstall Py-BOBYQA
 
 If Py-BOBYQA was installed manually you have to remove the installed files by hand (located in your python site-packages directory).
 

@@ -20,13 +20,13 @@ For easy installation, use `pip <http://www.pip-installer.org/>`_ as root:
 
  .. code-block:: bash
 
-    $ [sudo] pip install --pre pybobyqa
+    $ [sudo] pip install Py-BOBYQA
 
 If you do not have root privileges or you want to install Py-BOBYQA for your private use, you can use:
 
  .. code-block:: bash
 
-    $ pip install --pre --user pybobyqa
+    $ pip install --user Py-BOBYQA
       
 which will install Py-BOBYQA in your home directory.
 
@@ -34,7 +34,7 @@ Note that if an older install of Py-BOBYQA is present on your system you can use
 
  .. code-block:: bash
 
-    $ [sudo] pip install --pre --upgrade pybobyqa
+    $ [sudo] pip install --upgrade Py-BOBYQA
       
 to upgrade Py-BOBYQA to the latest version.
 
@@ -51,13 +51,13 @@ Py-BOBYQA is written in pure Python and requires no compilation. It can be insta
 
  .. code-block:: bash
 
-    $ [sudo] pip install --pre .
+    $ [sudo] pip install .
 
 If you do not have root privileges or you want to install Py-BOBYQA for your private use, you can use:
 
  .. code-block:: bash
 
-    $ pip install --pre --user .
+    $ pip install --user .
     
 instead.    
 
@@ -75,7 +75,7 @@ If Py-BOBYQA was installed using `pip <http://www.pip-installer.org/>`_ you can 
 
  .. code-block:: bash
 
-    $ [sudo] pip uninstall pybobyqa
+    $ [sudo] pip uninstall Py-BOBYQA
 
 If Py-BOBYQA was installed manually you have to remove the installed files by hand (located in your python site-packages directory).
 
