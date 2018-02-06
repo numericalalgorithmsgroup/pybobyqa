@@ -100,5 +100,5 @@ License
 -------
 This algorithm is released under the GNU GPL license.
 
-.. |PyPI Version| image:: https://img.shields.io/pypi/v/PyBOBYQA.svg
-                  :target: https://pypi.python.org/pypi/PyBOBYQA
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/Py-BOBYQA.svg
+                  :target: https://pypi.python.org/pypi/Py-BOBYQA
