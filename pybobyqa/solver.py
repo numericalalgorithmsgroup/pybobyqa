@@ -90,7 +90,7 @@ class OptimResults:
         return output
 
 
-def solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf_so_far, nx_so_far, nsamples, params,
+def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf_so_far, nx_so_far, nsamples, params,
                diagnostic_info, scaling_changes, f0_avg_old=None, f0_nsamples_old=None):
     # Evaluate at x0 (keep nf, nx correct and check for f small)
     if f0_avg_old is None:
@@ -98,7 +98,7 @@ def solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf
         # Evaluate the first time...
         nf = nf_so_far + 1
         nx = nx_so_far + 1
-        f0 = eval_objective(objfun, remove_scaling(x0, scaling_changes), eval_num=nf, pt_num=nx,
+        f0 = eval_objective(objfun, remove_scaling(x0, scaling_changes), args, eval_num=nf, pt_num=nx,
                                                 full_x_thresh=params("logging.n_to_print_whole_x_vector"),
                                               check_for_overflow=params("general.check_objfun_for_overflow"))
 
@@ -116,7 +116,7 @@ def solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf
 
             nf += 1
             # Don't increment nx for x0 - we did this earlier
-            f_list[i] = eval_objective(objfun, remove_scaling(x0, scaling_changes), eval_num=nf, pt_num=nx,
+            f_list[i] = eval_objective(objfun, remove_scaling(x0, scaling_changes), args, eval_num=nf, pt_num=nx,
                                                 full_x_thresh=params("logging.n_to_print_whole_x_vector"),
                                                 check_for_overflow=params("general.check_objfun_for_overflow"))
             num_samples_run += 1
@@ -136,7 +136,7 @@ def solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf
         nx = nx_so_far
 
     # Initialise controller
-    control = Controller(objfun, x0, f0_avg, num_samples_run, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes)
+    control = Controller(objfun, x0, args, f0_avg, num_samples_run, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes)
 
     # Initialise interpolation set
     number_of_samples = max(nsamples(control.delta, control.rho, 0, nruns_so_far), 1)
@@ -631,7 +631,7 @@ def solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf
     return x, f, gradmin, hessmin, nsamples, control.nf, control.nx, nruns_so_far, exit_info, diagnostic_info
 
 
-def solve(objfun, x0, bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
+def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
           objfun_has_noise=False, scaling_within_bounds=False):
     n = len(x0)
 
@@ -765,7 +765,7 @@ def solve(objfun, x0, bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=No
     nf = 0
     nx = 0
     xmin, fmin, gradmin, hessmin, nsamples_min, nf, nx, nruns, exit_info, diagnostic_info = \
-        solve_main(objfun, x0, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+        solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
                     diagnostic_info, scaling_changes)
 
     # Hard restarts loop
@@ -778,11 +778,11 @@ def solve(objfun, x0, bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=No
                      % (fmin, nf, rhobeg, rhoend))
         if params("restarts.hard.use_old_fk"):
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
                             diagnostic_info, scaling_changes, f0_avg_old=fmin, f0_nsamples_old=nsamples_min)
         else:
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
                            diagnostic_info, scaling_changes)
 
         if fmin2 < fmin or np.isnan(fmin):
