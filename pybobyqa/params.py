@@ -31,7 +31,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 __all__ = ['ParameterList']
 
 
-class ParameterList:
+class ParameterList(object):
     def __init__(self, n, npt, maxfun, objfun_has_noise=False):
         self.params = {}
         # Rounding error constant (for shifting base)
