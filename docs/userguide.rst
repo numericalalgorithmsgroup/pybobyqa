@@ -124,11 +124,11 @@ Note that Py-BOBYQA is a randomized algorithm: in its first phase, it builds an 
   
       ****** Py-BOBYQA Results ******
       Solution xmin = [ 1.  1.]
-      Objective value f(xmin) = 2.790048765e-19
-      Needed 211 objective evaluations (at 211 points)
-      Approximate gradient = [ -1.57869863e-08   7.96417081e-09]
-      Approximate Hessian = [[ 803.2582815  -399.50964113]
-       [-399.50964113  199.12578708]]
+      Objective value f(xmin) = 2.964036794e-19
+      Needed 213 objective evaluations (at 213 points)
+      Approximate gradient = [ -2.57280154e-08   1.26855793e-08]
+      Approximate Hessian = [[ 802.90904563 -400.46022134]
+       [-400.46022134  200.23335154]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
@@ -155,10 +155,10 @@ Py-BOBYQA correctly finds the solution to the constrained problem:
       ****** Py-BOBYQA Results ******
       Solution xmin = [ 0.9   0.81]
       Objective value f(xmin) = 0.01
-      Needed 129 objective evaluations (at 129 points)
-      Approximate gradient = [ -2.00000002e-01  -4.01842008e-09]
-      Approximate Hessian = [[ 649.34361541 -364.85712365]
-       [-364.85712365  200.53013142]]
+      Needed 134 objective evaluations (at 134 points)
+      Approximate gradient = [ -1.99999226e-01  -4.31078784e-07]
+      Approximate Hessian = [[ 649.6790222  -360.18361979]
+       [-360.18361979  200.00205196]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
@@ -189,8 +189,8 @@ And we can now see each evaluation of :code:`objfun`:
       Function eval 2 at point 2 has f = 14.337296 at x = [-1.08  0.85]
       Function eval 3 at point 3 has f = 55.25 at x = [-1.2   0.73]
       ...
-      Function eval 128 at point 128 has f = 0.0100000000000225 at x = [ 0.9         0.81000002]
-      Function eval 129 at point 129 has f = 0.00999999999999997 at x = [ 0.9   0.81]
+      Function eval 133 at point 133 has f = 0.0100000000000165 at x = [ 0.9         0.81000001]
+      Function eval 134 at point 134 has f = 0.00999999999999997 at x = [ 0.9   0.81]
       Did a total of 1 run(s)
 
 If we wanted to save this output to a file, we could replace the above call to :code:`logging.basicConfig()` with
@@ -287,18 +287,18 @@ As noted above, Py-BOBYQA has an input parameter :code:`objfun_has_noise` to ind
   
       soln = pybobyqa.solve(rosenbrock_noisy, x0, objfun_has_noise=True)
 
-Using this setting, we get a more accurate solution, and better estimates of the gradient and Hessian:
+This time, we find the true solution, and better estimates of the gradient and Hessian:
 
   .. code-block:: none
   
       ****** Py-BOBYQA Results ******
       Solution xmin = [ 1.  1.]
-      Objective value f(xmin) = 3.559647071e-18
+      Objective value f(xmin) = 3.418770987e-18
       Needed 300 objective evaluations (at 300 points)
       Did a total of 4 runs
-      Approximate gradient = [ -3.70447710e-07   1.81205404e-07]
-      Approximate Hessian = [[ 804.44834579 -394.71053944]
-       [-394.71053944  194.52019795]]
+      Approximate gradient = [ -1.36175005e-08   2.12249758e-09]
+      Approximate Hessian = [[ 805.93202374 -394.16671315]
+       [-394.16671315  192.99451721]]
       Exit flag = 1
       Warning (max evals): Objective has been called MAXFUN times
       ******************************

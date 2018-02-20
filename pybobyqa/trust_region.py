@@ -140,7 +140,7 @@ def trsbox(xopt, g, hess, sl, su, delta):
 
         # Reduce STPLEN if necessary in order to preserve the simple bounds,
         # letting IACT be the index of the new constrained variable.
-        iact = -1
+        iact = None
         for i in range(n):
             if s[i] != 0.0:
                 temp = (su[i] - xopt[i] - d[i] if s[i] > 0.0 else sl[i] - xopt[i] - d[i]) / s[i]
@@ -153,8 +153,8 @@ def trsbox(xopt, g, hess, sl, su, delta):
         if stplen > 0.0:
             iterc += 1
             temp = shs / stepsq
-            if iact == 0 and temp > 0.0:
-                crvmin = (min(crvmin, temp) if crvmin != -1.0 else temp)
+            if iact is None and temp > 0.0:
+                crvmin = min(crvmin, temp) if crvmin != -1.0 else temp
             ggsav = gredsq
             gnew += stplen * hs
             d += stplen * s
@@ -163,7 +163,7 @@ def trsbox(xopt, g, hess, sl, su, delta):
             qred += sdec
 
         # Restart the conjugate gradient method if it has hit a new bound.
-        if iact > -1:
+        if iact is not None:
             nact += 1
             xbdi[iact] = (1 if s[iact] >= 0.0 else -1)
             delsq = delsq - d[iact] ** 2
@@ -240,7 +240,7 @@ def alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred):
             # bound, there is a branch back to label 100 after fixing that variable.
             free_variable_reached_bound = False
             angbd = 1.0
-            iact = -1
+            iact = None
             for i in range(n):
                 if xbdi[i] == 0:
                     tempa = xopt[i] + d[i] - sl[i]
@@ -334,7 +334,7 @@ def alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred):
             hred = cth * hred + sth * hs
 
             qred += sdec
-            if iact > -1 and isav == iu - 1:
+            if iact is not None and isav == iu - 1:
                 nact += 1
                 xbdi[iact] = xsav
                 restart_alt_loop = True

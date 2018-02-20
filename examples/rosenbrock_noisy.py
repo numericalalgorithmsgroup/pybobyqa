@@ -23,8 +23,8 @@ for i in range(5):
 print("")
 
 # Call Py-BOBYQA
-soln = pybobyqa.solve(rosenbrock_noisy, x0)
-#soln = pybobyqa.solve(rosenbrock_noisy, x0, objfun_has_noise=True)
+#soln = pybobyqa.solve(rosenbrock_noisy, x0)
+soln = pybobyqa.solve(rosenbrock_noisy, x0, objfun_has_noise=True)
 
 # Display output
 print(soln)
