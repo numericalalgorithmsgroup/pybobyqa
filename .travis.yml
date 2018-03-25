@@ -1,16 +1,16 @@
-dist: trusty
 language: python
-sudo: required
+python:
+  - "2.6"
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 
-addons:
-  apt:
-    packages:
-      - python-numpy
-      - python-pandas
-      - python-scipy
+install:
+  - pip install -r requirements.txt
+  - python setup.py build
 
 script:
-  - sudo pip install nose
-  - export PYTHONPATH=$PYTHONPATH:.
-  - python setup.py build
+  - pip install nose
   - python setup.py test
