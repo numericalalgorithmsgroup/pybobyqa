@@ -44,7 +44,7 @@ def sumsq(x):
     return np.dot(x, x)
 
 
-def eval_objective(objfun, x, args, verbose=True, eval_num=0, pt_num=0, full_x_thresh=6, check_for_overflow=True):
+def eval_objective(objfun, x, args=(), verbose=True, eval_num=0, pt_num=0, full_x_thresh=6, check_for_overflow=True):
     # Evaluate objective function
     if check_for_overflow:
         try:
