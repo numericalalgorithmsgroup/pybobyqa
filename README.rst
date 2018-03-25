@@ -100,7 +100,7 @@ Please report any bugs using GitHub's issue tracker.
 
 License
 -------
-This algorithm is released under the GNU GPL license.
+This algorithm is released under the GNU GPL license. Please `contact NAG <http://www.nag.com/content/worldwide-contact-information>`_ for alternative licensing.
 
 .. |Build Status| image::  https://travis-ci.org/numericalalgorithmsgroup/pybobyqa.svg?branch=master
                   :target: https://travis-ci.org/numericalalgorithmsgroup/pybobyqa
