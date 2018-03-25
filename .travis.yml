@@ -1,0 +1,16 @@
+dist: trusty
+language: python
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - python-numpy
+      - python-pandas
+      - python-scipy
+
+script:
+  - sudo pip install nose
+  - export PYTHONPATH=$PYTHONPATH:.
+  - python setup.py build
+  - python setup.py test

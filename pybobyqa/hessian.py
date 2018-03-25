@@ -35,7 +35,7 @@ import numpy as np
 __all__ = ['Hessian']
 
 
-class Hessian:
+class Hessian(object):
     def __init__(self, n, vals=None):
         self.n = n
         if vals is None:
