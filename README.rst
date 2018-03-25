@@ -1,6 +1,19 @@
-==================================================================================================
-Py-BOBYQA: Derivative-Free Solver for Bound-Constrained Minimization |Build Status| |PyPI Version|
-==================================================================================================
+====================================================================
+Py-BOBYQA: Derivative-Free Solver for Bound-Constrained Minimization
+====================================================================
+
+.. image::  https://travis-ci.org/numericalalgorithmsgroup/pybobyqa.svg?branch=master
+   :target: https://travis-ci.org/numericalalgorithmsgroup/pybobyqa
+   :alt: Build Status
+
+.. image::  https://img.shields.io/badge/License-GPL%20v3-blue.svg
+   :target: https://www.gnu.org/licenses/gpl-3.0
+   :alt: GNU GPL v3 License
+
+.. image:: https://img.shields.io/pypi/v/Py-BOBYQA.svg
+   :target: https://pypi.python.org/pypi/Py-BOBYQA
+   :alt: Latest PyPI version
+
 Py-BOBYQA is a flexible package for solving bound-constrained general objective minimization, without requiring derivatives of the objective. It is a Python implementation of the BOBYQA algorithm by Powell. Py-BOBYQA is particularly useful when evaluations of the objective function are expensive and/or noisy.
 
 More details about Py-BOBYQA can be found in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers, technical report, University of Oxford, (2018).
@@ -101,8 +114,3 @@ Please report any bugs using GitHub's issue tracker.
 License
 -------
 This algorithm is released under the GNU GPL license. Please `contact NAG <http://www.nag.com/content/worldwide-contact-information>`_ for alternative licensing.
-
-.. |Build Status| image::  https://travis-ci.org/numericalalgorithmsgroup/pybobyqa.svg?branch=master
-                  :target: https://travis-ci.org/numericalalgorithmsgroup/pybobyqa
-.. |PyPI Version| image:: https://img.shields.io/pypi/v/Py-BOBYQA.svg
-                  :target: https://pypi.python.org/pypi/Py-BOBYQA
