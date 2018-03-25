@@ -41,7 +41,7 @@ from .util import sumsq, model_value
 __all__ = ['Model']
 
 
-class Model:
+class Model(object):
     def __init__(self, npt, x0, f0, xl, xu, f0_nsamples, n=None, abs_tol=-1e20, precondition=True):
         if n is None:
             n = len(x0)

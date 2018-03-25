@@ -46,7 +46,7 @@ ITER_UNSUCCESSFUL_NO_GEOM = "Unsuccessful (geom not fixed)"  # ratio < 0, withou
 ITER_SAFETY = "Safety"  # safety step taken (||s|| too small compared to rho)
 
 
-class DiagnosticInfo:
+class DiagnosticInfo(object):
     def __init__(self):
         self.data = {}
         # Initialise everything we want to store

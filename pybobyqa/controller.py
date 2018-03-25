@@ -54,7 +54,7 @@ EXIT_TR_INCREASE_ERROR = -2  # error, trust region step increased model value
 EXIT_LINALG_ERROR = -3  # error, linalg error (singular matrix encountered)
 
 
-class ExitInformation:
+class ExitInformation(object):
     def __init__(self, flag, msg_details):
         self.flag = flag
         self.msg = msg_details
@@ -92,7 +92,7 @@ class ExitInformation:
             return "sufficiently small" not in self.msg  # restart for rho=rhoend and noise level termination
 
 
-class Controller:
+class Controller(object):
     def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes):
         self.objfun = objfun
         self.maxfun = maxfun
