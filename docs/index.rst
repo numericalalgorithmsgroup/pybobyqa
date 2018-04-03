@@ -21,7 +21,7 @@ That is, Py-BOBYQA solves
    \min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
    \text{s.t.} &\quad  a \leq x \leq b
 
-Full details of the Py-BOBYQA algorithm are given in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers, technical report, University of Oxford, (2018).
+Full details of the Py-BOBYQA algorithm are given in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018).
 
 If you are interested in solving least-squares minimization problems, you may wish to try `DFO-LS <https://github.com/numericalalgorithmsgroup/dfols>`_, which has the same features as Py-BOBYQA (plus some more), and exploits the least-squares problem structure, so performs better on such problems.
 
