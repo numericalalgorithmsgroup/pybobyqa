@@ -59,7 +59,14 @@ If you do not have root privileges or you want to install Py-BOBYQA for your pri
 
     $ pip install --user .
     
-instead.    
+instead.
+
+To upgrade Py-BOBYQA to the latest version, navigate to the top-level directory (i.e. the one containing :code:`setup.py`) and rerun the installation using :code:`pip`, as above:
+
+ .. code-block:: bash
+
+    $ git pull
+    $ [sudo] pip install .  # with admin privileges
 
 Testing
 -------
