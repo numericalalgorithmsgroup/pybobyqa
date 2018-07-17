@@ -68,6 +68,7 @@ The :code:`solve` function has several optional arguments which the user may pro
       pybobyqa.solve(objfun, x0, args=(), bounds=None, npt=None,
 		  rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, 
                   user_params=None, objfun_has_noise=False, 
+                  seek_global_minimum=False, 
                   scaling_within_bounds=False)
 
 These arguments are:
@@ -75,12 +76,13 @@ These arguments are:
 * :code:`args` - a tuple of extra arguments passed to the objective function.
 * :code:`bounds` - a tuple :code:`(lower, upper)` with the vectors :math:`a` and :math:`b` of lower and upper bounds on :math:`x` (default is :math:`a_i=-10^{20}` and :math:`b_i=10^{20}`). To set bounds for either :code:`lower` or :code:`upper`, but not both, pass a tuple :code:`(lower, None)` or :code:`(None, upper)`.
 * :code:`npt` - the number of interpolation points to use (default is :code:`2*len(x0)+1`). Py-BOBYQA requires :code:`n+1 <= npt <= (n+1)*(n+2)/2` for a problem with :code:`len(x0)=n`. Larger values are particularly useful for noisy problems.
-* :code:`rhobeg` - the initial value of the trust region radius (default is :math:`0.1\max(\|x_0\|_{\infty}, 1)`).
+* :code:`rhobeg` - the initial value of the trust region radius (default is 0.1 if :code:`scaling_within_bounds=True`, otherwise :math:`0.1\max(\|x_0\|_{\infty}, 1)`).
 * :code:`rhoend` - minimum allowed value of trust region radius, which determines when a successful termination occurs (default is :math:`10^{-8}`).
 * :code:`maxfun` - the maximum number of objective evaluations the algorithm may request (default is :math:`\min(100(n+1),1000)`).
 * :code:`nsamples` - a Python function :code:`nsamples(delta, rho, iter, nrestarts)` which returns the number of times to evaluate :code:`objfun` at a given point. This is only applicable for objectives with stochastic noise, when averaging multiple evaluations at the same point produces a more accurate value. The input parameters are the trust region radius (:code:`delta`), the lower bound on the trust region radius (:code:`rho`), how many iterations the algorithm has been running for (:code:`iter`), and how many restarts have been performed (:code:`nrestarts`). Default is no averaging (i.e. :code:`nsamples(delta, rho, iter, nrestarts)=1`).
 * :code:`user_params` - a Python dictionary :code:`{'param1': val1, 'param2':val2, ...}` of optional parameters. A full list of available options is given in the next section :doc:`advanced`.
 * :code:`objfun_has_noise` - a flag to indicate whether or not :code:`objfun` has stochastic noise; i.e. will calling :code:`objfun(x)` multiple times at the same value of :code:`x` give different results? This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`.
+* :code:`seek_global_minimum` - a flag to indicate whether to search for a global minimum, rather than a local minimum. This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`. If :code:`True`, both upper and lower bounds must be set.
 * :code:`scaling_within_bounds` - a flag to indicate whether the algorithm should internally shift and scale the entries of :code:`x` so that the bounds become :math:`0 \leq x \leq 1`. This is useful is you are setting :code:`bounds` and the bounds have different orders of magnitude. If :code:`scaling_within_bounds=True`, the values of :code:`rhobeg` and :code:`rhoend` apply to the *shifted* variables.
 
 In general when using optimization software, it is good practice to scale your variables so that moving each by a given amount has approximately the same impact on the objective function.
@@ -304,6 +306,87 @@ This time, we find the true solution, and better estimates of the gradient and H
       Warning (max evals): Objective has been called MAXFUN times
       ******************************
 
+
+Example: Global Optimization
+----------------------------
+The following example shows how to use the global optimization features of Py-BOBYQA. Here, we try to minimize the Freudenstein and Roth function (problem 2 in J.J. Moré, B.S. Garbow, B.S. and K.E. Hillstrom, Testing Unconstrained Optimization Software, *ACM Trans. Math. Software* 7:1 (1981), 17-41). This function has two local minima, one of which is global.
+
+  .. code-block:: python
+  
+      # Py-BOBYQA example: globally minimize the Freudenstein and Roth function
+      from __future__ import print_function
+      import numpy as np
+      import pybobyqa
+      
+      # Define the objective function
+      # This function has a local minimum f = 48.98 
+      # at x = np.array([11.41, -0.8968])
+      # and a global minimum f = 0 at x = np.array([5.0, 4.0])
+      def freudenstein_roth(x):
+          r1 = -13.0 + x[0] + ((5.0 - x[1]) * x[1] - 2.0) * x[1]
+          r2 = -29.0 + x[0] + ((1.0 + x[1]) * x[1] - 14.0) * x[1]
+          return r1 ** 2 + r2 ** 2
+      
+      # Define the starting point
+      x0 = np.array([5.0, -20.0])
+      
+      # Define bounds (required for global optimization)
+      lower = np.array([-30.0, -30.0])
+      upper = np.array([30.0, 30.0])
+      
+      # Set random seed (for reproducibility)
+      np.random.seed(0)
+      
+      print("First run - search for local minimum only")
+      print("")
+      soln = pybobyqa.solve(freudenstein_roth, x0, maxfun=500, 
+                            bounds=(lower, upper))
+      print(soln)
+      
+      print("")
+      print("")
+      
+      print("Second run - search for global minimum")
+      print("")
+      soln = pybobyqa.solve(freudenstein_roth, x0, maxfun=500, 
+                            bounds=(lower, upper), 
+                            seek_global_minimum=True)
+      print(soln)
+
+The output of this is:
+
+  .. code-block:: none
+  
+      First run - search for local minimum only
+      
+      ****** Py-BOBYQA Results ******
+      Solution xmin = [ 11.41277906  -0.89680525]
+      Objective value f(xmin) = 48.98425368
+      Needed 203 objective evaluations (at 203 points)
+      Approximate gradient = [ -1.61348180e-06  -3.61662651e-07]
+      Approximate Hessian = [[ 132.10265455  -45.5426821 ]
+       [ -45.5426821   976.15808779]]
+      Exit flag = 0
+      Success: rho has reached rhoend
+      ******************************
+      
+      
+      
+      Second run - search for global minimum
+      
+      ****** Py-BOBYQA Results ******
+      Solution xmin = [ 5.  4.]
+      Objective value f(xmin) = 9.734692105e-19
+      Needed 500 objective evaluations (at 500 points)
+      Did a total of 4 runs
+      Approximate gradient = [  4.28964221e-08   4.58344260e-07]
+      Approximate Hessian = [[    4.06992486    61.15006935]
+       [   61.15006935  3728.06826545]]
+      Exit flag = 1
+      Warning (max evals): Objective has been called MAXFUN times
+      ******************************
+
+As we can see, the :code:`seek_global_minimum` flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum.
 
 References
 ----------

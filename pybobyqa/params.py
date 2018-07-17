@@ -32,7 +32,7 @@ __all__ = ['ParameterList']
 
 
 class ParameterList(object):
-    def __init__(self, n, npt, maxfun, objfun_has_noise=False):
+    def __init__(self, n, npt, maxfun, objfun_has_noise=False, seek_global_minimum=False):
         self.params = {}
         # Rounding error constant (for shifting base)
         self.params["general.rounding_error_constant"] = 0.1  # 0.1 in DFBOLS, 1e-3 in BOBYQA
@@ -71,8 +71,10 @@ class ParameterList(object):
         self.params["noise.multiplicative_noise_level"] = None
         self.params["noise.additive_noise_level"] = None
         # Restarts
-        self.params["restarts.use_restarts"] = True if objfun_has_noise else False
+        self.params["restarts.use_restarts"] = True if (objfun_has_noise or seek_global_minimum) else False
         self.params["restarts.max_unsuccessful_restarts"] = 10
+        self.params["restarts.max_unsuccessful_restarts_total"] = 20 if seek_global_minimum else maxfun  # i.e. not used (in line with previous behaviour)
+        self.params["restarts.rhobeg_scale_after_unsuccessful_restart"] = 1.1 if seek_global_minimum else 1.0
         self.params["restarts.rhoend_scale"] = 1.0  # how much to decrease rhoend by after each restart
         self.params["restarts.use_soft_restarts"] = True
         self.params["restarts.soft.num_geom_steps"] = 3
@@ -161,6 +163,10 @@ class ParameterList(object):
             type_str, nonetype_ok, lower, upper = 'bool', False, None, None
         elif key == "restarts.max_unsuccessful_restarts":
             type_str, nonetype_ok, lower, upper = 'int', False, 0, None
+        elif key == "restarts.max_unsuccessful_restarts_total":
+            type_str, nonetype_ok, lower, upper = 'int', False, 0, None
+        elif key == "restarts.rhobeg_scale_after_unsuccessful_restart":
+            type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
         elif key == "restarts.rhoend_scale":
             type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
         elif key == "restarts.use_soft_restarts":

@@ -4,7 +4,7 @@ This section describes different optional user parameters available in Py-BOBYQA
 
 In the last section (:doc:`userguide`), we introduced :code:`pybobyqa.solve()`, which has the optional input :code:`user_params`. This is a Python dictionary of user parameters. We will now go through the settings which can be changed in this way. More details are available in the paper [CFMR2018]_.
 
-The default values, used if no override is given, in some cases vary depending on whether :code:`objfun` has stochastic noise; that is, whether evaluating :code:`objfun(x)` several times at the same :code:`x` gives the same result or not. Whether or not this is the case is determined by the :code:`objfun_has_noise` input to :code:`pybobyqa.solve()` (and not by inspecting :code:`objfun`, for instance).
+The default values, used if no override is given, in some cases vary depending on whether :code:`objfun` has stochastic noise; that is, whether evaluating :code:`objfun(x)` several times at the same :code:`x` gives the same result or not. Whether or not this is the case is determined by the :code:`objfun_has_noise` input to :code:`pybobyqa.solve()` (and not by inspecting :code:`objfun`, for instance). Similarly, the default values depend on the input flag :code:`seek_global_minimum`, i.e. if a global minimum is desired.
 
 General Algorithm Parameters
 ----------------------------
@@ -59,8 +59,10 @@ Interpolation Management
 
 Multiple Restarts
 -----------------
-* :code:`restarts.use_restarts` - Whether to do restarts when :math:`\rho_k` reaches :math:`\rho_{end}`, or (optionally) when all points are within noise level of :math:`f(x_k)`. Default is :code:`False` for smooth problems or :code:`True` for noisy problems. 
+* :code:`restarts.use_restarts` - Whether to do restarts when :math:`\rho_k` reaches :math:`\rho_{end}`, or (optionally) when all points are within noise level of :math:`f(x_k)`. Default is :code:`False` for smooth problems or :code:`True` for noisy problems or when seeking a global minimum. 
 * :code:`restarts.max_unsuccessful_restarts` - Maximum number of consecutive unsuccessful restarts allowed (i.e.~restarts which did not reduce the objective further). Default is 10. 
+* :code:`restarts.max_unsuccessful_restarts_total` - Maximum number of total unsuccessful restarts allowed. Default is 20 when seeking a global minimum, otherwise it is :code:`maxfun` (i.e.~not restricted).
+* :code:`restarts.rhobeg_scale_after_unsuccessful_restart` - Factor to increase :math:`\rho_{beg}` by after unsuccessful restarts. Default is 1.1 when seeking a global minimum, otherwise it is 1.
 * :code:`restarts.rhoend_scale` - Factor to reduce :math:`\rho_{end}` by with each restart. Default is 1. 
 * :code:`restarts.use_soft_restarts` - Whether to use soft or hard restarts. Default is :code:`True`. 
 * :code:`restarts.soft.num_geom_steps` - For soft restarts, the number of points to move. Default is 3. 

@@ -634,7 +634,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
 
 def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
-          objfun_has_noise=False, scaling_within_bounds=False):
+          objfun_has_noise=False, seek_global_minimum=False, scaling_within_bounds=False):
     n = len(x0)
 
     # Set missing inputs (if not specified) to some sensible defaults
@@ -646,6 +646,10 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         assert len(bounds) == 2, "bounds must be a 2-tuple of (lower, upper), where both are arrays of size(x0)"
         xl = bounds[0]
         xu = bounds[1]
+    
+    exit_info = None
+    if seek_global_minimum and (xl is None or xu is None):
+        exit_info = ExitInformation(EXIT_INPUT_ERROR, "If seeking global minimum, must specify upper and lower bounds")
 
     if xl is None:
         xl = -1e20 * np.ones((n,))  # unconstrained
@@ -654,7 +658,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     if npt is None:
         npt = (n + 1) * (n + 2) // 2 if objfun_has_noise else 2 * n + 1
     if rhobeg is None:
-        rhobeg = 0.1 * max(np.max(np.abs(x0)), 1.0)
+        rhobeg = 0.1 if scaling_within_bounds else 0.1 * max(np.max(np.abs(x0)), 1.0)
     if maxfun is None:
         maxfun = min(100 * (n + 1), 1000)  # 100 gradients, capped at 1000
     else:
@@ -663,7 +667,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         nsamples = lambda delta, rho, iter, nruns: 1  # no averaging
 
     # Set parameters
-    params = ParameterList(int(n), int(npt), int(maxfun), objfun_has_noise=objfun_has_noise)
+    params = ParameterList(int(n), int(npt), int(maxfun), objfun_has_noise=objfun_has_noise, seek_global_minimum=seek_global_minimum)
     if user_params is not None:
         for (key, val) in user_params.items():
             params(key, new_value=val)
@@ -678,7 +682,6 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     xl = apply_scaling(xl, scaling_changes)
     xu = apply_scaling(xu, scaling_changes)
 
-    exit_info = None
     # Input & parameter checks
     if exit_info is None and npt < n + 1:
         exit_info = ExitInformation(EXIT_INPUT_ERROR, "npt must be >= n+1")
@@ -772,19 +775,27 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
 
     # Hard restarts loop
     last_successful_run = nruns
+    total_unsuccessful_restarts = 0
+    reduction_last_run = True
+    _rhobeg = rhobeg
+    _rhoend = rhoend
     while params("restarts.use_restarts") and not params("restarts.use_soft_restarts") and nf < maxfun and \
-            exit_info.able_to_do_restart() and nruns - last_successful_run < params("restarts.max_unsuccessful_restarts"):
-        rhoend = params("restarts.rhoend_scale") * rhoend
+            exit_info.able_to_do_restart() and nruns - last_successful_run < params("restarts.max_unsuccessful_restarts")\
+            and total_unsuccessful_restarts < params("restarts.max_unsuccessful_restarts_total"):
+        _rhoend = params("restarts.rhoend_scale") * _rhoend
+        
+        if not reduction_last_run:
+            _rhobeg = _rhobeg * params("restarts.rhobeg_scale_after_unsuccessful_restart")
         
         logging.info("Restarting from finish point (f = %g) after %g function evals; using rhobeg = %g and rhoend = %g"
-                     % (fmin, nf, rhobeg, rhoend))
+                     % (fmin, nf, _rhobeg, _rhoend))
         if params("restarts.hard.use_old_fk"):
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
                             diagnostic_info, scaling_changes, f0_avg_old=fmin, f0_nsamples_old=nsamples_min)
         else:
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
                            diagnostic_info, scaling_changes)
 
         if fmin2 < fmin or np.isnan(fmin):
@@ -795,11 +806,16 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
                 gradmin = gradmin2
             if hessmin2 is not None:  # may be None if finished during setup phase, in which case just use old Hessian
                 hessmin = hessmin2
+            reduction_last_run = True
         else:
             logging.info("Unsuccessful run with new f = %s compared to old f = %s" % (fmin2, fmin))
+            reduction_last_run = False
+            total_unsuccessful_restarts += 1
 
     if nruns - last_successful_run >= params("restarts.max_unsuccessful_restarts"):
-        exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum number of unsuccessful restarts")
+        exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum number of consecutive unsuccessful restarts")
+    elif total_unsuccessful_restarts >= params("restarts.max_unsuccessful_restarts_total"):
+        exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum total number of unsuccessful restarts")
 
     # Process final return values & package up
     exit_flag = exit_info.flag

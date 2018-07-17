@@ -15,3 +15,9 @@ Version 1.0.2 (20 Jun 2018)
 * Extra optional input :code:`args` which passes through arguments for :code:`objfun` (pull request from `logangrado <https://github.com/logangrado>`_).
 * Bug fixes: default parameters for reduced initialization cost regime, returning correct value from safety steps, retrieving dependencies during installation.
 
+Version 1.1a0 (13 Jul 2018)
+---------------------------
+* Extra parameters to control the trust region radius over multiple restarts, designed for global optimization.
+* New input flag :code:`seek_global_minimum` to set sensible default parameters for global optimization. New example script to demonstrate this functionality.
+* Bug fix: default trust region radius when scaling variables within bounds.
+

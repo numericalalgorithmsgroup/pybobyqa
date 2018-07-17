@@ -119,6 +119,7 @@ class Controller(object):
         self.last_successful_iter = 0  # when ||d|| >= rho
         # For counting the number of soft restarts
         self.last_successful_run = 0
+        self.total_unsuccessful_restarts = 0
         self.last_run_fopt = f0
         self.scaling_changes = scaling_changes
 
@@ -465,16 +466,22 @@ class Controller(object):
         # A successful run is one where we reduced fopt
         if self.model.fopt() < self.last_run_fopt:
             self.last_successful_run = nruns_so_far
+        else:
+            # Unsuccessful run
+            self.total_unsuccessful_restarts += 1
+            self.rhobeg = self.rhobeg * params("restarts.rhobeg_scale_after_unsuccessful_restart")
         self.last_run_fopt = self.model.fopt()
 
         ok_to_do_restart = (nruns_so_far - self.last_successful_run < params("restarts.max_unsuccessful_restarts")) and \
-                           (self.nf < self.maxfun)
+                           (self.nf < self.maxfun) and self.total_unsuccessful_restarts < params("restarts.max_unsuccessful_restarts_total")
 
         if not ok_to_do_restart:
             # last outputs are (exit_flag, exit_str, return_to_new_tr_iteration)
             exit_info = ExitInformation(EXIT_MAXFUN_WARNING, "Objective has been called MAXFUN times")
             if nruns_so_far - self.last_successful_run >= params("restarts.max_unsuccessful_restarts"):
-                exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum number of unsuccessful restarts")
+                exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum number of consecutive unsuccessful restarts")
+            elif self.total_unsuccessful_restarts >= params("restarts.max_unsuccessful_restarts_total"):
+                exit_info = ExitInformation(EXIT_SUCCESS, "Reached maximum total number of unsuccessful restarts")
             return exit_info
 
         # Save current best point and the one the user wanted to save too
