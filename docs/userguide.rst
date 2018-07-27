@@ -82,7 +82,7 @@ These arguments are:
 * :code:`nsamples` - a Python function :code:`nsamples(delta, rho, iter, nrestarts)` which returns the number of times to evaluate :code:`objfun` at a given point. This is only applicable for objectives with stochastic noise, when averaging multiple evaluations at the same point produces a more accurate value. The input parameters are the trust region radius (:code:`delta`), the lower bound on the trust region radius (:code:`rho`), how many iterations the algorithm has been running for (:code:`iter`), and how many restarts have been performed (:code:`nrestarts`). Default is no averaging (i.e. :code:`nsamples(delta, rho, iter, nrestarts)=1`).
 * :code:`user_params` - a Python dictionary :code:`{'param1': val1, 'param2':val2, ...}` of optional parameters. A full list of available options is given in the next section :doc:`advanced`.
 * :code:`objfun_has_noise` - a flag to indicate whether or not :code:`objfun` has stochastic noise; i.e. will calling :code:`objfun(x)` multiple times at the same value of :code:`x` give different results? This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`.
-* :code:`seek_global_minimum` - a flag to indicate whether to search for a global minimum, rather than a local minimum. This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`. If :code:`True`, both upper and lower bounds must be set.
+* :code:`seek_global_minimum` - a flag to indicate whether to search for a global minimum, rather than a local minimum. This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`. If :code:`True`, both upper and lower bounds must be set. Note that Py-BOBYQA only implements a heuristic method, so there are no guarantees it will find a global minimum. However, by using this flag, it is more likely to escape local minima if there are better values nearby.
 * :code:`scaling_within_bounds` - a flag to indicate whether the algorithm should internally shift and scale the entries of :code:`x` so that the bounds become :math:`0 \leq x \leq 1`. This is useful is you are setting :code:`bounds` and the bounds have different orders of magnitude. If :code:`scaling_within_bounds=True`, the values of :code:`rhobeg` and :code:`rhoend` apply to the *shifted* variables.
 
 In general when using optimization software, it is good practice to scale your variables so that moving each by a given amount has approximately the same impact on the objective function.
@@ -310,6 +310,8 @@ This time, we find the true solution, and better estimates of the gradient and H
 Example: Global Optimization
 ----------------------------
 The following example shows how to use the global optimization features of Py-BOBYQA. Here, we try to minimize the Freudenstein and Roth function (problem 2 in J.J. Moré, B.S. Garbow, B.S. and K.E. Hillstrom, Testing Unconstrained Optimization Software, *ACM Trans. Math. Software* 7:1 (1981), 17-41). This function has two local minima, one of which is global.
+
+Note that Py-BOBYQA only implements a heuristic method, so there are no guarantees it will find a global minimum. However, by using the :code:`seek_global_minimum` flag, it is more likely to escape local minima if there are better values nearby.
 
   .. code-block:: python
   

@@ -1,4 +1,9 @@
 # Py-BOBYQA example: globally minimize the Freudenstein and Roth function
+
+# Note that Py-BOBYQA only implements a heuristic, so there are no guarantees
+# it will find a global minimum. However, by using the seek_global_minimum flag,
+# it is more likely to escape local minima if there are better values nearby.
+
 from __future__ import print_function
 import numpy as np
 import pybobyqa
