@@ -25,7 +25,7 @@ Full details of the Py-BOBYQA algorithm are given in our paper: C. Cartis, J. Fi
 
 If you are interested in solving least-squares minimization problems, you may wish to try `DFO-LS <https://github.com/numericalalgorithmsgroup/dfols>`_, which has the same features as Py-BOBYQA (plus some more), and exploits the least-squares problem structure, so performs better on such problems.
 
-**New feature: global optimization (July 2018)!** Py-BOBYQA now has a heuristic for global optimization (see :doc:`userguide` for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.
+**New feature: global optimization heuristic (July 2018)!** Py-BOBYQA now has a heuristic for global optimization (see :doc:`userguide` for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.
 
 Py-BOBYQA is released under the GNU General Public License. Please `contact NAG <http://www.nag.com/content/worldwide-contact-information>`_ for alternative licensing.
 
