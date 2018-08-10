@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview &mdash; Py-BOBYQA v1.1a0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Py-BOBYQA v1.1a0 documentation" href="index.html"/>
+        <link rel="next" title="Using Py-BOBYQA" href="userguide.html"/>
+        <link rel="prev" title="Installing Py-BOBYQA" href="install.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Py-BOBYQA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1a0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Py-BOBYQA</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#when-to-use-py-bobyqa">When to use Py-BOBYQA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#details-of-the-py-bobyqa-algorithm">Details of the Py-BOBYQA Algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html">Using Py-BOBYQA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagnostic.html">Diagnostic Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Version History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Py-BOBYQA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Overview</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/info.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="when-to-use-py-bobyqa">
+<h2>When to use Py-BOBYQA<a class="headerlink" href="#when-to-use-py-bobyqa" title="Permalink to this headline">¶</a></h2>
+<p>Py-BOBYQA is designed to solve the nonlinear least-squares minimization problem (with optional bound constraints)</p>
+<div class="math">
+\[\begin{split}\min_{x\in\mathbb{R}^n}  &amp;\quad  f(x)\\
+\text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
+<p>We call <span class="math">\(f(x)\)</span> the objective function.</p>
+<p>Py-BOBYQA is a <em>derivative-free</em> optimization algorithm, which means it does not require the user to provide the derivatives of <span class="math">\(f(x)\)</span>, nor does it attempt to estimate them internally (by using finite differencing, for instance).</p>
+<p>There are two main situations when using a derivative-free algorithm (such as Py-BOBYQA) is preferable to a derivative-based algorithm (which is the vast majority of least-squares solvers).</p>
+<p>If <strong>the residuals are noisy</strong>, then calculating or even estimating their derivatives may be impossible (or at least very inaccurate). By noisy, we mean that if we evaluate <span class="math">\(f(x)\)</span> multiple times at the same value of <span class="math">\(x\)</span>, we get different results. This may happen when a Monte Carlo simulation is used, for instance, or <span class="math">\(f(x)\)</span> involves performing a physical experiment.</p>
+<p>If <strong>the residuals are expensive to evaluate</strong>, then estimating derivatives (which requires <span class="math">\(n\)</span> evaluations of <span class="math">\(f(x)\)</span> for every point of interest <span class="math">\(x\)</span>) may be prohibitively expensive. Derivative-free methods are designed to solve the problem with the fewest number of evaluations of the objective as possible.</p>
+<p><strong>However, if you have provide (or a solver can estimate) derivatives</strong> of <span class="math">\(f(x)\)</span>, then it is probably a good idea to use one of the many derivative-based solvers (such as <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html#scipy.optimize.minimize">one from the SciPy library</a>).</p>
+</div>
+<div class="section" id="details-of-the-py-bobyqa-algorithm">
+<h2>Details of the Py-BOBYQA Algorithm<a class="headerlink" href="#details-of-the-py-bobyqa-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>Py-BOBYQA is a type of <em>trust-region</em> method, a common category of optimization algorithms for nonconvex problems. Given a current estimate of the solution <span class="math">\(x_k\)</span>, we compute a model which approximates the objective <span class="math">\(m_k(s)\approx f(x_k+s)\)</span> (for small steps <span class="math">\(s\)</span>), and maintain a value <span class="math">\(\Delta_k&gt;0\)</span> (called the <em>trust region radius</em>) which measures the size of <span class="math">\(s\)</span> for which the approximation is good.</p>
+<p>At each step, we compute a trial step <span class="math">\(s_k\)</span> designed to make our approximation <span class="math">\(m_k(s)\)</span> small (this task is called the <em>trust region subproblem</em>). We evaluate the objective at this new point, and if this provided a good decrease in the objective, we take the step (<span class="math">\(x_{k+1}=x_k+s_k\)</span>), otherwise we stay put (<span class="math">\(x_{k+1}=x_k\)</span>). Based on this information, we choose a new value <span class="math">\(\Delta_{k+1}\)</span>, and repeat the process.</p>
+<p>In Py-BOBYQA, we construct our approximation <span class="math">\(m_k(s)\)</span> by interpolating a linear or quadratic approximation for <span class="math">\(f(x)\)</span> at several points close to <span class="math">\(x_k\)</span>. To make sure our interpolated model is accurate, we need to regularly check that the points are well-spaced, and move them if they aren’t (i.e. improve the geometry of our interpolation points).</p>
+<p>Py-BOBYQA is a Python implementation of the BOBYQA solver by Powell <a class="reference internal" href="#powell2009" id="id1">[Powell2009]</a>. More details about Py-BOBYQA algorithm are given in our paper <a class="reference internal" href="userguide.html#cfmr2018" id="id2">[CFMR2018]</a>.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils citation" frame="void" id="cfmr2018" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[CFMR2018]</a></td><td><ol class="first last upperalpha simple" start="3">
+<li>Cartis, J. Fiala, B. Marteau and L. Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="powell2009" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[Powell2009]</a></td><td><ol class="first last upperalpha simple" start="13">
+<li><ol class="first upperalpha" start="10">
+<li><ol class="first upperalpha" start="4">
+<li>Powell, <a class="reference external" href="http://www.damtp.cam.ac.uk/user/na/NA_papers/NA2009_06.pdf">The BOBYQA algorithm for bound constrained optimization without derivatives</a>, technical report DAMTP 2009/NA06, University of Cambridge, (2009).</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="userguide.html" class="btn btn-neutral float-right" title="Using Py-BOBYQA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Installing Py-BOBYQA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Lindon Roberts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1a0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

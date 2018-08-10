@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Diagnostic Information &mdash; Py-BOBYQA v1.1a0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Py-BOBYQA v1.1a0 documentation" href="index.html"/>
+        <link rel="next" title="Version History" href="history.html"/>
+        <link rel="prev" title="Advanced Usage" href="advanced.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Py-BOBYQA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1a0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Py-BOBYQA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html">Using Py-BOBYQA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Diagnostic Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#current-iterate">Current Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trust-region">Trust Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-interpolation">Model Interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#iteration-count">Iteration Count</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#algorithm-progress">Algorithm Progress</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Version History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Py-BOBYQA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Diagnostic Information</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/diagnostic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="diagnostic-information">
+<h1>Diagnostic Information<a class="headerlink" href="#diagnostic-information" title="Permalink to this headline">¶</a></h1>
+<p>In <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (<code class="code docutils literal"><span class="pre">soln.diagnostic_info</span></code>). This object is a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).</p>
+<p>To save this information to a CSV file, use:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Previously: define objfun and x0</span>
+
+<span class="c1"># Turn on diagnostic information</span>
+<span class="n">user_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;logging.save_diagnostic_info&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c1"># Call Py-BOBYQA</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">user_params</span><span class="o">=</span><span class="n">user_params</span><span class="p">)</span>
+
+<span class="c1"># Save diagnostic info to CSV</span>
+<span class="n">soln</span><span class="o">.</span><span class="n">diagnostic_info</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;myfile.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Depending on exactly how Py-BOBYQA terminates, the last row of results may not be fully populated.</p>
+<div class="section" id="current-iterate">
+<h2>Current Iterate<a class="headerlink" href="#current-iterate" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">xk</span></code> - Best point found so far (current iterate). This is only saved if <code class="code docutils literal"><span class="pre">user_params['logging.save_xk']</span> <span class="pre">=</span> <span class="pre">True</span></code>.</li>
+<li><code class="code docutils literal"><span class="pre">fk</span></code> - The value of <span class="math">\(f\)</span> at the current iterate.</li>
+</ul>
+</div>
+<div class="section" id="trust-region">
+<h2>Trust Region<a class="headerlink" href="#trust-region" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">rho</span></code> - The lower bound on the trust region radius <span class="math">\(\rho_k\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">delta</span></code> - The trust region radius <span class="math">\(\Delta_k\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">norm_sk</span></code> - The norm of the trust region step <span class="math">\(\|s_k\|\)</span>.</li>
+</ul>
+</div>
+<div class="section" id="model-interpolation">
+<h2>Model Interpolation<a class="headerlink" href="#model-interpolation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">npt</span></code> - The number of interpolation points.</li>
+<li><code class="code docutils literal"><span class="pre">interpolation_error</span></code> - The sum of squares of the interpolation errors from the interpolated model.</li>
+<li><code class="code docutils literal"><span class="pre">interpolation_condition_number</span></code> - The condition number of the matrix in the interpolation linear system.</li>
+<li><code class="code docutils literal"><span class="pre">interpolation_change_g_norm</span></code> - The norm of the change in model gradient at this iteration, <span class="math">\(\|g_k-g_{k-1}\|\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">interpolation_change_H_norm</span></code> - The Frobenius norm of the change in model Hessian at this iteration, <span class="math">\(\|H_k-H_{k-1}\|_F\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">poisedness</span></code> - The smallest value of <span class="math">\(\Lambda\)</span> for which the current interpolation set <span class="math">\(Y_k\)</span> is <span class="math">\(\Lambda\)</span>-poised in the current trust region. This is the most expensive piece of information to compute, and is only computed if <code class="code docutils literal"><span class="pre">user_params['logging.save_poisedness'</span> <span class="pre">=</span> <span class="pre">True</span></code>.</li>
+<li><code class="code docutils literal"><span class="pre">max_distance_xk</span></code> - The maximum distance from any interpolation point to the current iterate.</li>
+<li><code class="code docutils literal"><span class="pre">norm_gk</span></code> - The norm of the model gradient <span class="math">\(\|g_k\|\)</span>.</li>
+</ul>
+</div>
+<div class="section" id="iteration-count">
+<h2>Iteration Count<a class="headerlink" href="#iteration-count" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">nruns</span></code> - The number of times the algorithm has been restarted.</li>
+<li><code class="code docutils literal"><span class="pre">nf</span></code> - The number of objective evaluations so far (see <code class="code docutils literal"><span class="pre">soln.nf</span></code>)</li>
+<li><code class="code docutils literal"><span class="pre">nx</span></code> - The number of points at which the objective has been evaluated so far (see <code class="code docutils literal"><span class="pre">soln.nx</span></code>)</li>
+<li><code class="code docutils literal"><span class="pre">nsamples</span></code> - The total number of objective evaluations used for all current interpolation points.</li>
+<li><code class="code docutils literal"><span class="pre">iter_this_run</span></code> - The number of iterations since the last restart.</li>
+<li><code class="code docutils literal"><span class="pre">iters_total</span></code> - The total number of iterations so far.</li>
+</ul>
+</div>
+<div class="section" id="algorithm-progress">
+<h2>Algorithm Progress<a class="headerlink" href="#algorithm-progress" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">iter_type</span></code> - A text description of what type of iteration we had (e.g. Successful, Safety, etc.)</li>
+<li><code class="code docutils literal"><span class="pre">ratio</span></code> - The ratio of actual to predicted objective reduction in the trust region step.</li>
+<li><code class="code docutils literal"><span class="pre">slow_iter</span></code> - Equal to 1 if the current iteration is successful but slow, 0 if is successful but not slow, and -1 if was not successful.</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="history.html" class="btn btn-neutral float-right" title="Version History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="advanced.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Lindon Roberts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1a0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

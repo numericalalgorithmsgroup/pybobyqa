@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using Py-BOBYQA &mdash; Py-BOBYQA v1.1a0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Py-BOBYQA v1.1a0 documentation" href="index.html"/>
+        <link rel="next" title="Advanced Usage" href="advanced.html"/>
+        <link rel="prev" title="Overview" href="info.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Py-BOBYQA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1a0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Py-BOBYQA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using Py-BOBYQA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nonlinear-minimization">Nonlinear Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-use-py-bobyqa">How to use Py-BOBYQA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-arguments">Optional Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-simple-example">A Simple Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-bounds-and-more-output">Adding Bounds and More Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-noisy-objective-evaluation">Example: Noisy Objective Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-global-optimization">Example: Global Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagnostic.html">Diagnostic Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Version History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Py-BOBYQA</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Using Py-BOBYQA</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/userguide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-py-bobyqa">
+<h1>Using Py-BOBYQA<a class="headerlink" href="#using-py-bobyqa" title="Permalink to this headline">¶</a></h1>
+<p>This section describes the main interface to Py-BOBYQA and how to use it.</p>
+<div class="section" id="nonlinear-minimization">
+<h2>Nonlinear Minimization<a class="headerlink" href="#nonlinear-minimization" title="Permalink to this headline">¶</a></h2>
+<p>Py-BOBYQA is designed to solve the local optimization problem</p>
+<div class="math">
+\[\begin{split}\min_{x\in\mathbb{R}^n}  &amp;\quad  f(x) \\
+\text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
+<p>where the bound constraints <span class="math">\(a \leq x \leq b\)</span> are optional. The objective function <span class="math">\(f(x)\)</span> is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see <a class="reference external" href="https://neos-guide.org/Optimization-Guide">here</a> for details).</p>
+<p>Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
+For an in-depth technical description of the algorithm see the paper <a class="reference internal" href="#cfmr2018" id="id1">[CFMR2018]</a>.</p>
+</div>
+<div class="section" id="how-to-use-py-bobyqa">
+<h2>How to use Py-BOBYQA<a class="headerlink" href="#how-to-use-py-bobyqa" title="Permalink to this headline">¶</a></h2>
+<p>The main interface to Py-BOBYQA is via the function <code class="code docutils literal"><span class="pre">solve</span></code></p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The input <code class="code docutils literal"><span class="pre">objfun</span></code> is a Python function which takes an input <span class="math">\(x\in\mathbb{R}^n\)</span> and returns the objective value <span class="math">\(f(x)\in\mathbb{R}\)</span>. The input of <code class="code docutils literal"><span class="pre">objfun</span></code> must be one-dimensional NumPy arrays (i.e. with <code class="code docutils literal"><span class="pre">x.shape</span> <span class="pre">==</span> <span class="pre">(n,)</span></code>) and the output must be a single Float.</p>
+<p>The input <code class="code docutils literal"><span class="pre">x0</span></code> is the starting point for the solver, and (where possible) should be set to be the best available estimate of the true solution <span class="math">\(x_{min}\in\mathbb{R}^n\)</span>. It should be specified as a one-dimensional NumPy array (i.e. with <code class="code docutils literal"><span class="pre">x0.shape</span> <span class="pre">==</span> <span class="pre">(n,)</span></code>).
+As Py-BOBYQA is a local solver, providing different values for <code class="code docutils literal"><span class="pre">x0</span></code> may cause it to return different solutions, with possibly different objective values.</p>
+<p>The output of <code class="code docutils literal"><span class="pre">pybobyqa.solve</span></code> is an object containing:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">soln.x</span></code> - an estimate of the solution, <span class="math">\(x_{min}\in\mathbb{R}^n\)</span>, a one-dimensional NumPy array.</li>
+<li><code class="code docutils literal"><span class="pre">soln.f</span></code> - the objective value at the calculated solution, <span class="math">\(f(x_{min})\)</span>, a Float.</li>
+<li><code class="code docutils literal"><span class="pre">soln.gradient</span></code> - an estimate of the gradient vector of first derivatives of the objective, <span class="math">\(g_i \approx \partial f(x_{min})/\partial x_i\)</span>, a NumPy array of length <span class="math">\(n\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">soln.hessian</span></code> - an estimate of the Hessian matrix of second derivatives of the objective, <span class="math">\(H_{i,j} \approx \partial^2 f(x_{min})/\partial x_i \partial x_j\)</span>, a NumPy array of size <span class="math">\(n\times n\)</span>.</li>
+<li><code class="code docutils literal"><span class="pre">soln.nf</span></code> - the number of evaluations of <code class="code docutils literal"><span class="pre">objfun</span></code> that the algorithm needed, an Integer.</li>
+<li><code class="code docutils literal"><span class="pre">soln.nx</span></code> - the number of points <span class="math">\(x\)</span> at which <code class="code docutils literal"><span class="pre">objfun</span></code> was evaluated, an Integer. This may be different to <code class="code docutils literal"><span class="pre">soln.nf</span></code> if sample averaging is used.</li>
+<li><code class="code docutils literal"><span class="pre">soln.nruns</span></code> - the number of runs performed by Py-BOBYQA (more than 1 if using multiple restarts), an Integer.</li>
+<li><code class="code docutils literal"><span class="pre">soln.flag</span></code> - an exit flag, which can take one of several values (listed below), an Integer.</li>
+<li><code class="code docutils literal"><span class="pre">soln.msg</span></code> - a description of why the algorithm finished, a String.</li>
+<li><code class="code docutils literal"><span class="pre">soln.diagnostic_info</span></code> - a table of diagnostic information showing the progress of the solver, a Pandas DataFrame.</li>
+</ul>
+<p>The possible values of <code class="code docutils literal"><span class="pre">soln.flag</span></code> are defined by the following variables:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_SUCCESS</span></code> - Py-BOBYQA terminated successfully (the objective value or trust region radius are sufficiently small).</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_MAXFUN_WARNING</span></code> - maximum allowed objective evaluations reached. This is the most likely return value when using multiple restarts.</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_SLOW_WARNING</span></code> - maximum number of slow iterations reached.</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_FALSE_SUCCESS_WARNING</span></code> - Py-BOBYQA reached the maximum number of restarts which decreased the objective, but to a worse value than was found in a previous run.</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_INPUT_ERROR</span></code> - error in the inputs.</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_TR_INCREASE_ERROR</span></code> - error occurred when solving the trust region subproblem.</li>
+<li><code class="code docutils literal"><span class="pre">soln.EXIT_LINALG_ERROR</span></code> - linear algebra error, e.g. the interpolation points produced a singular linear system.</li>
+</ul>
+<p>These variables are defined in the <code class="code docutils literal"><span class="pre">soln</span></code> object, so can be accessed with, for example</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">soln</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="n">soln</span><span class="o">.</span><span class="n">EXIT_SUCCESS</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Success!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="optional-arguments">
+<h2>Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="code docutils literal"><span class="pre">solve</span></code> function has several optional arguments which the user may provide:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">npt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">rhobeg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rhoend</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">user_params</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">objfun_has_noise</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">seek_global_minimum</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">scaling_within_bounds</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>These arguments are:</p>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">args</span></code> - a tuple of extra arguments passed to the objective function.</li>
+<li><code class="code docutils literal"><span class="pre">bounds</span></code> - a tuple <code class="code docutils literal"><span class="pre">(lower,</span> <span class="pre">upper)</span></code> with the vectors <span class="math">\(a\)</span> and <span class="math">\(b\)</span> of lower and upper bounds on <span class="math">\(x\)</span> (default is <span class="math">\(a_i=-10^{20}\)</span> and <span class="math">\(b_i=10^{20}\)</span>). To set bounds for either <code class="code docutils literal"><span class="pre">lower</span></code> or <code class="code docutils literal"><span class="pre">upper</span></code>, but not both, pass a tuple <code class="code docutils literal"><span class="pre">(lower,</span> <span class="pre">None)</span></code> or <code class="code docutils literal"><span class="pre">(None,</span> <span class="pre">upper)</span></code>.</li>
+<li><code class="code docutils literal"><span class="pre">npt</span></code> - the number of interpolation points to use (default is <span class="math">\(2n+1\)</span> for a problem with <code class="code docutils literal"><span class="pre">len(x0)=n</span></code> if <code class="code docutils literal"><span class="pre">objfun_has_noise=False</span></code>, otherwise it is set to <span class="math">\((n+1)(n+2)/2\)</span>). Py-BOBYQA requires <span class="math">\(n+1 \leq npt \leq (n+1)(n+2)/2\)</span>. Larger values are particularly useful for noisy problems.</li>
+<li><code class="code docutils literal"><span class="pre">rhobeg</span></code> - the initial value of the trust region radius (default is 0.1 if <code class="code docutils literal"><span class="pre">scaling_within_bounds=True</span></code>, otherwise <span class="math">\(0.1\max(\|x_0\|_{\infty}, 1)\)</span>).</li>
+<li><code class="code docutils literal"><span class="pre">rhoend</span></code> - minimum allowed value of trust region radius, which determines when a successful termination occurs (default is <span class="math">\(10^{-8}\)</span>).</li>
+<li><code class="code docutils literal"><span class="pre">maxfun</span></code> - the maximum number of objective evaluations the algorithm may request (default is <span class="math">\(\min(100(n+1),1000)\)</span>).</li>
+<li><code class="code docutils literal"><span class="pre">nsamples</span></code> - a Python function <code class="code docutils literal"><span class="pre">nsamples(delta,</span> <span class="pre">rho,</span> <span class="pre">iter,</span> <span class="pre">nrestarts)</span></code> which returns the number of times to evaluate <code class="code docutils literal"><span class="pre">objfun</span></code> at a given point. This is only applicable for objectives with stochastic noise, when averaging multiple evaluations at the same point produces a more accurate value. The input parameters are the trust region radius (<code class="code docutils literal"><span class="pre">delta</span></code>), the lower bound on the trust region radius (<code class="code docutils literal"><span class="pre">rho</span></code>), how many iterations the algorithm has been running for (<code class="code docutils literal"><span class="pre">iter</span></code>), and how many restarts have been performed (<code class="code docutils literal"><span class="pre">nrestarts</span></code>). Default is no averaging (i.e. <code class="code docutils literal"><span class="pre">nsamples(delta,</span> <span class="pre">rho,</span> <span class="pre">iter,</span> <span class="pre">nrestarts)=1</span></code>).</li>
+<li><code class="code docutils literal"><span class="pre">user_params</span></code> - a Python dictionary <code class="code docutils literal"><span class="pre">{'param1':</span> <span class="pre">val1,</span> <span class="pre">'param2':val2,</span> <span class="pre">...}</span></code> of optional parameters. A full list of available options is given in the next section <a class="reference internal" href="advanced.html"><span class="doc">Advanced Usage</span></a>.</li>
+<li><code class="code docutils literal"><span class="pre">objfun_has_noise</span></code> - a flag to indicate whether or not <code class="code docutils literal"><span class="pre">objfun</span></code> has stochastic noise; i.e. will calling <code class="code docutils literal"><span class="pre">objfun(x)</span></code> multiple times at the same value of <code class="code docutils literal"><span class="pre">x</span></code> give different results? This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in <code class="code docutils literal"><span class="pre">user_params</span></code>.</li>
+<li><code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> - a flag to indicate whether to search for a global minimum, rather than a local minimum. This is used to set some sensible default parameters, all of which can be overridden by the values provided in <code class="code docutils literal"><span class="pre">user_params</span></code>. If <code class="code docutils literal"><span class="pre">True</span></code>, both upper and lower bounds must be set. Note that Py-BOBYQA only implements a heuristic method, so there are no guarantees it will find a global minimum. However, by using this flag, it is more likely to escape local minima if there are better values nearby. The method used is a multiple restart mechanism, where we repeatedly re-initialize Py-BOBYQA from the best point found so far, but where we use a larger trust reigon radius each time (note: this is different to more common multi-start approach to global optimization).</li>
+<li><code class="code docutils literal"><span class="pre">scaling_within_bounds</span></code> - a flag to indicate whether the algorithm should internally shift and scale the entries of <code class="code docutils literal"><span class="pre">x</span></code> so that the bounds become <span class="math">\(0 \leq x \leq 1\)</span>. This is useful is you are setting <code class="code docutils literal"><span class="pre">bounds</span></code> and the bounds have different orders of magnitude. If <code class="code docutils literal"><span class="pre">scaling_within_bounds=True</span></code>, the values of <code class="code docutils literal"><span class="pre">rhobeg</span></code> and <code class="code docutils literal"><span class="pre">rhoend</span></code> apply to the <em>shifted</em> variables.</li>
+</ul>
+<p>In general when using optimization software, it is good practice to scale your variables so that moving each by a given amount has approximately the same impact on the objective function.
+The <code class="code docutils literal"><span class="pre">scaling_within_bounds</span></code> flag is designed to provide an easy way to achieve this, if you have set the bounds <code class="code docutils literal"><span class="pre">lower</span></code> and <code class="code docutils literal"><span class="pre">upper</span></code>.</p>
+</div>
+<div class="section" id="a-simple-example">
+<h2>A Simple Example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
+<p>Suppose we wish to minimize the <a class="reference external" href="https://en.wikipedia.org/wiki/Rosenbrock_function">Rosenbrock test function</a>:</p>
+<div class="math">
+\[\begin{split}\min_{(x_1,x_2)\in\mathbb{R}^2}  &amp;\quad  100(x_2-x_1^2)^2 + (1-x_1)^2 \\\end{split}\]</div>
+<p>This function has exactly one local minimum <span class="math">\(f(x_{min})=0\)</span> at <span class="math">\(x_{min}=(1,1)\)</span>. A commonly-used starting point for testing purposes is <span class="math">\(x_0=(-1.2,1)\)</span>. The following script shows how to solve this problem using Py-BOBYQA:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Py-BOBYQA example: minimize the Rosenbrock function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pybobyqa</span>
+
+<span class="c1"># Define the objective function</span>
+<span class="k">def</span> <span class="nf">rosenbrock</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="c1"># Define the starting point</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># Set random seed (for reproducibility)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Call Py-BOBYQA</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rosenbrock</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+
+<span class="c1"># Display output</span>
+<span class="k">print</span><span class="p">(</span><span class="n">soln</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note that Py-BOBYQA is a randomized algorithm: in its first phase, it builds an internal approximation to the objective function by sampling it along random directions. In the code above, we set NumPy’s random seed for reproducibility over multiple runs, but this is not required. The output of this script, showing that Py-BOBYQA finds the correct solution, is</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>****** Py-BOBYQA Results ******
+Solution xmin = [ 1.  1.]
+Objective value f(xmin) = 2.964036794e-19
+Needed 213 objective evaluations (at 213 points)
+Approximate gradient = [ -2.57280154e-08   1.26855793e-08]
+Approximate Hessian = [[ 802.90904563 -400.46022134]
+ [-400.46022134  200.23335154]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+</pre></div>
+</div>
+</div></blockquote>
+<p>This and all following problems can be found in the <a class="reference external" href="https://github.com/numericalalgorithmsgroup/pybobyqa/tree/master/examples">examples</a> directory on the Py-BOBYQA Github page.</p>
+</div>
+<div class="section" id="adding-bounds-and-more-output">
+<h2>Adding Bounds and More Output<a class="headerlink" href="#adding-bounds-and-more-output" title="Permalink to this headline">¶</a></h2>
+<p>We can extend the above script to add constraints. To do this, we can add the lines</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Define bound constraints (lower &lt;= x &lt;= upper)</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">])</span>
+<span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">])</span>
+
+<span class="c1"># Call Py-BOBYQA (with bounds)</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rosenbrock</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span><span class="n">upper</span><span class="p">))</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Py-BOBYQA correctly finds the solution to the constrained problem:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>****** Py-BOBYQA Results ******
+Solution xmin = [ 0.9   0.81]
+Objective value f(xmin) = 0.01
+Needed 134 objective evaluations (at 134 points)
+Approximate gradient = [ -1.99999226e-01  -4.31078784e-07]
+Approximate Hessian = [[ 649.6790222  -360.18361979]
+ [-360.18361979  200.00205196]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+</pre></div>
+</div>
+</div></blockquote>
+<p>However, we also get a warning that our starting point was outside of the bounds:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>RuntimeWarning: x0 above upper bound, adjusting
+</pre></div>
+</div>
+</div></blockquote>
+<p>Py-BOBYQA automatically fixes this, and moves <span class="math">\(x_0\)</span> to a point within the bounds, in this case <span class="math">\(x_0=(-1.2,0.85)\)</span>.</p>
+<p>We can also get Py-BOBYQA to print out more detailed information about its progress using the <a class="reference external" href="https://docs.python.org/3/library/logging.html">logging</a> module. To do this, we need to add the following lines:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># ... (call pybobyqa.solve)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>And we can now see each evaluation of <code class="code docutils literal"><span class="pre">objfun</span></code>:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>Function eval 1 at point 1 has f = 39.65 at x = [-1.2   0.85]
+Initialising (random directions)
+Function eval 2 at point 2 has f = 14.337296 at x = [-1.08  0.85]
+Function eval 3 at point 3 has f = 55.25 at x = [-1.2   0.73]
+...
+Function eval 133 at point 133 has f = 0.0100000000000165 at x = [ 0.9         0.81000001]
+Function eval 134 at point 134 has f = 0.00999999999999997 at x = [ 0.9   0.81]
+Did a total of 1 run(s)
+</pre></div>
+</div>
+</div></blockquote>
+<p>If we wanted to save this output to a file, we could replace the above call to <code class="code docutils literal"><span class="pre">logging.basicConfig()</span></code> with</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;myfile.log&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                    <span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="example-noisy-objective-evaluation">
+<h2>Example: Noisy Objective Evaluation<a class="headerlink" href="#example-noisy-objective-evaluation" title="Permalink to this headline">¶</a></h2>
+<p>As described in <a class="reference internal" href="info.html"><span class="doc">Overview</span></a>, derivative-free algorithms such as Py-BOBYQA are particularly useful when <code class="code docutils literal"><span class="pre">objfun</span></code> has noise. Let’s modify the previous example to include random noise in our objective evaluation, and compare it to a derivative-based solver:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Py-BOBYQA example: minimize the noisy Rosenbrock function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pybobyqa</span>
+
+<span class="c1"># Define the objective function</span>
+<span class="k">def</span> <span class="nf">rosenbrock</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="c1"># Modified objective function: add 1% Gaussian noise</span>
+<span class="k">def</span> <span class="nf">rosenbrock_noisy</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rosenbrock</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Define the starting point</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># Set random seed (for reproducibility)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Demonstrate noise in function evaluation:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;objfun(x0) = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">rosenbrock_noisy</span><span class="p">(</span><span class="n">x0</span><span class="p">)))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Call Py-BOBYQA</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rosenbrock_noisy</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+
+<span class="c1"># Display output</span>
+<span class="k">print</span><span class="p">(</span><span class="n">soln</span><span class="p">)</span>
+
+<span class="c1"># Compare with a derivative-based solver</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">opt</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">rosenbrock_noisy</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;** SciPy results **&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Solution xmin = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">soln</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Objective value f(xmin) = </span><span class="si">%.10g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">soln</span><span class="o">.</span><span class="n">fun</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Needed </span><span class="si">%g</span><span class="s2"> objective evaluations&quot;</span> <span class="o">%</span> <span class="n">soln</span><span class="o">.</span><span class="n">nfev</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Exit flag = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">soln</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">soln</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The output of this is:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>Demonstrate noise in function evaluation:
+objfun(x0) = 24.6269006677
+objfun(x0) = 24.2968380444
+objfun(x0) = 24.4368545922
+objfun(x0) = 24.7422961542
+objfun(x0) = 24.6519490336
+
+****** Py-BOBYQA Results ******
+Solution xmin = [-1.02866429  1.07341548]
+Objective value f(xmin) = 4.033118937
+Needed 36 objective evaluations (at 36 points)
+Approximate gradient = [-6921247.2999239  -3051622.27188687]
+Approximate Hessian = [[  1.98604897e+15   5.75929121e+14]
+ [  5.75929121e+14   7.89533101e+14]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+
+
+** SciPy results **
+Solution xmin = [-1.2  1. ]
+Objective value f(xmin) = 23.80943672
+Needed 104 objective evaluations
+Exit flag = 2
+Desired error not necessarily achieved due to precision loss.
+</pre></div>
+</div>
+</div></blockquote>
+<p>Although Py-BOBYQA does not find the true solution (and it cannot produce a good estimate of the objective gradient and Hessian), it still gives a reasonable decrease in the objective. However SciPy’s derivative-based solver, which has no trouble solving the noise-free problem, is unable to make any progress.</p>
+<p>As noted above, Py-BOBYQA has an input parameter <code class="code docutils literal"><span class="pre">objfun_has_noise</span></code> to indicate if <code class="code docutils literal"><span class="pre">objfun</span></code> has noise in it, which it does in this case. Therefore we can call Py-BOBYQA with</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rosenbrock_noisy</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">objfun_has_noise</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This time, we find the true solution, and better estimates of the gradient and Hessian:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>****** Py-BOBYQA Results ******
+Solution xmin = [ 1.  1.]
+Objective value f(xmin) = 3.418770987e-18
+Needed 300 objective evaluations (at 300 points)
+Did a total of 4 runs
+Approximate gradient = [ -1.36175005e-08   2.12249758e-09]
+Approximate Hessian = [[ 805.93202374 -394.16671315]
+ [-394.16671315  192.99451721]]
+Exit flag = 1
+Warning (max evals): Objective has been called MAXFUN times
+******************************
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="example-global-optimization">
+<h2>Example: Global Optimization<a class="headerlink" href="#example-global-optimization" title="Permalink to this headline">¶</a></h2>
+<p>The following example shows how to use the global optimization features of Py-BOBYQA. Here, we try to minimize the Freudenstein and Roth function (problem 2 in J.J. Moré, B.S. Garbow, B.S. and K.E. Hillstrom, Testing Unconstrained Optimization Software, <em>ACM Trans. Math. Software</em> 7:1 (1981), 17-41). This function has two local minima, one of which is global.</p>
+<p>Note that Py-BOBYQA only implements a heuristic method, so there are no guarantees it will find a global minimum. However, by using the <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> flag, it is more likely to escape local minima if there are better values nearby.</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Py-BOBYQA example: globally minimize the Freudenstein and Roth function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pybobyqa</span>
+
+<span class="c1"># Define the objective function</span>
+<span class="c1"># This function has a local minimum f = 48.98</span>
+<span class="c1"># at x = np.array([11.41, -0.8968])</span>
+<span class="c1"># and a global minimum f = 0 at x = np.array([5.0, 4.0])</span>
+<span class="k">def</span> <span class="nf">freudenstein_roth</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">13.0</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="mf">5.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">29.0</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">14.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">r1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">r2</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="c1"># Define the starting point</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">])</span>
+
+<span class="c1"># Define bounds (required for global optimization)</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">])</span>
+<span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">])</span>
+
+<span class="c1"># Set random seed (for reproducibility)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;First run - search for local minimum only&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">freudenstein_roth</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                      <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">soln</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Second run - search for global minimum&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">freudenstein_roth</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                      <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">),</span>
+                      <span class="n">seek_global_minimum</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">soln</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The output of this is:</p>
+<blockquote>
+<div><div class="highlight-none"><div class="highlight"><pre><span></span>First run - search for local minimum only
+
+****** Py-BOBYQA Results ******
+Solution xmin = [ 11.41277906  -0.89680525]
+Objective value f(xmin) = 48.98425368
+Needed 203 objective evaluations (at 203 points)
+Approximate gradient = [ -1.61348180e-06  -3.61662651e-07]
+Approximate Hessian = [[ 132.10265455  -45.5426821 ]
+ [ -45.5426821   976.15808779]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+
+
+
+Second run - search for global minimum
+
+****** Py-BOBYQA Results ******
+Solution xmin = [ 5.  4.]
+Objective value f(xmin) = 9.734692105e-19
+Needed 500 objective evaluations (at 500 points)
+Did a total of 4 runs
+Approximate gradient = [  4.28964221e-08   4.58344260e-07]
+Approximate Hessian = [[    4.06992486    61.15006935]
+ [   61.15006935  3728.06826545]]
+Exit flag = 1
+Warning (max evals): Objective has been called MAXFUN times
+******************************
+</pre></div>
+</div>
+</div></blockquote>
+<p>As we can see, the <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils citation" frame="void" id="cfmr2018" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[CFMR2018]</a></td><td><ol class="first last upperalpha simple" start="3">
+<li>Cartis, J. Fiala, B. Marteau and L. Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="advanced.html" class="btn btn-neutral float-right" title="Advanced Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="info.html" class="btn btn-neutral" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Lindon Roberts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1a0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
