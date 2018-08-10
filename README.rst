@@ -24,7 +24,7 @@ If you are interested in solving least-squares minimization problems, you may wi
 
 Documentation
 -------------
-See manual.pdf or `here <http://people.maths.ox.ac.uk/robertsl/pybobyqa>`_.
+See manual.pdf or `here <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_.
 
 Requirements
 ------------
@@ -110,7 +110,7 @@ Alternatively, the HTML documentation provides some simple examples of how to ru
 
 Examples
 --------
-Examples of how to run Py-BOBYQA are given in the `documentation <http://people.maths.ox.ac.uk/robertsl/pybobyqa>`_, and the `examples <https://github.com/numericalalgorithmsgroup/pybobyqa/tree/master/examples>`_ directory in Github.
+Examples of how to run Py-BOBYQA are given in the `documentation <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_, and the `examples <https://github.com/numericalalgorithmsgroup/pybobyqa/tree/master/examples>`_ directory in Github.
 
 Uninstallation
 --------------
