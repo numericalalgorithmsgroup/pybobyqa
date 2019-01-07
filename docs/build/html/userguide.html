@@ -182,7 +182,7 @@
 \text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
 <p>where the bound constraints <span class="math">\(a \leq x \leq b\)</span> are optional. The objective function <span class="math">\(f(x)\)</span> is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see <a class="reference external" href="https://neos-guide.org/Optimization-Guide">here</a> for details).</p>
 <p>Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
-For an in-depth technical description of the algorithm see the paper <a class="reference internal" href="#cfmr2018" id="id1">[CFMR2018]</a>.</p>
+For an in-depth technical description of the algorithm see the paper <a class="reference internal" href="#cfmr2018" id="id1">[CFMR2018]</a>, and for the global optimization heuristic, see <a class="reference internal" href="#cro2018" id="id2">[CRO2018]</a>.</p>
 </div>
 <div class="section" id="how-to-use-py-bobyqa">
 <h2>How to use Py-BOBYQA<a class="headerlink" href="#how-to-use-py-bobyqa" title="Permalink to this headline">¶</a></h2>
@@ -549,7 +549,7 @@ Warning (max evals): Objective has been called MAXFUN times
 </pre></div>
 </div>
 </div></blockquote>
-<p>As we can see, the <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum.</p>
+<p>As we can see, the <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in <a class="reference internal" href="#cro2018" id="id3">[CRO2018]</a>.</p>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
@@ -558,6 +558,15 @@ Warning (max evals): Objective has been called MAXFUN times
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id1">[CFMR2018]</a></td><td><ol class="first last upperalpha simple" start="3">
 <li>Cartis, J. Fiala, B. Marteau and L. Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</li>
+</ol>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="cro2018" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[CRO2018]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> <ol class="last upperalpha simple" start="3">
+<li>Cartis, L. Roberts and O. Sheridan-Methven, <a class="reference external" href="https://arxiv.org/abs/1812.11343">Escaping local minima with derivative-free methods: a numerical investigation</a>, technical report, University of Oxford, (2018).</li>
 </ol>
 </td></tr>
 </tbody>

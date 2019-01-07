@@ -163,16 +163,27 @@
   <div class="section" id="py-bobyqa-derivative-free-optimizer-for-bound-constrained-minimization">
 <h1>Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization<a class="headerlink" href="#py-bobyqa-derivative-free-optimizer-for-bound-constrained-minimization" title="Permalink to this headline">¶</a></h1>
 <p><strong>Release:</strong> 1.1</p>
-<p><strong>Date:</strong> 24 December 2018</p>
+<p><strong>Date:</strong> 07 January 2019</p>
 <p><strong>Author:</strong> <a class="reference external" href="mailto:lindon&#46;roberts&#37;&#52;&#48;maths&#46;ox&#46;ac&#46;uk">Lindon Roberts</a></p>
 <p>Py-BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound constraints), without requiring any derivatives of the objective. Py-BOBYQA is a Python implementation of the <a class="reference external" href="http://mat.uc.pt/~zhang/software.html#powell_software">BOBYQA</a> solver by Powell (documentation <a class="reference external" href="http://www.damtp.cam.ac.uk/user/na/NA_papers/NA2009_06.pdf">here</a>). It is particularly useful when evaluations of the objective function are expensive and/or noisy.</p>
 <p>That is, Py-BOBYQA solves</p>
 <div class="math">
 \[\begin{split}\min_{x\in\mathbb{R}^n}  &amp;\quad  f(x)\\
 \text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
-<p>Full details of the Py-BOBYQA algorithm are given in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</p>
+<p>Full details of the Py-BOBYQA algorithm are given in our papers:</p>
+<ol class="arabic simple">
+<li><ol class="first upperalpha" start="3">
+<li>Cartis, J. Fiala, B. Marteau and L. Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</li>
+</ol>
+</li>
+<li><ol class="first upperalpha" start="3">
+<li>Cartis, L. Roberts and O. Sheridan-Methven, <a class="reference external" href="https://arxiv.org/abs/1812.11343">Escaping local minima with derivative-free methods: a numerical investigation</a>, technical report, University of Oxford, (2018).</li>
+</ol>
+</li>
+</ol>
+<p>Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA’s global optimization heuristic functionality <strong>(new in v1.1!)</strong>.</p>
 <p>If you are interested in solving least-squares minimization problems, you may wish to try <a class="reference external" href="https://github.com/numericalalgorithmsgroup/dfols">DFO-LS</a>, which has the same features as Py-BOBYQA (plus some more), and exploits the least-squares problem structure, so performs better on such problems.</p>
-<p><strong>New feature: global optimization heuristic (July 2018)!</strong> Py-BOBYQA now has a heuristic for global optimization (see <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a> for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.</p>
+<p>Since v1.1, Py-BOBYQA has a heuristic for global optimization (see <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a> for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.</p>
 <p>Py-BOBYQA is released under the GNU General Public License. Please <a class="reference external" href="http://www.nag.com/content/worldwide-contact-information">contact NAG</a> for alternative licensing.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>

@@ -16,7 +16,12 @@ Py-BOBYQA: Derivative-Free Solver for Bound-Constrained Minimization
 
 Py-BOBYQA is a flexible package for solving bound-constrained general objective minimization, without requiring derivatives of the objective. It is a Python implementation of the BOBYQA algorithm by Powell. Py-BOBYQA is particularly useful when evaluations of the objective function are expensive and/or noisy.
 
-More details about Py-BOBYQA can be found in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). For reproducibility of all figures in this paper, please feel free to contact the authors.
+More details about Py-BOBYQA can be found in our papers: 
+
+1. C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 
+2. C. Cartis, L. Roberts and O. Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
+
+Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality. For reproducibility of all figures, please feel free to contact the authors.
 
 The original paper by Powell is: M. J. D. Powell, The BOBYQA algorithm for bound constrained optimization without derivatives, technical report DAMTP 2009/NA06, University of Cambridge (2009), and the original Fortran implementation is available `here <http://mat.uc.pt/~zhang/software.html>`_.
 

@@ -21,11 +21,16 @@ That is, Py-BOBYQA solves
    \min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
    \text{s.t.} &\quad  a \leq x \leq b
 
-Full details of the Py-BOBYQA algorithm are given in our paper: C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018).
+Full details of the Py-BOBYQA algorithm are given in our papers: 
+
+1. C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 
+2. C. Cartis, L. Roberts and O. Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
+
+Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality **(new in v1.1!)**.
 
 If you are interested in solving least-squares minimization problems, you may wish to try `DFO-LS <https://github.com/numericalalgorithmsgroup/dfols>`_, which has the same features as Py-BOBYQA (plus some more), and exploits the least-squares problem structure, so performs better on such problems.
 
-**New feature: global optimization heuristic (July 2018)!** Py-BOBYQA now has a heuristic for global optimization (see :doc:`userguide` for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.
+Since v1.1, Py-BOBYQA has a heuristic for global optimization (see :doc:`userguide` for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.
 
 Py-BOBYQA is released under the GNU General Public License. Please `contact NAG <http://www.nag.com/content/worldwide-contact-information>`_ for alternative licensing.
 

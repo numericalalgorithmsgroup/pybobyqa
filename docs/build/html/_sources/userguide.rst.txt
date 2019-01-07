@@ -14,7 +14,7 @@ Py-BOBYQA is designed to solve the local optimization problem
 where the bound constraints :math:`a \leq x \leq b` are optional. The objective function :math:`f(x)` is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
 
 Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
-For an in-depth technical description of the algorithm see the paper [CFMR2018]_.
+For an in-depth technical description of the algorithm see the paper [CFMR2018]_, and for the global optimization heuristic, see [CRO2018]_.
 
 How to use Py-BOBYQA
 --------------------
@@ -388,11 +388,12 @@ The output of this is:
       Warning (max evals): Objective has been called MAXFUN times
       ******************************
 
-As we can see, the :code:`seek_global_minimum` flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum.
+As we can see, the :code:`seek_global_minimum` flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in [CRO2018]_.
 
 References
 ----------
 
 .. [CFMR2018]   
    C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018).
-
+.. [CRO2018]   
+   C. Cartis, L. Roberts and O. Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
