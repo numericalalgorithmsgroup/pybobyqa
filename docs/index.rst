@@ -23,8 +23,8 @@ That is, Py-BOBYQA solves
 
 Full details of the Py-BOBYQA algorithm are given in our papers: 
 
-1. C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 
-2. C. Cartis, L. Roberts and O. Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
+1. Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 
+2. Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
 
 Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality **(new in v1.1!)**.
 

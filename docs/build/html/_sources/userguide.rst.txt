@@ -394,6 +394,6 @@ References
 ----------
 
 .. [CFMR2018]   
-   C. Cartis, J. Fiala, B. Marteau and L. Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018).
+   Coralia Cartis, Jan Fiala, Benjamina Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018).
 .. [CRO2018]   
-   C. Cartis, L. Roberts and O. Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
+   Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
