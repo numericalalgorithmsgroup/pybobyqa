@@ -74,12 +74,16 @@ class OptimResults(object):
             output += "Needed %g objective evaluations (at %g points)\n" % (self.nf, self.nx)
             if self.nruns > 1:
                 output += "Did a total of %g runs\n" % self.nruns
-            if np.size(self.gradient) < 100:
+            if self.gradient is not None and np.size(self.gradient) < 100:
                 output += "Approximate gradient = %s\n" % str(self.gradient)
+            elif self.gradient is None:
+                output += "No gradient available\n"
             else:
                 output += "Not showing approximate gradient because it is too long; check self.gradient\n"
-            if np.size(self.hessian) < 200:
+            if self.hessian is not None and np.size(self.hessian) < 200:
                 output += "Approximate Hessian = %s\n" % str(self.hessian)
+            elif self.hessian is None:
+                output += "No Hessian available\n"
             else:
                 output += "Not showing approximate Hessian because it is too long; check self.hessian\n"
             if self.diagnostic_info is not None:
@@ -822,8 +826,10 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     exit_msg = exit_info.message(with_stem=True)
     # Un-scale gradient and Hessian
     if scaling_changes is not None:
-        gradmin = gradmin / scaling_changes[1]
-        hessmin = hessmin / np.outer(scaling_changes[1], scaling_changes[1])
+        if gradmin is not None:
+            gradmin = gradmin / scaling_changes[1]
+        if hessmin is not None:
+            hessmin = hessmin / np.outer(scaling_changes[1], scaling_changes[1])
     results = OptimResults(remove_scaling(xmin, scaling_changes), fmin, gradmin, hessmin, nf, nx, nruns, exit_flag, exit_msg)
     if params("logging.save_diagnostic_info"):
         df = diagnostic_info.to_dataframe(with_xk=params("logging.save_xk"))
