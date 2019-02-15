@@ -640,6 +640,8 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
           objfun_has_noise=False, seek_global_minimum=False, scaling_within_bounds=False):
     n = len(x0)
+    if type(x0) == list:
+        x0 = np.array(x0, dtype=np.float)
 
     # Set missing inputs (if not specified) to some sensible defaults
     if bounds is None:
@@ -649,7 +651,11 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     else:
         assert len(bounds) == 2, "bounds must be a 2-tuple of (lower, upper), where both are arrays of size(x0)"
         xl = bounds[0]
+        if type(xl) == list:
+            xl = np.array(xl, dtype=np.float)
         xu = bounds[1]
+        if type(xu) == list:
+            xu = np.array(xu, dtype=np.float)
     
     exit_info = None
     if seek_global_minimum and (xl is None or xu is None):
