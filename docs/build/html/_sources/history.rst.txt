@@ -16,9 +16,14 @@ Version 1.0.2 (20 Jun 2018)
 * Bug fixes: default parameters for reduced initialization cost regime, returning correct value from safety steps, retrieving dependencies during installation.
 
 Version 1.1 (24 Dec 2018)
----------------------------
+-------------------------
 * Extra parameters to control the trust region radius over multiple restarts, designed for global optimization.
 * New input flag :code:`seek_global_minimum` to set sensible default parameters for global optimization. New example script to demonstrate this functionality.
 * Bug fix: default trust region radius when scaling variables within bounds.
 
 Initially released as version 1.1a0 on 17 Jul 2018.
+
+Version 1.1.1 (5 Apr 2019)
+--------------------------
+* Link code to Zenodo, to create DOI - no changes to the Py-BOBYQA algorithm.
+

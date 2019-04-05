@@ -39,7 +39,7 @@ setup(
     author='Lindon Roberts',
     author_email='lindon.roberts@maths.ox.ac.uk',
     url="https://github.com/numericalalgorithmsgroup/pybobyqa/",
-    download_url="https://github.com/numericalalgorithmsgroup/pybobyqa/archive/v1.1.tar.gz",
+    download_url="https://github.com/numericalalgorithmsgroup/pybobyqa/archive/v1.1.1.tar.gz",
     packages=['pybobyqa'],
     license='GNU GPL',
     keywords = "mathematics derivative free optimization",
