@@ -642,6 +642,8 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     n = len(x0)
     if type(x0) == list:
         x0 = np.array(x0, dtype=np.float)
+    else:
+        x0 = x0.astype(np.float)
 
     # Set missing inputs (if not specified) to some sensible defaults
     if bounds is None:
@@ -653,9 +655,13 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         xl = bounds[0]
         if type(xl) == list:
             xl = np.array(xl, dtype=np.float)
+        else:
+            xl = xl.astype(np.float)
         xu = bounds[1]
         if type(xu) == list:
             xu = np.array(xu, dtype=np.float)
+        else:
+            xu = xu.astype(np.float)
     
     exit_info = None
     if seek_global_minimum and (xl is None or xu is None):
