@@ -22,7 +22,7 @@ Py-BOBYQA is a flexible package for solving bound-constrained general objective 
 
 More details about Py-BOBYQA can be found in our papers: 
 
-1. Coralia Cartis, Jan Fiala, Benjamina Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 
+1. Coralia Cartis, Jan Fiala, Benjamina Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41 [`preprint <https://arxiv.org/abs/1804.00154>`_] 
 2. Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
 
 Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality. For reproducibility of all figures, please feel free to contact the authors.
@@ -34,6 +34,16 @@ If you are interested in solving least-squares minimization problems, you may wi
 Documentation
 -------------
 See manual.pdf or `here <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_.
+
+Citation
+--------
+If you use Py-BOBYQA in a paper, please cite:
+
+Cartis, C., Fiala, J., Marteau, B. and Roberts, L., `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41.
+
+If you use Py-BOBYQA's global optimization heuristic, please cite the above and also
+
+Cartis, C., Roberts, L. and Sheridan-Methven, O., `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
 
 Requirements
 ------------
