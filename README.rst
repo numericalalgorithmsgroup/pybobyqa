@@ -33,17 +33,17 @@ If you are interested in solving least-squares minimization problems, you may wi
 
 Documentation
 -------------
-See manual.pdf or `here <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_.
+See manual.pdf or the `online manual <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_.
 
 Citation
 --------
 If you use Py-BOBYQA in a paper, please cite:
 
-Cartis, C., Fiala, J., Marteau, B. and Roberts, L., `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41.
+Cartis, C., Fiala, J., Marteau, B. and Roberts, L., Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41.
 
 If you use Py-BOBYQA's global optimization heuristic, please cite the above and also
 
-Cartis, C., Roberts, L. and Sheridan-Methven, O., `Escaping local minima with derivative-free methods: a numerical investigation <https://arxiv.org/abs/1812.11343>`_, technical report, University of Oxford, (2018). 
+Cartis, C., Roberts, L. and Sheridan-Methven, O., Escaping local minima with derivative-free methods: a numerical investigation, technical report, University of Oxford, (2018). 
 
 Requirements
 ------------
@@ -131,7 +131,7 @@ Alternatively, the HTML documentation provides some simple examples of how to ru
 
 Examples
 --------
-Examples of how to run Py-BOBYQA are given in the `documentation <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_, and the `examples <https://github.com/numericalalgorithmsgroup/pybobyqa/tree/master/examples>`_ directory in Github.
+Examples of how to run Py-BOBYQA are given in the `online documentation <https://numericalalgorithmsgroup.github.io/pybobyqa/>`_, and the `examples directory <https://github.com/numericalalgorithmsgroup/pybobyqa/tree/master/examples>`_ in Github.
 
 Uninstallation
 --------------
