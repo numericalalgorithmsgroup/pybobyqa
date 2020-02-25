@@ -114,7 +114,7 @@ class TestLinear(unittest.TestCase):
         objfun = lambda x: sumsq(np.dot(A, x) - b)
         gradfun = lambda x: 2.0 * np.dot(A.T, np.dot(A,x)) - 2.0 * np.dot(A.T, b)
         hessfun = 2.0 * np.dot(A.T, A)  # constant Hessian
-        xmin = np.linalg.lstsq(A, b)[0]
+        xmin = np.linalg.lstsq(A, b, rcond=None)[0]
         fmin = objfun(xmin)
         x0 = np.zeros((n,))
         np.random.seed(0)
@@ -135,7 +135,7 @@ class TestLinearNp1Model(unittest.TestCase):
         objfun = lambda x: sumsq(np.dot(A, x) - b)
         gradfun = lambda x: 2.0 * np.dot(A.T, np.dot(A,x)) - 2.0 * np.dot(A.T, b)
         hessfun = 2.0 * np.dot(A.T, A)  # constant Hessian
-        xmin = np.linalg.lstsq(A, b)[0]
+        xmin = np.linalg.lstsq(A, b, rcond=None)[0]
         fmin = objfun(xmin)
         x0 = np.zeros((n,))
         np.random.seed(0)

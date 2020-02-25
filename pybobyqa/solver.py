@@ -654,14 +654,18 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         assert len(bounds) == 2, "bounds must be a 2-tuple of (lower, upper), where both are arrays of size(x0)"
         xl = bounds[0]
         if type(xl) == list:
-            xl = np.array(xl, dtype=np.float)
+            xl = np.array(xl, dtype=np.float) if xl is not None else None
         else:
-            xl = xl.astype(np.float)
+            xl = xl.astype(np.float) if xl is not None else None
         xu = bounds[1]
         if type(xu) == list:
-            xu = np.array(xu, dtype=np.float)
+            xu = np.array(xu, dtype=np.float) if xu is not None else None
         else:
-            xu = xu.astype(np.float)
+            xu = xu.astype(np.float) if xu is not None else None
+
+    if (xl is None or xu is None) and scaling_within_bounds:
+        scaling_within_bounds = False
+        warnings.warn("Ignoring scaling_within_bounds=True for unconstrained problem/1-sided bounds", RuntimeWarning)
     
     exit_info = None
     if seek_global_minimum and (xl is None or xu is None):
@@ -760,20 +764,10 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         return results
 
     # Enforce lower & upper bounds on x0
-    idx = (xl < x0) & (x0 <= xl + rhobeg)
-    if np.any(idx):
-        warnings.warn("x0 too close to lower bound, adjusting", RuntimeWarning)
-    x0[idx] = xl[idx] + rhobeg
-
     idx = (x0 <= xl)
     if np.any(idx):
         warnings.warn("x0 below lower bound, adjusting", RuntimeWarning)
     x0[idx] = xl[idx]
-
-    idx = (xu - rhobeg <= x0) & (x0 < xu)
-    if np.any(idx):
-        warnings.warn("x0 too close to upper bound, adjusting", RuntimeWarning)
-    x0[idx] = xu[idx] - rhobeg
 
     idx = (x0 >= xu)
     if np.any(idx):

@@ -106,7 +106,7 @@ class Model(object):
     def xpt(self, k, abs_coordinates=False):
         assert 0 <= k < self.npt(), "Invalid index %g" % k
         if not abs_coordinates:
-            return self.points[k, :].copy()
+            return np.minimum(np.maximum(self.sl, self.points[k, :].copy()), self.su)
         else:
             # Apply bounds and convert back to absolute coordinates
             return self.xbase + np.minimum(np.maximum(self.sl, self.points[k, :]), self.su)
