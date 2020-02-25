@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Version History &mdash; Py-BOBYQA v1.1.1 documentation</title>
+  <title>Version History &mdash; Py-BOBYQA v1.2 documentation</title>
   
 
   
@@ -17,41 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Py-BOBYQA v1.1.1 documentation" href="index.html"/>
-        <link rel="prev" title="Diagnostic Information" href="diagnostic.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Diagnostic Information" href="diagnostic.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -65,7 +60,7 @@
             
             
               <div class="version">
-                1.1.1
+                1.2
               </div>
             
           
@@ -102,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-2-20-jun-2018">Version 1.0.2 (20 Jun 2018)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-24-dec-2018">Version 1.1 (24 Dec 2018)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-1-5-apr-2019">Version 1.1.1 (5 Apr 2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-25-feb-2020">Version 1.2 (25 Feb 2020)</a></li>
 </ul>
 </li>
 </ul>
@@ -115,7 +111,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Py-BOBYQA</a>
@@ -123,9 +119,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -173,51 +170,60 @@
 <div class="section" id="version-1-0-6-feb-2018">
 <h2>Version 1.0 (6 Feb 2018)<a class="headerlink" href="#version-1-0-6-feb-2018" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Initial release of Py-BOBYQA</li>
+<li><p>Initial release of Py-BOBYQA</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-1-20-feb-2018">
 <h2>Version 1.0.1 (20 Feb 2018)<a class="headerlink" href="#version-1-0-1-20-feb-2018" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Minor bug fix to trust region subproblem solver (the output <code class="code docutils literal"><span class="pre">crvmin</span></code> is calculated correctly) - this has minimal impact on the performance of Py-BOBYQA.</li>
+<li><p>Minor bug fix to trust region subproblem solver (the output <code class="code docutils literal notranslate"><span class="pre">crvmin</span></code> is calculated correctly) - this has minimal impact on the performance of Py-BOBYQA.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-2-20-jun-2018">
 <h2>Version 1.0.2 (20 Jun 2018)<a class="headerlink" href="#version-1-0-2-20-jun-2018" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Extra optional input <code class="code docutils literal"><span class="pre">args</span></code> which passes through arguments for <code class="code docutils literal"><span class="pre">objfun</span></code> (pull request from <a class="reference external" href="https://github.com/logangrado">logangrado</a>).</li>
-<li>Bug fixes: default parameters for reduced initialization cost regime, returning correct value from safety steps, retrieving dependencies during installation.</li>
+<li><p>Extra optional input <code class="code docutils literal notranslate"><span class="pre">args</span></code> which passes through arguments for <code class="code docutils literal notranslate"><span class="pre">objfun</span></code> (pull request from <a class="reference external" href="https://github.com/logangrado">logangrado</a>).</p></li>
+<li><p>Bug fixes: default parameters for reduced initialization cost regime, returning correct value from safety steps, retrieving dependencies during installation.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-24-dec-2018">
 <h2>Version 1.1 (24 Dec 2018)<a class="headerlink" href="#version-1-1-24-dec-2018" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Extra parameters to control the trust region radius over multiple restarts, designed for global optimization.</li>
-<li>New input flag <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code> to set sensible default parameters for global optimization. New example script to demonstrate this functionality.</li>
-<li>Bug fix: default trust region radius when scaling variables within bounds.</li>
+<li><p>Extra parameters to control the trust region radius over multiple restarts, designed for global optimization.</p></li>
+<li><p>New input flag <code class="code docutils literal notranslate"><span class="pre">seek_global_minimum</span></code> to set sensible default parameters for global optimization. New example script to demonstrate this functionality.</p></li>
+<li><p>Bug fix: default trust region radius when scaling variables within bounds.</p></li>
 </ul>
 <p>Initially released as version 1.1a0 on 17 Jul 2018.</p>
 </div>
 <div class="section" id="version-1-1-1-5-apr-2019">
 <h2>Version 1.1.1 (5 Apr 2019)<a class="headerlink" href="#version-1-1-1-5-apr-2019" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Link code to Zenodo, to create DOI - no changes to the Py-BOBYQA algorithm.</li>
+<li><p>Link code to Zenodo, to create DOI - no changes to the Py-BOBYQA algorithm.</p></li>
+</ul>
+</div>
+<div class="section" id="version-1-2-25-feb-2020">
+<h2>Version 1.2 (25 Feb 2020)<a class="headerlink" href="#version-1-2-25-feb-2020" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Use deterministic initialisation by default (so it is no longer necessary to set a random seed for reproducibility of Py-BOBYQA results).</p></li>
+<li><p>Full model Hessian stored rather than just upper triangular part - this improves the runtime of Hessian-based operations.</p></li>
+<li><p>Faster trust-region and geometry subproblem solutions in Fortran using the <a class="reference external" href="https://github.com/lindonroberts/trust-region">trustregion</a> package.</p></li>
+<li><p>Don’t adjust starting point if it is close to the bounds (as long as it is feasible).</p></li>
+<li><p>Option to stop default logging behavior and/or enable per-iteration printing.</p></li>
+<li><p>Bugfix: correctly handle 1-sided bounds as inputs, avoid divide-by-zero warnings when auto-detecting restarts.</p></li>
 </ul>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="diagnostic.html" class="btn btn-neutral" title="Diagnostic Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="diagnostic.html" class="btn btn-neutral float-left" title="Diagnostic Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -226,11 +232,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Lindon Roberts.
+        &copy; Copyright 2017, Lindon Roberts
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -243,37 +249,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

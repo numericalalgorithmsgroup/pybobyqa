@@ -21,6 +21,8 @@ That is, Py-BOBYQA solves
    \min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
    \text{s.t.} &\quad  a \leq x \leq b
 
+The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds).
+
 Full details of the Py-BOBYQA algorithm are given in our papers: 
 
 1. Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://arxiv.org/abs/1804.00154>`_, technical report, University of Oxford, (2018). 

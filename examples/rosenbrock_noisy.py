@@ -19,11 +19,11 @@ np.random.seed(0)
 
 print("Demonstrate noise in function evaluation:")
 for i in range(5):
-    print("objfun(x0) = %s" % str(rosenbrock_noisy(x0)))
+    print("objfun(x0) = %g" % rosenbrock_noisy(x0))
 print("")
 
 # Call Py-BOBYQA
-#soln = pybobyqa.solve(rosenbrock_noisy, x0)
+# soln = pybobyqa.solve(rosenbrock_noisy, x0)
 soln = pybobyqa.solve(rosenbrock_noisy, x0, objfun_has_noise=True)
 
 # Display output

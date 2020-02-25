@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Diagnostic Information &mdash; Py-BOBYQA v1.1.1 documentation</title>
+  <title>Diagnostic Information &mdash; Py-BOBYQA v1.2 documentation</title>
   
 
   
@@ -17,42 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Py-BOBYQA v1.1.1 documentation" href="index.html"/>
-        <link rel="next" title="Version History" href="history.html"/>
-        <link rel="prev" title="Advanced Usage" href="advanced.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Version History" href="history.html" />
+    <link rel="prev" title="Advanced Usage" href="advanced.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -66,7 +61,7 @@
             
             
               <div class="version">
-                1.1.1
+                1.2
               </div>
             
           
@@ -116,7 +111,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Py-BOBYQA</a>
@@ -124,9 +119,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -170,13 +166,13 @@
             
   <div class="section" id="diagnostic-information">
 <h1>Diagnostic Information<a class="headerlink" href="#diagnostic-information" title="Permalink to this headline">¶</a></h1>
-<p>In <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (<code class="code docutils literal"><span class="pre">soln.diagnostic_info</span></code>). This object is a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).</p>
+<p>In <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (<code class="code docutils literal notranslate"><span class="pre">soln.diagnostic_info</span></code>). This object is a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).</p>
 <p>To save this information to a CSV file, use:</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Previously: define objfun and x0</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Previously: define objfun and x0</span>
 
 <span class="c1"># Turn on diagnostic information</span>
-<span class="n">user_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;logging.save_diagnostic_info&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="n">user_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;logging.save_diagnostic_info&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
 <span class="c1"># Call Py-BOBYQA</span>
 <span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">user_params</span><span class="o">=</span><span class="n">user_params</span><span class="p">)</span>
@@ -190,57 +186,55 @@
 <div class="section" id="current-iterate">
 <h2>Current Iterate<a class="headerlink" href="#current-iterate" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">xk</span></code> - Best point found so far (current iterate). This is only saved if <code class="code docutils literal"><span class="pre">user_params['logging.save_xk']</span> <span class="pre">=</span> <span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">fk</span></code> - The value of <span class="math">\(f\)</span> at the current iterate.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">xk</span></code> - Best point found so far (current iterate). This is only saved if <code class="code docutils literal notranslate"><span class="pre">user_params['logging.save_xk']</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">fk</span></code> - The value of <span class="math notranslate nohighlight">\(f\)</span> at the current iterate.</p></li>
 </ul>
 </div>
 <div class="section" id="trust-region">
 <h2>Trust Region<a class="headerlink" href="#trust-region" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">rho</span></code> - The lower bound on the trust region radius <span class="math">\(\rho_k\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">delta</span></code> - The trust region radius <span class="math">\(\Delta_k\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">norm_sk</span></code> - The norm of the trust region step <span class="math">\(\|s_k\|\)</span>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">rho</span></code> - The lower bound on the trust region radius <span class="math notranslate nohighlight">\(\rho_k\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">delta</span></code> - The trust region radius <span class="math notranslate nohighlight">\(\Delta_k\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">norm_sk</span></code> - The norm of the trust region step <span class="math notranslate nohighlight">\(\|s_k\|\)</span>.</p></li>
 </ul>
 </div>
 <div class="section" id="model-interpolation">
 <h2>Model Interpolation<a class="headerlink" href="#model-interpolation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">npt</span></code> - The number of interpolation points.</li>
-<li><code class="code docutils literal"><span class="pre">interpolation_error</span></code> - The sum of squares of the interpolation errors from the interpolated model.</li>
-<li><code class="code docutils literal"><span class="pre">interpolation_condition_number</span></code> - The condition number of the matrix in the interpolation linear system.</li>
-<li><code class="code docutils literal"><span class="pre">interpolation_change_g_norm</span></code> - The norm of the change in model gradient at this iteration, <span class="math">\(\|g_k-g_{k-1}\|\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">interpolation_change_H_norm</span></code> - The Frobenius norm of the change in model Hessian at this iteration, <span class="math">\(\|H_k-H_{k-1}\|_F\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">poisedness</span></code> - The smallest value of <span class="math">\(\Lambda\)</span> for which the current interpolation set <span class="math">\(Y_k\)</span> is <span class="math">\(\Lambda\)</span>-poised in the current trust region. This is the most expensive piece of information to compute, and is only computed if <code class="code docutils literal"><span class="pre">user_params['logging.save_poisedness'</span> <span class="pre">=</span> <span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">max_distance_xk</span></code> - The maximum distance from any interpolation point to the current iterate.</li>
-<li><code class="code docutils literal"><span class="pre">norm_gk</span></code> - The norm of the model gradient <span class="math">\(\|g_k\|\)</span>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">npt</span></code> - The number of interpolation points.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation_error</span></code> - The sum of squares of the interpolation errors from the interpolated model.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation_condition_number</span></code> - The condition number of the matrix in the interpolation linear system.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation_change_g_norm</span></code> - The norm of the change in model gradient at this iteration, <span class="math notranslate nohighlight">\(\|g_k-g_{k-1}\|\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation_change_H_norm</span></code> - The Frobenius norm of the change in model Hessian at this iteration, <span class="math notranslate nohighlight">\(\|H_k-H_{k-1}\|_F\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">poisedness</span></code> - The smallest value of <span class="math notranslate nohighlight">\(\Lambda\)</span> for which the current interpolation set <span class="math notranslate nohighlight">\(Y_k\)</span> is <span class="math notranslate nohighlight">\(\Lambda\)</span>-poised in the current trust region. This is the most expensive piece of information to compute, and is only computed if <code class="code docutils literal notranslate"><span class="pre">user_params['logging.save_poisedness'</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">max_distance_xk</span></code> - The maximum distance from any interpolation point to the current iterate.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">norm_gk</span></code> - The norm of the model gradient <span class="math notranslate nohighlight">\(\|g_k\|\)</span>.</p></li>
 </ul>
 </div>
 <div class="section" id="iteration-count">
 <h2>Iteration Count<a class="headerlink" href="#iteration-count" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">nruns</span></code> - The number of times the algorithm has been restarted.</li>
-<li><code class="code docutils literal"><span class="pre">nf</span></code> - The number of objective evaluations so far (see <code class="code docutils literal"><span class="pre">soln.nf</span></code>)</li>
-<li><code class="code docutils literal"><span class="pre">nx</span></code> - The number of points at which the objective has been evaluated so far (see <code class="code docutils literal"><span class="pre">soln.nx</span></code>)</li>
-<li><code class="code docutils literal"><span class="pre">nsamples</span></code> - The total number of objective evaluations used for all current interpolation points.</li>
-<li><code class="code docutils literal"><span class="pre">iter_this_run</span></code> - The number of iterations since the last restart.</li>
-<li><code class="code docutils literal"><span class="pre">iters_total</span></code> - The total number of iterations so far.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">nruns</span></code> - The number of times the algorithm has been restarted.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">nf</span></code> - The number of objective evaluations so far (see <code class="code docutils literal notranslate"><span class="pre">soln.nf</span></code>)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">nx</span></code> - The number of points at which the objective has been evaluated so far (see <code class="code docutils literal notranslate"><span class="pre">soln.nx</span></code>)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">nsamples</span></code> - The total number of objective evaluations used for all current interpolation points.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">iter_this_run</span></code> - The number of iterations since the last restart.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">iters_total</span></code> - The total number of iterations so far.</p></li>
 </ul>
 </div>
 <div class="section" id="algorithm-progress">
 <h2>Algorithm Progress<a class="headerlink" href="#algorithm-progress" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">iter_type</span></code> - A text description of what type of iteration we had (e.g. Successful, Safety, etc.)</li>
-<li><code class="code docutils literal"><span class="pre">ratio</span></code> - The ratio of actual to predicted objective reduction in the trust region step.</li>
-<li><code class="code docutils literal"><span class="pre">slow_iter</span></code> - Equal to 1 if the current iteration is successful but slow, 0 if is successful but not slow, and -1 if was not successful.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">iter_type</span></code> - A text description of what type of iteration we had (e.g. Successful, Safety, etc.)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">ratio</span></code> - The ratio of actual to predicted objective reduction in the trust region step.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">slow_iter</span></code> - Equal to 1 if the current iteration is successful but slow, 0 if is successful but not slow, and -1 if was not successful.</p></li>
 </ul>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -249,7 +243,7 @@
         <a href="history.html" class="btn btn-neutral float-right" title="Version History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="advanced.html" class="btn btn-neutral" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="advanced.html" class="btn btn-neutral float-left" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -258,11 +252,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Lindon Roberts.
+        &copy; Copyright 2017, Lindon Roberts
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -275,37 +269,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

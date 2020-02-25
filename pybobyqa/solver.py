@@ -531,10 +531,10 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                     # If delta criteria met, check chg_grad and chg_hess criteria
                     # Fit line to k vs. log(||chg_grad||_2) and log(||chg_hess||_F) separately; both have to increase
                     slope, intercept, r_value, p_value, std_err = STAT.linregress(np.arange(len(restart_auto_detect_chg_grad)),
-                                                                                  np.log(restart_auto_detect_chg_grad))
+                                                                                  np.log(np.maximum(restart_auto_detect_chg_grad, 1e-15)))
                     if control.model.npt() > control.n() + 1:
                         slope2, intercept2, r_value2, p_value2, std_err2 = STAT.linregress(np.arange(len(restart_auto_detect_chg_hess)),
-                                                                                  np.log(restart_auto_detect_chg_hess))
+                                                                                  np.log(np.maximum(restart_auto_detect_chg_hess, 1e-15)))
                     else:
                         slope2, intercept2, r_value2, p_value2, std_err2 = slope, intercept, r_value, p_value, std_err
 

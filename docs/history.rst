@@ -27,3 +27,11 @@ Version 1.1.1 (5 Apr 2019)
 --------------------------
 * Link code to Zenodo, to create DOI - no changes to the Py-BOBYQA algorithm.
 
+Version 1.2 (25 Feb 2020)
+-------------------------
+* Use deterministic initialisation by default (so it is no longer necessary to set a random seed for reproducibility of Py-BOBYQA results).
+* Full model Hessian stored rather than just upper triangular part - this improves the runtime of Hessian-based operations.
+* Faster trust-region and geometry subproblem solutions in Fortran using the `trustregion <https://github.com/lindonroberts/trust-region>`_ package.
+* Don’t adjust starting point if it is close to the bounds (as long as it is feasible).
+* Option to stop default logging behavior and/or enable per-iteration printing.
+* Bugfix: correctly handle 1-sided bounds as inputs, avoid divide-by-zero warnings when auto-detecting restarts.

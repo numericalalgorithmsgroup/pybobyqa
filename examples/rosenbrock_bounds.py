@@ -15,8 +15,8 @@ lower = np.array([-10.0, -10.0])
 upper = np.array([0.9, 0.85])
 
 # For optional extra output details
-#import logging
-#logging.basicConfig(level=logging.INFO, format='%(message)s')
+# import logging
+# logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 # Call Py-BOBYQA (with bounds)
 soln = pybobyqa.solve(rosenbrock, x0, bounds=(lower,upper))

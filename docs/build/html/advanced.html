@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Advanced Usage &mdash; Py-BOBYQA v1.1.1 documentation</title>
+  <title>Advanced Usage &mdash; Py-BOBYQA v1.2 documentation</title>
   
 
   
@@ -17,42 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Py-BOBYQA v1.1.1 documentation" href="index.html"/>
-        <link rel="next" title="Diagnostic Information" href="diagnostic.html"/>
-        <link rel="prev" title="Using Py-BOBYQA" href="userguide.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Diagnostic Information" href="diagnostic.html" />
+    <link rel="prev" title="Using Py-BOBYQA" href="userguide.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -66,7 +61,7 @@
             
             
               <div class="version">
-                1.1.1
+                1.2
               </div>
             
           
@@ -121,7 +116,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Py-BOBYQA</a>
@@ -129,9 +124,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -176,110 +172,107 @@
   <div class="section" id="advanced-usage">
 <h1>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permalink to this headline">¶</a></h1>
 <p>This section describes different optional user parameters available in Py-BOBYQA.</p>
-<p>In the last section (<a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>), we introduced <code class="code docutils literal"><span class="pre">pybobyqa.solve()</span></code>, which has the optional input <code class="code docutils literal"><span class="pre">user_params</span></code>. This is a Python dictionary of user parameters. We will now go through the settings which can be changed in this way. More details are available in the paper <a class="reference internal" href="userguide.html#cfmr2018" id="id1">[CFMR2018]</a>.</p>
-<p>The default values, used if no override is given, in some cases vary depending on whether <code class="code docutils literal"><span class="pre">objfun</span></code> has stochastic noise; that is, whether evaluating <code class="code docutils literal"><span class="pre">objfun(x)</span></code> several times at the same <code class="code docutils literal"><span class="pre">x</span></code> gives the same result or not. Whether or not this is the case is determined by the <code class="code docutils literal"><span class="pre">objfun_has_noise</span></code> input to <code class="code docutils literal"><span class="pre">pybobyqa.solve()</span></code> (and not by inspecting <code class="code docutils literal"><span class="pre">objfun</span></code>, for instance). Similarly, the default values depend on the input flag <code class="code docutils literal"><span class="pre">seek_global_minimum</span></code>, i.e. if a global minimum is desired.</p>
+<p>In the last section (<a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>), we introduced <code class="code docutils literal notranslate"><span class="pre">pybobyqa.solve()</span></code>, which has the optional input <code class="code docutils literal notranslate"><span class="pre">user_params</span></code>. This is a Python dictionary of user parameters. We will now go through the settings which can be changed in this way. More details are available in the paper <a class="reference internal" href="userguide.html#cfmr2018" id="id1"><span>[CFMR2018]</span></a>.</p>
+<p>The default values, used if no override is given, in some cases vary depending on whether <code class="code docutils literal notranslate"><span class="pre">objfun</span></code> has stochastic noise; that is, whether evaluating <code class="code docutils literal notranslate"><span class="pre">objfun(x)</span></code> several times at the same <code class="code docutils literal notranslate"><span class="pre">x</span></code> gives the same result or not. Whether or not this is the case is determined by the <code class="code docutils literal notranslate"><span class="pre">objfun_has_noise</span></code> input to <code class="code docutils literal notranslate"><span class="pre">pybobyqa.solve()</span></code> (and not by inspecting <code class="code docutils literal notranslate"><span class="pre">objfun</span></code>, for instance). Similarly, the default values depend on the input flag <code class="code docutils literal notranslate"><span class="pre">seek_global_minimum</span></code>, i.e. if a global minimum is desired.</p>
 <div class="section" id="general-algorithm-parameters">
 <h2>General Algorithm Parameters<a class="headerlink" href="#general-algorithm-parameters" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">general.rounding_error_constant</span></code> - Internally, all interpolation points are stored with respect to a base point <span class="math">\(x_b\)</span>; that is, we store <span class="math">\(\{y_t-x_b\}\)</span>, which reduces the risk of roundoff errors. We shift <span class="math">\(x_b\)</span> to <span class="math">\(x_k\)</span> when <span class="math">\(\|s_k\| \leq \text{const}\|x_k-x_b\|\)</span>, where ‘const’ is this parameter. Default is 0.1.</li>
-<li><code class="code docutils literal"><span class="pre">general.safety_step_thresh</span></code> - Threshold for when to call the safety step, <span class="math">\(\|s_k\| \leq \gamma_S \rho_k\)</span>. Default is <span class="math">\(\gamma_S =0.5\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">general.check_objfun_for_overflow</span></code> - Whether to cap the value of <span class="math">\(r_i(x)\)</span> when they are large enough that an OverflowError will be encountered when trying to evaluate <span class="math">\(f(x)\)</span>. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">general.rounding_error_constant</span></code> - Internally, all interpolation points are stored with respect to a base point <span class="math notranslate nohighlight">\(x_b\)</span>; that is, we store <span class="math notranslate nohighlight">\(\{y_t-x_b\}\)</span>, which reduces the risk of roundoff errors. We shift <span class="math notranslate nohighlight">\(x_b\)</span> to <span class="math notranslate nohighlight">\(x_k\)</span> when <span class="math notranslate nohighlight">\(\|s_k\| \leq \text{const}\|x_k-x_b\|\)</span>, where ‘const’ is this parameter. Default is 0.1.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">general.safety_step_thresh</span></code> - Threshold for when to call the safety step, <span class="math notranslate nohighlight">\(\|s_k\| \leq \gamma_S \rho_k\)</span>. Default is <span class="math notranslate nohighlight">\(\gamma_S =0.5\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">general.check_objfun_for_overflow</span></code> - Whether to cap the value of <span class="math notranslate nohighlight">\(r_i(x)\)</span> when they are large enough that an OverflowError will be encountered when trying to evaluate <span class="math notranslate nohighlight">\(f(x)\)</span>. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="logging-and-output">
 <h2>Logging and Output<a class="headerlink" href="#logging-and-output" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">logging.n_to_print_whole_x_vector</span></code> - If printing all function evaluations to screen/log file, the maximum <code class="code docutils literal"><span class="pre">len(x)</span></code> for which the full vector <code class="code docutils literal"><span class="pre">x</span></code> should be printed also. Default is 6.</li>
-<li><code class="code docutils literal"><span class="pre">logging.save_diagnostic_info</span></code> - Flag so save diagnostic information at each iteration. Default is <code class="code docutils literal"><span class="pre">False</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">logging.save_poisedness</span></code> - If saving diagnostic information, whether to include the <span class="math">\(\Lambda\)</span>-poisedness of <span class="math">\(Y_k\)</span> in the diagnostic information. This is the most computationally expensive piece of diagnostic information. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">logging.save_xk</span></code> - If saving diagnostic information, whether to include the full vector <span class="math">\(x_k\)</span>. Default is <code class="code docutils literal"><span class="pre">False</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">logging.n_to_print_whole_x_vector</span></code> - If printing all function evaluations to screen/log file, the maximum <code class="code docutils literal notranslate"><span class="pre">len(x)</span></code> for which the full vector <code class="code docutils literal notranslate"><span class="pre">x</span></code> should be printed also. Default is 6.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">logging.save_diagnostic_info</span></code> - Flag so save diagnostic information at each iteration. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">logging.save_poisedness</span></code> - If saving diagnostic information, whether to include the <span class="math notranslate nohighlight">\(\Lambda\)</span>-poisedness of <span class="math notranslate nohighlight">\(Y_k\)</span> in the diagnostic information. This is the most computationally expensive piece of diagnostic information. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">logging.save_xk</span></code> - If saving diagnostic information, whether to include the full vector <span class="math notranslate nohighlight">\(x_k\)</span>. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="initialization-of-points">
 <h2>Initialization of Points<a class="headerlink" href="#initialization-of-points" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">init.random_initial_directions</span></code> - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">init.random_directions_make_orthogonal</span></code> - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">init.run_in_parallel</span></code> - If using random directions, whether or not to ask for all <code class="code docutils literal"><span class="pre">objfun</span></code> to be evaluated at all points without any intermediate processing. Default is <code class="code docutils literal"><span class="pre">False</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_initial_directions</span></code> - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_directions_make_orthogonal</span></code> - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.run_in_parallel</span></code> - If using random directions, whether or not to ask for all <code class="code docutils literal notranslate"><span class="pre">objfun</span></code> to be evaluated at all points without any intermediate processing. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="trust-region-management">
 <h2>Trust Region Management<a class="headerlink" href="#trust-region-management" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">tr_radius.eta1</span></code> - Threshold for unsuccessful trust region iteration, <span class="math">\(\eta_1\)</span>. Default is 0.1.</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.eta2</span></code> - Threshold for very successful trust region iteration, <span class="math">\(\eta_2\)</span>. Default is 0.7.</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.gamma_dec</span></code> - Ratio to decrease <span class="math">\(\Delta_k\)</span> in unsuccessful iteration, <span class="math">\(\gamma_{dec}\)</span>. Default is 0.5 for smooth problems or 0.98 for noisy problems (i.e. <code class="code docutils literal"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.gamma_inc</span></code> - Ratio to increase <span class="math">\(\Delta_k\)</span> in very successful iterations, <span class="math">\(\gamma_{inc}\)</span>. Default is 2.</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.gamma_inc_overline</span></code> - Ratio of <span class="math">\(\|s_k\|\)</span> to increase <span class="math">\(\Delta_k\)</span> by in very successful iterations, <span class="math">\(\overline{\gamma}_{inc}\)</span>. Default is 4.</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.alpha1</span></code> - Ratio to decrease <span class="math">\(\rho_k\)</span> by when it is reduced, <span class="math">\(\alpha_1\)</span>. Default is 0.1 for smooth problems or 0.9 for noisy problems (i.e. <code class="code docutils literal"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</li>
-<li><code class="code docutils literal"><span class="pre">tr_radius.alpha2</span></code> - Ratio of <span class="math">\(\rho_k\)</span> to decrease <span class="math">\(\Delta_k\)</span> by when <span class="math">\(\rho_k\)</span> is reduced, <span class="math">\(\alpha_2\)</span>. Default is 0.5 for smooth problems or 0.95 for noisy problems (i.e. <code class="code docutils literal"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.eta1</span></code> - Threshold for unsuccessful trust region iteration, <span class="math notranslate nohighlight">\(\eta_1\)</span>. Default is 0.1.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.eta2</span></code> - Threshold for very successful trust region iteration, <span class="math notranslate nohighlight">\(\eta_2\)</span>. Default is 0.7.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.gamma_dec</span></code> - Ratio to decrease <span class="math notranslate nohighlight">\(\Delta_k\)</span> in unsuccessful iteration, <span class="math notranslate nohighlight">\(\gamma_{dec}\)</span>. Default is 0.5 for smooth problems or 0.98 for noisy problems (i.e. <code class="code docutils literal notranslate"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.gamma_inc</span></code> - Ratio to increase <span class="math notranslate nohighlight">\(\Delta_k\)</span> in very successful iterations, <span class="math notranslate nohighlight">\(\gamma_{inc}\)</span>. Default is 2.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.gamma_inc_overline</span></code> - Ratio of <span class="math notranslate nohighlight">\(\|s_k\|\)</span> to increase <span class="math notranslate nohighlight">\(\Delta_k\)</span> by in very successful iterations, <span class="math notranslate nohighlight">\(\overline{\gamma}_{inc}\)</span>. Default is 4.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.alpha1</span></code> - Ratio to decrease <span class="math notranslate nohighlight">\(\rho_k\)</span> by when it is reduced, <span class="math notranslate nohighlight">\(\alpha_1\)</span>. Default is 0.1 for smooth problems or 0.9 for noisy problems (i.e. <code class="code docutils literal notranslate"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">tr_radius.alpha2</span></code> - Ratio of <span class="math notranslate nohighlight">\(\rho_k\)</span> to decrease <span class="math notranslate nohighlight">\(\Delta_k\)</span> by when <span class="math notranslate nohighlight">\(\rho_k\)</span> is reduced, <span class="math notranslate nohighlight">\(\alpha_2\)</span>. Default is 0.5 for smooth problems or 0.95 for noisy problems (i.e. <code class="code docutils literal notranslate"><span class="pre">objfun_has_noise</span> <span class="pre">=</span> <span class="pre">True</span></code>).</p></li>
 </ul>
 </div>
 <div class="section" id="termination-on-small-objective-value">
 <h2>Termination on Small Objective Value<a class="headerlink" href="#termination-on-small-objective-value" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">model.abs_tol</span></code> - Tolerance on <span class="math">\(f(x_k)\)</span>; quit if <span class="math">\(f(x_k)\)</span> is below this value. Default is <span class="math">\(-10^{20}\)</span>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">model.abs_tol</span></code> - Tolerance on <span class="math notranslate nohighlight">\(f(x_k)\)</span>; quit if <span class="math notranslate nohighlight">\(f(x_k)\)</span> is below this value. Default is <span class="math notranslate nohighlight">\(-10^{20}\)</span>.</p></li>
 </ul>
 </div>
 <div class="section" id="termination-on-slow-progress">
 <h2>Termination on Slow Progress<a class="headerlink" href="#termination-on-slow-progress" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">slow.history_for_slow</span></code> - History used to determine whether the current iteration is ‘slow’. Default is 5.</li>
-<li><code class="code docutils literal"><span class="pre">slow.thresh_for_slow</span></code> - Threshold for objective decrease used to determine whether the current iteration is ‘slow’. Default is <span class="math">\(10^{-8}\)</span>.</li>
-<li><code class="code docutils literal"><span class="pre">slow.max_slow_iters</span></code> - Number of consecutive slow successful iterations before termination (or restart). Default is <code class="code docutils literal"><span class="pre">20*len(x0)</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">slow.history_for_slow</span></code> - History used to determine whether the current iteration is ‘slow’. Default is 5.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">slow.thresh_for_slow</span></code> - Threshold for objective decrease used to determine whether the current iteration is ‘slow’. Default is <span class="math notranslate nohighlight">\(10^{-8}\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">slow.max_slow_iters</span></code> - Number of consecutive slow successful iterations before termination (or restart). Default is <code class="code docutils literal notranslate"><span class="pre">20*len(x0)</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="stochastic-noise-information">
 <h2>Stochastic Noise Information<a class="headerlink" href="#stochastic-noise-information" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">noise.quit_on_noise_level</span></code> - Flag to quit (or restart) if all <span class="math">\(f(y_t)\)</span> are within noise level of <span class="math">\(f(x_k)\)</span>. Default is <code class="code docutils literal"><span class="pre">False</span></code> for smooth problems or <code class="code docutils literal"><span class="pre">True</span></code> for noisy problems.</li>
-<li><code class="code docutils literal"><span class="pre">noise.scale_factor_for_quit</span></code> - Factor of noise level to use in termination criterion. Default is 1.</li>
-<li><code class="code docutils literal"><span class="pre">noise.multiplicative_noise_level</span></code> - Multiplicative noise level in <span class="math">\(f\)</span>. Can only specify one of multiplicative or additive noise levels. Default is <code class="code docutils literal"><span class="pre">None</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">noise.additive_noise_level</span></code> - Additive noise level in <span class="math">\(f\)</span>. Can only specify one of multiplicative or additive noise levels. Default is <code class="code docutils literal"><span class="pre">None</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">noise.quit_on_noise_level</span></code> - Flag to quit (or restart) if all <span class="math notranslate nohighlight">\(f(y_t)\)</span> are within noise level of <span class="math notranslate nohighlight">\(f(x_k)\)</span>. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code> for smooth problems or <code class="code docutils literal notranslate"><span class="pre">True</span></code> for noisy problems.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">noise.scale_factor_for_quit</span></code> - Factor of noise level to use in termination criterion. Default is 1.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">noise.multiplicative_noise_level</span></code> - Multiplicative noise level in <span class="math notranslate nohighlight">\(f\)</span>. Can only specify one of multiplicative or additive noise levels. Default is <code class="code docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">noise.additive_noise_level</span></code> - Additive noise level in <span class="math notranslate nohighlight">\(f\)</span>. Can only specify one of multiplicative or additive noise levels. Default is <code class="code docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="interpolation-management">
 <h2>Interpolation Management<a class="headerlink" href="#interpolation-management" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">interpolation.precondition</span></code> - whether or not to scale the interpolation linear system to improve conditioning. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">interpolation.minimum_change_hessian</span></code> - whether to solve the underdetermined quadratic interpolation problem by minimizing the Frobenius norm of the Hessian, or change in Hessian. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation.precondition</span></code> - whether or not to scale the interpolation linear system to improve conditioning. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">interpolation.minimum_change_hessian</span></code> - whether to solve the underdetermined quadratic interpolation problem by minimizing the Frobenius norm of the Hessian, or change in Hessian. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="multiple-restarts">
 <h2>Multiple Restarts<a class="headerlink" href="#multiple-restarts" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">restarts.use_restarts</span></code> - Whether to do restarts when <span class="math">\(\rho_k\)</span> reaches <span class="math">\(\rho_{end}\)</span>, or (optionally) when all points are within noise level of <span class="math">\(f(x_k)\)</span>. Default is <code class="code docutils literal"><span class="pre">False</span></code> for smooth problems or <code class="code docutils literal"><span class="pre">True</span></code> for noisy problems or when seeking a global minimum.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.max_unsuccessful_restarts</span></code> - Maximum number of consecutive unsuccessful restarts allowed (i.e.~restarts which did not reduce the objective further). Default is 10.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.max_unsuccessful_restarts_total</span></code> - Maximum number of total unsuccessful restarts allowed. Default is 20 when seeking a global minimum, otherwise it is <code class="code docutils literal"><span class="pre">maxfun</span></code> (i.e.~not restricted).</li>
-<li><code class="code docutils literal"><span class="pre">restarts.rhobeg_scale_after_unsuccessful_restart</span></code> - Factor to increase <span class="math">\(\rho_{beg}\)</span> by after unsuccessful restarts. Default is 1.1 when seeking a global minimum, otherwise it is 1.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.rhoend_scale</span></code> - Factor to reduce <span class="math">\(\rho_{end}\)</span> by with each restart. Default is 1.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.use_soft_restarts</span></code> - Whether to use soft or hard restarts. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.soft.num_geom_steps</span></code> - For soft restarts, the number of points to move. Default is 3.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.soft.move_xk</span></code> - For soft restarts, whether to preserve <span class="math">\(x_k\)</span>, or move it to the best new point evaluated. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.hard.use_old_fk</span></code> - If using hard restarts, whether or not to recycle the objective value at the best iterate found when performing a restart. This saves one objective evaluation. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.soft.max_fake_successful_steps</span></code> - The maximum number of successful steps in a given run where the new (smaller) objective value is larger than the best value found in a previous run. Default is <code class="code docutils literal"><span class="pre">maxfun</span></code>, the input to <code class="code docutils literal"><span class="pre">pybobyqa.solve()</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.auto_detect</span></code> - Whether or not to automatically determine when to restart. This is an extra condition, and restarts can still be triggered by small trust region radius, etc. Default is <code class="code docutils literal"><span class="pre">True</span></code>.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.auto_detect.history</span></code> - How many iterations of data on model changes and trust region radii to store. There are two criteria used: trust region radius decreases (no increases over the history, more decreases than no changes), and change in model Jacobian (consistently increasing trend as measured by slope and correlation coefficient of line of best fit). Default is 30.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.auto_detect.min_chg_model_slope</span></code> - Minimum rate of increase of <span class="math">\(\log(\|g_k-g_{k-1}\|)\)</span> and <span class="math">\(\log(\|H_k-H_{k-1}\|_F)\)</span> over the past iterations to cause a restart. Default is 0.015.</li>
-<li><code class="code docutils literal"><span class="pre">restarts.auto_detect.min_correl</span></code> - Minimum correlation of the data sets <span class="math">\((k, \log(\|g_k-g_{k-1}\|))\)</span> and <span class="math">\((k, \log(\|H_k-H_{k-1}\|_F))\)</span> required to cause a restart. Default is 0.1.</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.use_restarts</span></code> - Whether to do restarts when <span class="math notranslate nohighlight">\(\rho_k\)</span> reaches <span class="math notranslate nohighlight">\(\rho_{end}\)</span>, or (optionally) when all points are within noise level of <span class="math notranslate nohighlight">\(f(x_k)\)</span>. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code> for smooth problems or <code class="code docutils literal notranslate"><span class="pre">True</span></code> for noisy problems or when seeking a global minimum.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.max_unsuccessful_restarts</span></code> - Maximum number of consecutive unsuccessful restarts allowed (i.e.~restarts which did not reduce the objective further). Default is 10.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.max_unsuccessful_restarts_total</span></code> - Maximum number of total unsuccessful restarts allowed. Default is 20 when seeking a global minimum, otherwise it is <code class="code docutils literal notranslate"><span class="pre">maxfun</span></code> (i.e.~not restricted).</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.rhobeg_scale_after_unsuccessful_restart</span></code> - Factor to increase <span class="math notranslate nohighlight">\(\rho_{beg}\)</span> by after unsuccessful restarts. Default is 1.1 when seeking a global minimum, otherwise it is 1.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.rhoend_scale</span></code> - Factor to reduce <span class="math notranslate nohighlight">\(\rho_{end}\)</span> by with each restart. Default is 1.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.use_soft_restarts</span></code> - Whether to use soft or hard restarts. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.soft.num_geom_steps</span></code> - For soft restarts, the number of points to move. Default is 3.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.soft.move_xk</span></code> - For soft restarts, whether to preserve <span class="math notranslate nohighlight">\(x_k\)</span>, or move it to the best new point evaluated. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.hard.use_old_fk</span></code> - If using hard restarts, whether or not to recycle the objective value at the best iterate found when performing a restart. This saves one objective evaluation. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.soft.max_fake_successful_steps</span></code> - The maximum number of successful steps in a given run where the new (smaller) objective value is larger than the best value found in a previous run. Default is <code class="code docutils literal notranslate"><span class="pre">maxfun</span></code>, the input to <code class="code docutils literal notranslate"><span class="pre">pybobyqa.solve()</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect</span></code> - Whether or not to automatically determine when to restart. This is an extra condition, and restarts can still be triggered by small trust region radius, etc. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.history</span></code> - How many iterations of data on model changes and trust region radii to store. There are two criteria used: trust region radius decreases (no increases over the history, more decreases than no changes), and change in model Jacobian (consistently increasing trend as measured by slope and correlation coefficient of line of best fit). Default is 30.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.min_chg_model_slope</span></code> - Minimum rate of increase of <span class="math notranslate nohighlight">\(\log(\|g_k-g_{k-1}\|)\)</span> and <span class="math notranslate nohighlight">\(\log(\|H_k-H_{k-1}\|_F)\)</span> over the past iterations to cause a restart. Default is 0.015.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.min_correl</span></code> - Minimum correlation of the data sets <span class="math notranslate nohighlight">\((k, \log(\|g_k-g_{k-1}\|))\)</span> and <span class="math notranslate nohighlight">\((k, \log(\|H_k-H_{k-1}\|_F))\)</span> required to cause a restart. Default is 0.1.</p></li>
 </ul>
 </div>
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
-<table class="docutils citation" frame="void" id="cfmr2018" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[CFMR2018]</a></td><td>Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</td></tr>
-</tbody>
-</table>
+<dl class="citation">
+<dt class="label" id="cfmr2018"><span class="brackets"><a class="fn-backref" href="#id1">CFMR2018</a></span></dt>
+<dd><p>Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, <a class="reference external" href="https://arxiv.org/abs/1804.00154">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, technical report, University of Oxford, (2018).</p>
+</dd>
+</dl>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -288,7 +281,7 @@
         <a href="diagnostic.html" class="btn btn-neutral float-right" title="Diagnostic Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="userguide.html" class="btn btn-neutral" title="Using Py-BOBYQA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="userguide.html" class="btn btn-neutral float-left" title="Using Py-BOBYQA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -297,11 +290,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Lindon Roberts.
+        &copy; Copyright 2017, Lindon Roberts
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -314,37 +307,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

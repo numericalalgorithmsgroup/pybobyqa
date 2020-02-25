@@ -11,7 +11,7 @@ Py-BOBYQA is designed to solve the local optimization problem
    \min_{x\in\mathbb{R}^n}  &\quad  f(x) \\
    \text{s.t.} &\quad  a \leq x \leq b
 
-where the bound constraints :math:`a \leq x \leq b` are optional. The objective function :math:`f(x)` is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
+where the bound constraints :math:`a \leq x \leq b` are optional. The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds). The objective function :math:`f(x)` is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
 
 Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
 For an in-depth technical description of the algorithm see the paper [CFMR2018]_, and for the global optimization heuristic, see [CRO2018]_.
@@ -69,7 +69,8 @@ The :code:`solve` function has several optional arguments which the user may pro
 		  rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, 
                   user_params=None, objfun_has_noise=False, 
                   seek_global_minimum=False, 
-                  scaling_within_bounds=False)
+                  scaling_within_bounds=False,
+                  do_logging=True, print_progress=False)
 
 These arguments are:
 
@@ -84,6 +85,8 @@ These arguments are:
 * :code:`objfun_has_noise` - a flag to indicate whether or not :code:`objfun` has stochastic noise; i.e. will calling :code:`objfun(x)` multiple times at the same value of :code:`x` give different results? This is used to set some sensible default parameters (including using multiple restarts), all of which can be overridden by the values provided in :code:`user_params`.
 * :code:`seek_global_minimum` - a flag to indicate whether to search for a global minimum, rather than a local minimum. This is used to set some sensible default parameters, all of which can be overridden by the values provided in :code:`user_params`. If :code:`True`, both upper and lower bounds must be set. Note that Py-BOBYQA only implements a heuristic method, so there are no guarantees it will find a global minimum. However, by using this flag, it is more likely to escape local minima if there are better values nearby. The method used is a multiple restart mechanism, where we repeatedly re-initialize Py-BOBYQA from the best point found so far, but where we use a larger trust reigon radius each time (note: this is different to more common multi-start approach to global optimization).
 * :code:`scaling_within_bounds` - a flag to indicate whether the algorithm should internally shift and scale the entries of :code:`x` so that the bounds become :math:`0 \leq x \leq 1`. This is useful is you are setting :code:`bounds` and the bounds have different orders of magnitude. If :code:`scaling_within_bounds=True`, the values of :code:`rhobeg` and :code:`rhoend` apply to the *shifted* variables.
+* :code:`do_logging` - a flag to indicate whether logging output should be produced. This is not automatically visible unless you use the Python `logging <https://docs.python.org/3/library/logging.html>`_ module (see below for simple usage).
+* :code:`print_progress` - a flag to indicate whether to print a per-iteration progress log to terminal.
 
 In general when using optimization software, it is good practice to scale your variables so that moving each by a given amount has approximately the same impact on the objective function.
 The :code:`scaling_within_bounds` flag is designed to provide an easy way to achieve this, if you have set the bounds :code:`lower` and :code:`upper`.
@@ -112,9 +115,6 @@ This function has exactly one local minimum :math:`f(x_{min})=0` at :math:`x_{mi
       # Define the starting point
       x0 = np.array([-1.2, 1.0])
       
-      # Set random seed (for reproducibility)
-      np.random.seed(0)
-      
       # Call Py-BOBYQA
       soln = pybobyqa.solve(rosenbrock, x0)
       
@@ -126,12 +126,12 @@ Note that Py-BOBYQA is a randomized algorithm: in its first phase, it builds an 
   .. code-block:: none
   
       ****** Py-BOBYQA Results ******
-      Solution xmin = [ 1.  1.]
-      Objective value f(xmin) = 2.964036794e-19
-      Needed 213 objective evaluations (at 213 points)
-      Approximate gradient = [ -2.57280154e-08   1.26855793e-08]
-      Approximate Hessian = [[ 802.90904563 -400.46022134]
-       [-400.46022134  200.23335154]]
+      Solution xmin = [1. 1.]
+      Objective value f(xmin) = 1.013856052e-20
+      Needed 151 objective evaluations (at 151 points)
+      Approximate gradient = [ 2.35772499e-08 -1.07598803e-08]
+      Approximate Hessian = [[ 802.00799968 -400.04089119]
+       [-400.04089119  199.99228723]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
@@ -156,12 +156,12 @@ Py-BOBYQA correctly finds the solution to the constrained problem:
   .. code-block:: none
   
       ****** Py-BOBYQA Results ******
-      Solution xmin = [ 0.9   0.81]
+      Solution xmin = [0.9  0.81]
       Objective value f(xmin) = 0.01
-      Needed 134 objective evaluations (at 134 points)
-      Approximate gradient = [ -1.99999226e-01  -4.31078784e-07]
-      Approximate Hessian = [[ 649.6790222  -360.18361979]
-       [-360.18361979  200.00205196]]
+      Needed 146 objective evaluations (at 146 points)
+      Approximate gradient = [-2.00000006e-01 -4.74578563e-09]
+      Approximate Hessian = [[ 649.66398033 -361.03094781]
+       [-361.03094781  199.94223213]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
@@ -188,12 +188,12 @@ And we can now see each evaluation of :code:`objfun`:
   .. code-block:: none
   
       Function eval 1 at point 1 has f = 39.65 at x = [-1.2   0.85]
-      Initialising (random directions)
+      Initialising (coordinate directions)
       Function eval 2 at point 2 has f = 14.337296 at x = [-1.08  0.85]
       Function eval 3 at point 3 has f = 55.25 at x = [-1.2   0.73]
       ...
-      Function eval 133 at point 133 has f = 0.0100000000000165 at x = [ 0.9         0.81000001]
-      Function eval 134 at point 134 has f = 0.00999999999999997 at x = [ 0.9   0.81]
+      Function eval 145 at point 145 has f = 0.0100000013172792 at x = [0.89999999 0.80999999]
+      Function eval 146 at point 146 has f = 0.00999999999999993 at x = [0.9  0.81]
       Did a total of 1 run(s)
 
 If we wanted to save this output to a file, we could replace the above call to :code:`logging.basicConfig()` with
@@ -202,6 +202,20 @@ If we wanted to save this output to a file, we could replace the above call to :
   
       logging.basicConfig(filename="myfile.log", level=logging.INFO, 
                           format='%(message)s', filemode='w')
+
+If you have logging for some parts of your code and you want to deactivate all Py-BOBYQA logging, you can use the optional argument :code:`do_logging=False` in :code:`pybobyqa.solve()`.
+
+An alternative option available is to get Py-BOBYQA to print to terminal progress information every iteration, by setting the optional argument :code:`print_progress=True` in :code:`pybobyqa.solve()`. If we do this for the above example, we get
+
+  .. code-block:: none
+  
+       Run  Iter     Obj       Grad     Delta      rho     Evals 
+        1     1    1.43e+01  1.74e+02  1.20e-01  1.20e-01    5   
+        1     2    5.57e+00  1.20e+02  3.66e-01  1.20e-01    6   
+        1     3    5.57e+00  1.20e+02  6.00e-02  1.20e-02    6
+      ...
+        1    132   1.00e-02  2.00e-01  1.50e-08  1.00e-08   144  
+        1    133   1.00e-02  2.00e-01  1.50e-08  1.00e-08   145  
 
 Example: Noisy Objective Evaluation
 -----------------------------------
@@ -230,7 +244,7 @@ As described in :doc:`info`, derivative-free algorithms such as Py-BOBYQA are pa
       
       print("Demonstrate noise in function evaluation:")
       for i in range(5):
-          print("objfun(x0) = %s" % str(rosenbrock_noisy(x0)))
+          print("objfun(x0) = %g" % rosenbrock_noisy(x0))
       print("")
       
       # Call Py-BOBYQA
@@ -257,28 +271,28 @@ The output of this is:
   .. code-block:: none
   
       Demonstrate noise in function evaluation:
-      objfun(x0) = 24.6269006677
-      objfun(x0) = 24.2968380444
-      objfun(x0) = 24.4368545922
-      objfun(x0) = 24.7422961542
-      objfun(x0) = 24.6519490336
+      objfun(x0) = 24.6269
+      objfun(x0) = 24.2968
+      objfun(x0) = 24.4369
+      objfun(x0) = 24.7423
+      objfun(x0) = 24.6519
       
       ****** Py-BOBYQA Results ******
-      Solution xmin = [-1.02866429  1.07341548]
-      Objective value f(xmin) = 4.033118937
-      Needed 36 objective evaluations (at 36 points)
-      Approximate gradient = [-6921247.2999239  -3051622.27188687]
-      Approximate Hessian = [[  1.98604897e+15   5.75929121e+14]
-       [  5.75929121e+14   7.89533101e+14]]
+      Solution xmin = [-1.04327395  1.09935385]
+      Objective value f(xmin) = 4.080030471
+      Needed 42 objective evaluations (at 42 points)
+      Approximate gradient = [-3786376.5065785   5876675.51763198]
+      Approximate Hessian = [[ 1.32881117e+14 -2.68241358e+14]
+       [-2.68241358e+14  6.09785319e+14]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
       
       
       ** SciPy results **
-      Solution xmin = [-1.2  1. ]
-      Objective value f(xmin) = 23.80943672
-      Needed 104 objective evaluations
+      Solution xmin = [-1.20013817  0.99992915]
+      Objective value f(xmin) = 23.86371763
+      Needed 80 objective evaluations
       Exit flag = 2
       Desired error not necessarily achieved due to precision loss.
 
@@ -295,13 +309,13 @@ This time, we find the true solution, and better estimates of the gradient and H
   .. code-block:: none
   
       ****** Py-BOBYQA Results ******
-      Solution xmin = [ 1.  1.]
-      Objective value f(xmin) = 3.418770987e-18
+      Solution xmin = [1. 1.]
+      Objective value f(xmin) = 1.237351799e-19
       Needed 300 objective evaluations (at 300 points)
-      Did a total of 4 runs
-      Approximate gradient = [ -1.36175005e-08   2.12249758e-09]
-      Approximate Hessian = [[ 805.93202374 -394.16671315]
-       [-394.16671315  192.99451721]]
+      Did a total of 5 runs
+      Approximate gradient = [-2.17072738e-07  9.62304351e-08]
+      Approximate Hessian = [[ 809.56521044 -400.33737779]
+       [-400.33737779  198.36487985]]
       Exit flag = 1
       Warning (max evals): Objective has been called MAXFUN times
       ******************************
@@ -362,12 +376,12 @@ The output of this is:
       First run - search for local minimum only
       
       ****** Py-BOBYQA Results ******
-      Solution xmin = [ 11.41277906  -0.89680525]
+      Solution xmin = [11.41277902 -0.89680525]
       Objective value f(xmin) = 48.98425368
-      Needed 203 objective evaluations (at 203 points)
-      Approximate gradient = [ -1.61348180e-06  -3.61662651e-07]
-      Approximate Hessian = [[ 132.10265455  -45.5426821 ]
-       [ -45.5426821   976.15808779]]
+      Needed 143 objective evaluations (at 143 points)
+      Approximate gradient = [-1.64941396e-07  9.69795781e-07]
+      Approximate Hessian = [[   7.74717421 -104.51102613]
+       [-104.51102613 1135.76500421]]
       Exit flag = 0
       Success: rho has reached rhoend
       ******************************
@@ -377,13 +391,13 @@ The output of this is:
       Second run - search for global minimum
       
       ****** Py-BOBYQA Results ******
-      Solution xmin = [ 5.  4.]
-      Objective value f(xmin) = 9.734692105e-19
+      Solution xmin = [5. 4.]
+      Objective value f(xmin) = 3.659891409e-17
       Needed 500 objective evaluations (at 500 points)
-      Did a total of 4 runs
-      Approximate gradient = [  4.28964221e-08   4.58344260e-07]
-      Approximate Hessian = [[    4.06992486    61.15006935]
-       [   61.15006935  3728.06826545]]
+      Did a total of 5 runs
+      Approximate gradient = [ 8.70038835e-10 -4.64918043e-07]
+      Approximate Hessian = [[   4.28883646   64.16836253]
+       [  64.16836253 3722.93109385]]
       Exit flag = 1
       Warning (max evals): Objective has been called MAXFUN times
       ******************************

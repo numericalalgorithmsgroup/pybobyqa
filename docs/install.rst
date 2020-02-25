@@ -13,6 +13,7 @@ Additionally, the following python packages should be installed (these will be i
 * `SciPy 0.18 or higher <http://www.scipy.org/>`_
 * `Pandas 0.17 or higher <https://pandas.pydata.org/>`_
 
+**Optional package:** Py-BOBYQA versions 1.2 and higher also support the `trustregion <https://github.com/lindonroberts/trust-region>`_ package for fast trust-region subproblem solutions. To install this, make sure you have a Fortran compiler (e.g. `gfortran <https://gcc.gnu.org/wiki/GFortran>`_) and NumPy installed, then run :code:`pip install trustregion`. You do not have to have trustregion installed for Py-BOBYQA to work, and it is not installed by default.
 
 Installation using pip
 ----------------------

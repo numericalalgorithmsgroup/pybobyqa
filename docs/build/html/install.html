@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installing Py-BOBYQA &mdash; Py-BOBYQA v1.1.1 documentation</title>
+  <title>Installing Py-BOBYQA &mdash; Py-BOBYQA v1.2 documentation</title>
   
 
   
@@ -17,42 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Py-BOBYQA v1.1.1 documentation" href="index.html"/>
-        <link rel="next" title="Overview" href="info.html"/>
-        <link rel="prev" title="Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization" href="index.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="info.html" />
+    <link rel="prev" title="Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization" href="index.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -66,7 +61,7 @@
             
             
               <div class="version">
-                1.1.1
+                1.2
               </div>
             
           
@@ -116,7 +111,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Py-BOBYQA</a>
@@ -124,9 +119,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -174,33 +170,34 @@
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>Py-BOBYQA requires the following software to be installed:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.python.org/">Python 2.7 or Python 3</a></li>
+<li><p><a class="reference external" href="http://www.python.org/">Python 2.7 or Python 3</a></p></li>
 </ul>
 <p>Additionally, the following python packages should be installed (these will be installed automatically if using <a class="reference external" href="http://www.pip-installer.org/">pip</a>, see <a class="reference internal" href="#installation-using-pip">Installation using pip</a>):</p>
 <ul class="simple">
-<li><a class="reference external" href="http://www.numpy.org/">NumPy 1.11 or higher</a></li>
-<li><a class="reference external" href="http://www.scipy.org/">SciPy 0.18 or higher</a></li>
-<li><a class="reference external" href="https://pandas.pydata.org/">Pandas 0.17 or higher</a></li>
+<li><p><a class="reference external" href="http://www.numpy.org/">NumPy 1.11 or higher</a></p></li>
+<li><p><a class="reference external" href="http://www.scipy.org/">SciPy 0.18 or higher</a></p></li>
+<li><p><a class="reference external" href="https://pandas.pydata.org/">Pandas 0.17 or higher</a></p></li>
 </ul>
+<p><strong>Optional package:</strong> Py-BOBYQA versions 1.2 and higher also support the <a class="reference external" href="https://github.com/lindonroberts/trust-region">trustregion</a> package for fast trust-region subproblem solutions. To install this, make sure you have a Fortran compiler (e.g. <a class="reference external" href="https://gcc.gnu.org/wiki/GFortran">gfortran</a>) and NumPy installed, then run <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">trustregion</span></code>. You do not have to have trustregion installed for Py-BOBYQA to work, and it is not installed by default.</p>
 </div>
 <div class="section" id="installation-using-pip">
 <h2>Installation using pip<a class="headerlink" href="#installation-using-pip" title="Permalink to this headline">¶</a></h2>
 <p>For easy installation, use <a class="reference external" href="http://www.pip-installer.org/">pip</a> as root:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install Py-BOBYQA
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install Py-BOBYQA
 </pre></div>
 </div>
 </div></blockquote>
 <p>If you do not have root privileges or you want to install Py-BOBYQA for your private use, you can use:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install --user Py-BOBYQA
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install --user Py-BOBYQA
 </pre></div>
 </div>
 </div></blockquote>
 <p>which will install Py-BOBYQA in your home directory.</p>
 <p>Note that if an older install of Py-BOBYQA is present on your system you can use:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install --upgrade Py-BOBYQA
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install --upgrade Py-BOBYQA
 </pre></div>
 </div>
 </div></blockquote>
@@ -210,27 +207,27 @@
 <h2>Manual installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h2>
 <p>The source code for Py-BOBYQA is <a class="reference external" href="https://https://github.com/numericalalgorithmsgroup/pybobyqa">available on Github</a>:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/numericalalgorithmsgroup/pybobyqa
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/numericalalgorithmsgroup/pybobyqa
 $ <span class="nb">cd</span> pybobyqa
 </pre></div>
 </div>
 </div></blockquote>
 <p>Py-BOBYQA is written in pure Python and requires no compilation. It can be installed using:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install .
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip install .
 </pre></div>
 </div>
 </div></blockquote>
 <p>If you do not have root privileges or you want to install Py-BOBYQA for your private use, you can use:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install --user .
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install --user .
 </pre></div>
 </div>
 </div></blockquote>
 <p>instead.</p>
-<p>To upgrade Py-BOBYQA to the latest version, navigate to the top-level directory (i.e. the one containing <code class="code docutils literal"><span class="pre">setup.py</span></code>) and rerun the installation using <code class="code docutils literal"><span class="pre">pip</span></code>, as above:</p>
+<p>To upgrade Py-BOBYQA to the latest version, navigate to the top-level directory (i.e. the one containing <code class="code docutils literal notranslate"><span class="pre">setup.py</span></code>) and rerun the installation using <code class="code docutils literal notranslate"><span class="pre">pip</span></code>, as above:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ git pull
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git pull
 $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span class="c1"># with admin privileges</span>
 </pre></div>
 </div>
@@ -240,7 +237,7 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
 <h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
 <p>If you installed Py-BOBYQA manually, you can test your installation by running:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python setup.py <span class="nb">test</span>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python setup.py <span class="nb">test</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -249,7 +246,7 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
 <h2>Uninstallation<a class="headerlink" href="#uninstallation" title="Permalink to this headline">¶</a></h2>
 <p>If Py-BOBYQA was installed using <a class="reference external" href="http://www.pip-installer.org/">pip</a> you can uninstall as follows:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip uninstall Py-BOBYQA
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="o">[</span>sudo<span class="o">]</span> pip uninstall Py-BOBYQA
 </pre></div>
 </div>
 </div></blockquote>
@@ -259,9 +256,7 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -270,7 +265,7 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
         <a href="info.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -279,11 +274,11 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Lindon Roberts.
+        &copy; Copyright 2017, Lindon Roberts
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -296,37 +291,15 @@ $ <span class="o">[</span>sudo<span class="o">]</span> pip install .  <span clas
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
