@@ -250,14 +250,17 @@ class Model(object):
         return
 
     def solve_system(self, rhs):
+        # To do preconditioning below, we will need to scale each column of A elementwise by the entries of some vector
+        col_scale = lambda A, scale: (A.T * scale).T  # Uses the trick that A*x scales the 0th column of A by x[0], etc.
+
         if self.factorisation_current:
             # A(preconditioned) = diag(left_scaling) * A(original) * diag(right_scaling)
             # Solve A(original)\rhs
-            return LA.lu_solve((self.lu, self.piv), rhs * self.left_scaling) * self.right_scaling
+            return col_scale(LA.lu_solve((self.lu, self.piv), col_scale(rhs, self.left_scaling)), self.right_scaling)
         else:
             logging.warning("model.solve_system not using factorisation")
             A, left_scaling, right_scaling = self.interpolation_matrix()
-            return LA.solve(A, rhs * left_scaling) * right_scaling
+            return col_scale(LA.solve(A, col_scale(rhs, left_scaling)), right_scaling)
 
     def interpolate_model(self, verbose=False, min_chg_hess=True, get_norm_model_chg=False):
         if verbose:
