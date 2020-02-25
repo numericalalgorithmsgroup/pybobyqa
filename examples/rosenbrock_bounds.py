@@ -10,9 +10,6 @@ def rosenbrock(x):
 # Define the starting point
 x0 = np.array([-1.2, 1.0])
 
-# Set random seed (for reproducibility)
-np.random.seed(0)
-
 # Define bound constraints (lower <= x <= upper)
 lower = np.array([-10.0, -10.0])
 upper = np.array([0.9, 0.85])

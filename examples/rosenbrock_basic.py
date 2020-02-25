@@ -10,9 +10,6 @@ def rosenbrock(x):
 # Define the starting point
 x0 = np.array([-1.2, 1.0])
 
-# Set random seed (for reproducibility)
-np.random.seed(0)
-
 # For optional extra output details
 # import logging
 # logging.basicConfig(level=logging.INFO, format='%(message)s')

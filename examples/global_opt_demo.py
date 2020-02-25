@@ -23,9 +23,6 @@ x0 = np.array([5.0, -20.0])
 lower = np.array([-30.0, -30.0])
 upper = np.array([30.0, 30.0])
 
-# Set random seed (for reproducibility)
-np.random.seed(0)
-
 print("First run - search for local minimum only")
 print("")
 soln = pybobyqa.solve(freudenstein_roth, x0, maxfun=500, bounds=(lower, upper))

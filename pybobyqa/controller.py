@@ -92,12 +92,12 @@ class ExitInformation(object):
 
 
 class Controller(object):
-    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes):
+    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=True):
         self.objfun = objfun
         self.maxfun = maxfun
         self.args = args
         self.model = Model(npt, x0, f0, xl, xu, f0_nsamples, abs_tol=params("model.abs_tol"),
-                           precondition=params("interpolation.precondition"))
+                           precondition=params("interpolation.precondition"), do_logging=do_logging)
         self.nf = nf
         self.nx = nx
         self.rhobeg = rhobeg
@@ -121,6 +121,7 @@ class Controller(object):
         self.total_unsuccessful_restarts = 0
         self.last_run_fopt = f0
         self.scaling_changes = scaling_changes
+        self.do_logging = do_logging
 
     def n(self):
         return self.model.n()
@@ -129,7 +130,8 @@ class Controller(object):
         return self.model.npt()
 
     def initialise_coordinate_directions(self, number_of_samples, num_directions, params):
-        logging.debug("Initialising with coordinate directions")
+        if self.do_logging:
+            logging.debug("Initialising with coordinate directions")
         # self.model already has x0 evaluated, so only need to initialise the other points
         # num_directions = params("growing.ndirs_initial")
         assert self.model.num_pts <= (self.n() + 1) * (self.n() + 2) // 2, "prelim: must have npt <= (n+1)(n+2)/2"
@@ -202,7 +204,8 @@ class Controller(object):
         return None   # return & continue
 
     def initialise_random_directions(self, number_of_samples, num_directions, params):
-        logging.debug("Initialising with random orthogonal directions")
+        if self.do_logging:
+            logging.debug("Initialising with random orthogonal directions")
         # self.model already has x0 evaluated, so only need to initialise the other points
         # num_directions = params("growing.ndirs_initial")
         assert 1 <= num_directions < self.model.num_pts, "Initialisation: must have 1 <= ndirs_initial < npt"
@@ -270,7 +273,8 @@ class Controller(object):
         return d, gopt, H, gnew, crvmin
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
-        logging.debug("Running geometry-fixing step")
+        if self.do_logging:
+            logging.debug("Running geometry-fixing step")
         try:
             c, g, H = self.model.lagrange_polynomial(knew)  # based at xopt
             # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
@@ -344,7 +348,8 @@ class Controller(object):
                 incremented_nx = True
             f_list[i] = eval_objective(self.objfun, remove_scaling(x, self.scaling_changes), self.args, eval_num=self.nf, pt_num=self.nx,
                                             full_x_thresh=params("logging.n_to_print_whole_x_vector"),
-                                            check_for_overflow=params("general.check_objfun_for_overflow"))
+                                            check_for_overflow=params("general.check_objfun_for_overflow"),
+                                       verbose=self.do_logging)
             num_samples_run += 1
 
         # Check if the average value was below our threshold
@@ -453,11 +458,13 @@ class Controller(object):
         # Update counter of number of slow iterations
         if this_iter_slow:
             self.num_slow_iters += 1
-            logging.info("Slow iteration (%g consecutive so far, max allowed %g)"
+            if self.do_logging:
+                logging.info("Slow iteration (%g consecutive so far, max allowed %g)"
                          % (self.num_slow_iters, params("slow.max_slow_iters")))
         else:
             self.num_slow_iters = 0
-            logging.debug("Non-slow iteration")
+            if self.do_logging:
+                logging.debug("Non-slow iteration")
         return this_iter_slow, self.num_slow_iters >= params("slow.max_slow_iters")
 
     def soft_restart(self, number_of_samples, nruns_so_far, params, x_in_abs_coords_to_save=None, f_to_save=None,
@@ -491,7 +498,8 @@ class Controller(object):
         self.model.save_point(self.model.xopt(abs_coordinates=True), self.model.fopt(),
                               self.model.nsamples[self.model.kopt], x_in_abs_coords=True)
 
-        logging.info("Soft restart [currently, f = %g after %g function evals]" % (self.model.fopt(), self.nf))
+        if self.do_logging:
+            logging.info("Soft restart [currently, f = %g after %g function evals]" % (self.model.fopt(), self.nf))
         # Resetting method: reset delta and rho, then move the closest 'num_steps' points to xk to improve geometry
         # Note: closest points because we are suddenly increasing delta & rho, so we want to encourage spreading out points
         self.delta = self.rhobeg

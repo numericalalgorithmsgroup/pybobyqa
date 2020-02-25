@@ -42,7 +42,7 @@ __all__ = ['Model']
 
 
 class Model(object):
-    def __init__(self, npt, x0, f0, xl, xu, f0_nsamples, n=None, abs_tol=-1e20, precondition=True):
+    def __init__(self, npt, x0, f0, xl, xu, f0_nsamples, n=None, abs_tol=-1e20, precondition=True, do_logging=True):
         if n is None:
             n = len(x0)
         assert npt >= n + 1, "Require npt >= n+1 for quadratic models"
@@ -52,6 +52,7 @@ class Model(object):
         assert xu.shape == (n,), "xu has wrong shape (got %s, expect (%g,))" % (str(xu.shape), n)
         self.dim = n
         self.num_pts = npt
+        self.do_logging = do_logging
 
         # Initialise to blank some useful stuff
         # Interpolation points
@@ -258,7 +259,8 @@ class Model(object):
             # Solve A(original)\rhs
             return col_scale(LA.lu_solve((self.lu, self.piv), col_scale(rhs, self.left_scaling)), self.right_scaling)
         else:
-            logging.warning("model.solve_system not using factorisation")
+            if self.do_logging:
+                logging.warning("model.solve_system not using factorisation")
             A, left_scaling, right_scaling = self.interpolation_matrix()
             return col_scale(LA.solve(A, col_scale(rhs, left_scaling)), right_scaling)
 
