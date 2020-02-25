@@ -222,7 +222,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
 
         # Trust region step
-        d, gopt, hq, gnew, crvmin = control.trust_region_step()
+        d, gopt, H, gnew, crvmin = control.trust_region_step()
         logging.debug("Trust region step is d = " + str(d))
         xnew = control.model.xopt() + d
         dnorm = min(LA.norm(d), control.delta)
@@ -242,7 +242,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                 diagnostic_info.update_iter_type(ITER_SAFETY)
                 diagnostic_info.update_slow_iter(-1)
 
-            if not control.done_with_current_rho(xnew, gnew, crvmin, hq, current_iter):
+            if not control.done_with_current_rho(xnew, gnew, crvmin, H, current_iter):
                 distsq = (10.0 * control.rho) ** 2
                 number_of_samples = max(nsamples(control.delta, control.rho, current_iter, nruns_so_far), 1)
                 update_delta = True  # we do reduce delta for safety steps
@@ -378,7 +378,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                 break  # quit
 
             # Estimate f in order to compute 'actual reduction'
-            ratio, exit_info = control.calculate_ratio(current_iter, f_list[:num_samples_run], d, gopt, hq)
+            ratio, exit_info = control.calculate_ratio(current_iter, f_list[:num_samples_run], d, gopt, H)
             if exit_info is not None:
                 if exit_info.able_to_do_restart() and params("restarts.use_restarts") and params(
                         "restarts.use_soft_restarts"):

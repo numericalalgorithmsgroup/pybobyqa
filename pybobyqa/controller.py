@@ -35,7 +35,6 @@ from math import log, sqrt
 import numpy as np
 import scipy.linalg as LA
 
-from .hessian import *
 from .model import *
 from .trust_region import *
 from .util import *
@@ -266,21 +265,21 @@ class Controller(object):
 
     def trust_region_step(self):
         # Build model for full least squares objectives
-        gopt, hq = self.model.build_full_model()
-        d, gnew, crvmin = trsbox(self.model.xopt(), gopt, hq, self.model.sl, self.model.su, self.delta)
-        return d, gopt, hq, gnew, crvmin
+        gopt, H = self.model.build_full_model()
+        d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
+        return d, gopt, H, gnew, crvmin
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
         logging.debug("Running geometry-fixing step")
         try:
-            c, g, hess = self.model.lagrange_polynomial(knew)  # based at xopt
+            c, g, H = self.model.lagrange_polynomial(knew)  # based at xopt
             # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
-            xnew = trsbox_geometry(self.model.xopt(), c, g, hess, self.model.sl, self.model.su, adelt)
+            xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
         except LA.LinAlgError:
             exit_info = ExitInformation(EXIT_LINALG_ERROR, "Singular matrix encountered in geometry step")
             return exit_info  # didn't fix geometry - return & quit
 
-        gopt, hq = self.model.build_full_model()  # save here, to calculate predicted value from geometry step
+        gopt, H = self.model.build_full_model()  # save here, to calculate predicted value from geometry step
         fopt = self.model.fopt()  # again, evaluate now, before model.change_point()
         d = xnew - self.model.xopt()
         x = self.model.as_absolute_coordinates(xnew)
@@ -300,8 +299,8 @@ class Controller(object):
         # Estimate actual reduction to add to diffs vector
         f = np.mean(f_list[:num_samples_run])  # estimate actual objective value
 
-        # pred_reduction = - calculate_model_value(gopt, hq, d)
-        pred_reduction = - model_value(gopt, hq, d)
+        # pred_reduction = - calculate_model_value(gopt, H, d)
+        pred_reduction = - model_value(gopt, H, d)
         actual_reduction = fopt - f
         self.diffs = [abs(pred_reduction - actual_reduction), self.diffs[0], self.diffs[1]]
         return None  # exit_info = None
@@ -381,9 +380,9 @@ class Controller(object):
 
         return knew, exit_info
 
-    def done_with_current_rho(self, xnew, gnew, crvmin, hq, current_iter):
+    def done_with_current_rho(self, xnew, gnew, crvmin, H, current_iter):
         # (xnew, gnew, crvmin) come from trust region step
-        # hq is Hessian of model for the full objective
+        # H is Hessian of model for the full objective
 
         # Wait at least 3 iterations between reductions of rho
         if current_iter <= self.last_successful_iter + 2:
@@ -402,7 +401,7 @@ class Controller(object):
             if xnew[j] == self.model.su[j]:
                 bdtest = -gnew[j]
             if bdtest < bdtol:
-                curv = hq.get_element(j, j)  # curv = Hessian(j, j)
+                curv = H[j,j]
                 bdtest += 0.5 * curv * self.rho
                 if bdtest < bdtol:
                     return False
@@ -425,10 +424,10 @@ class Controller(object):
         self.last_successful_iter = current_iter  # reset successful iteration check
         return
 
-    def calculate_ratio(self, current_iter, f_list, d, gopt, hq):
+    def calculate_ratio(self, current_iter, f_list, d, gopt, H):
         exit_info = None
         f = np.mean(f_list)  # estimate actual objective value
-        pred_reduction = - model_value(gopt, hq, d)
+        pred_reduction = - model_value(gopt, H, d)
         actual_reduction = self.model.fopt() - f
         self.diffs = [abs(actual_reduction - pred_reduction), self.diffs[0], self.diffs[1]]
         if min(sqrt(sumsq(d)), self.delta) > self.rho:  # if ||d|| >= rho, successful!

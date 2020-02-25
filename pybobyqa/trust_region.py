@@ -3,9 +3,9 @@ Trust Region Subproblem Solver
 ====
 
 Specifically, the call
-    d, gnew, crvmin = trsbox(xopt, g, hess, sl, su, delta)
+    d, gnew, crvmin = trsbox(xopt, g, H, sl, su, delta)
 produces a new vector d which (approximately) solves the trust region subproblem:
-    min_{d}  g'*d + 0.5*d'*hess*d
+    min_{d}  g'*d + 0.5*d'*H*d
     s.t.    ||d|| <= delta
             sl <= xopt + d <= su
 The other outputs: gnew is the gradient of the model at d, and crvmin has
@@ -54,15 +54,17 @@ __all__ = ['trsbox', 'trsbox_geometry']
 # ZERO_THRESH = 1e-14
 
 
-def trsbox(xopt, g, hess, sl, su, delta):
+def trsbox(xopt, g, H, sl, su, delta):
     n = xopt.size
     assert xopt.shape == (n,), "xopt has wrong shape (should be vector)"
     assert g.shape == (n,), "g and xopt have incompatible sizes"
-    assert hess.dim() == n, "hess and xopt have incompatible sizes"
+    assert len(H.shape) == 2, "H must be a matrix"
+    assert H.shape == (n,n), "H and xopt have incompatible sizes"
+    assert np.allclose(H, H.T), "H must be symmetric"
     assert sl.shape == (n,), "sl and xopt have incompatible sizes"
     assert su.shape == (n,), "su and xopt have incompatible sizes"
     assert delta > 0.0, "delta must be strictly positive"
-    # Assume g and hess have full quadratic model for objective
+    # Assume g and H have full quadratic model for objective
     # i.e. skip straight to label 8 in DFBOLS version
 
     # The sign of G(I) gives the sign of the change to the I-th variable
@@ -119,7 +121,7 @@ def trsbox(xopt, g, hess, sl, su, delta):
         # the length of the the step to the trust region boundary and STPLEN to
         # the steplength, ignoring the simple bounds.
 
-        hs = hess.vec_mul(s)
+        hs = H.dot(s)
 
         # label 50
         ds = np.dot(s[xbdi == 0], d[xbdi == 0])
@@ -191,14 +193,14 @@ def trsbox(xopt, g, hess, sl, su, delta):
     # either done or need to take and alternative step
     if need_alt_trust_step:
         crvmin = 0.0
-        d, gnew = alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred)
+        d, gnew = alt_trust_step(n, xopt, H, sl, su, d, xbdi, nact, gnew, qred)
         return d, gnew, crvmin
     else:
         return d_within_bounds(d, xopt, sl, su, xbdi), gnew, crvmin
 
 
 # Alternative Trust Region Step (label 100 of TRSBOX in BOBYQA, where crvmin=0)
-def alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred):
+def alt_trust_step(n, xopt, H, sl, su, d, xbdi, nact, gnew, qred):
     MAX_LOOP_ITERS = 100 * n ** 2  # avoid infinite loops
     # while True:  # label 100 here
     for ii in range(MAX_LOOP_ITERS):
@@ -215,7 +217,7 @@ def alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred):
         gredsq = sumsq(gnew[xbdi == 0])
 
         # Label 210 (crvmin = 0, itcsav = iterc)
-        hs = hess.vec_mul(s)
+        hs = H.dot(s)
 
         hred = hs.copy()
         # quit 210 by goto 120
@@ -276,7 +278,7 @@ def alt_trust_step(n, xopt, hess, sl, su, d, xbdi, nact, gnew, qred):
                 break  # quit inner label 120 loop and restart alt iteration loop (label 100)
 
             # Label 210 (crvmin = 0, itcsav < iterc since iterc+=1 earlier)
-            hs = hess.vec_mul(s)
+            hs = H.dot(s)
 
             # Label 150
             # Calculate HHD and some curvatures for the alternative iteration.
@@ -366,19 +368,19 @@ def d_within_bounds(d, xopt, sl, su, xbdi):
     return d
 
 
-def trsbox_geometry(xbase, c, g, hess, lower, upper, Delta):
-    # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xbase) + 0.5*(x-xbase)*hess*(x-xbase)
+def trsbox_geometry(xbase, c, g, H, lower, upper, Delta):
+    # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xbase) + 0.5*(x-xbase)*H*(x-xbase)
     # Maximise |L(x)| in a box + trust region - that is, solve:
-    #   max_x  abs(c + g' * (x - xbase) + 0.5*(x-xbase)*hess*(x-xbase))
+    #   max_x  abs(c + g' * (x - xbase) + 0.5*(x-xbase)*H*(x-xbase))
     #    s.t.  lower <= x <= upper
     #          ||x-xbase|| <= Delta
     # Setting s = x-xbase (or x = xbase + s), this is equivalent to:
-    #   max_s  abs(c + g' * s + 0.5*s*hess*s)
+    #   max_s  abs(c + g' * s + 0.5*s*H*s)
     #   s.t.   lower <= xbase + s <= upper
     #          ||s|| <= Delta
-    smin, gmin, crvmin = trsbox(xbase, g, hess, lower, upper, Delta)  # minimise L(x)
-    smax, gmax, crvmax = trsbox(xbase, -g, -hess, lower, upper, Delta)  # maximise L(x)
-    if abs(c + model_value(g, hess, smin)) >= abs(c + model_value(g, hess, smax)):  # take largest abs value
+    smin, gmin, crvmin = trsbox(xbase, g, H, lower, upper, Delta)  # minimise L(x)
+    smax, gmax, crvmax = trsbox(xbase, -g, -H, lower, upper, Delta)  # maximise L(x)
+    if abs(c + model_value(g, H, smin)) >= abs(c + model_value(g, H, smax)):  # take largest abs value
         return xbase + smin
     else:
         return xbase + smax

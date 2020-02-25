@@ -63,10 +63,10 @@ def eval_objective(objfun, x, args=(), verbose=True, eval_num=0, pt_num=0, full_
     return f
 
 
-def model_value(g, hess, s):
+def model_value(g, H, s):
     # Calculate model value (s^T * g + 0.5* s^T * H * s) = s^T * (gopt + 0.5 * H*s)
     assert g.shape == s.shape, "g and s have incompatible sizes"
-    Hs = hess.vec_mul(s)
+    Hs = H.dot(s)
     return np.dot(s, g + 0.5*Hs)
 
 

@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import numpy as np
 import unittest
 
-from pybobyqa.hessian import Hessian
 from pybobyqa.util import *
 
 
@@ -55,11 +54,10 @@ class TestModelValue(unittest.TestCase):
         n = 5
         A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
         H = np.sin(A + A.T)  # force symmetric
-        hess = Hessian(n, vals=H)
         vec = np.exp(np.arange(n, dtype=np.float))
         g = np.cos(3*np.arange(n, dtype=np.float) - 2.0)
         mval = np.dot(g, vec) + 0.5 * np.dot(vec, np.dot(H, vec))
-        self.assertAlmostEqual(mval, model_value(g, hess, vec), msg='Wrong value')
+        self.assertAlmostEqual(mval, model_value(g, H, vec), msg='Wrong value')
 
 
 class TestRandom(unittest.TestCase):

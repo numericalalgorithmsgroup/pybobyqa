@@ -27,7 +27,6 @@ from math import sqrt, sin
 import numpy as np
 import unittest
 
-from pybobyqa.hessian import Hessian
 from pybobyqa.model import Model
 from pybobyqa.util import sumsq, model_value
 
@@ -269,9 +268,9 @@ class TestInterpMatrixLinear(unittest.TestCase):
         self.assertTrue(array_compare(model.model_value(x2 - model.xbase, d_based_at_xopt=False, with_const_term=False),
                                 rosenbrock(x2) - rosenbrock(model.xbase), thresh=1e-10), 'Wrong x2 (no constant v2)')
         g, hess = model.build_full_model()
-        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.vec_mul(model.xopt(abs_coordinates=False))),
+        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.dot(model.xopt(abs_coordinates=False))),
                         'Bad gradient')
-        self.assertTrue(np.allclose(hess.as_full(), model.model_hess.as_full()), 'Bad Hessian')
+        self.assertTrue(np.allclose(hess, model.model_hess), 'Bad Hessian')
 
 
 class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
@@ -311,17 +310,17 @@ class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
         self.assertTrue(interp_ok, 'Interpolation failed')
         self.assertAlmostEqual(interp_error, 0.0, msg='Expect exact interpolation')
         self.assertAlmostEqual(norm_chg_grad, np.linalg.norm(model.model_grad))
-        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess.as_full(), ord='fro'))
+        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess, ord='fro'))
         self.assertAlmostEqual(model.model_const, objfun(model.xbase), msg='Wrong constant term')
         for xi in [x0, x1, x2, x3]:
             self.assertAlmostEqual(model.model_value(xi - model.xbase, d_based_at_xopt=False, with_const_term=True),
                                       objfun(xi), msg='Wrong interp value at %s' % str(xi))
         # Test some other parameter settings for model.model_value()
-        print("Ignore after here")
+        # print("Ignore after here")
         g, hess = model.build_full_model()
-        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.vec_mul(model.xopt(abs_coordinates=False))),
+        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.dot(model.xopt(abs_coordinates=False))),
                         'Bad gradient')
-        self.assertTrue(np.allclose(hess.as_full(), model.model_hess.as_full()), 'Bad Hessian')
+        self.assertTrue(np.allclose(hess, model.model_hess), 'Bad Hessian')
 
         # Build a new model
         model2 = Model(npt, x0, objfun(x0), xl, xu, 1, precondition=False)
@@ -329,7 +328,7 @@ class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
         model2.change_point(2, x2 - model.xbase, objfun(x2))
         model2.change_point(3, x3 - model.xbase, objfun(x3))
         # Force Hessian to be something else
-        model2.model_hess = Hessian(n, vals=np.eye(n))
+        model2.model_hess = np.eye(n)
         A2, left_scaling, right_scaling = model2.interpolation_matrix()
         self.assertTrue(np.allclose(A, A2), 'Interp matrix 2')
         interp_ok, interp_cond_num, norm_chg_grad, norm_chg_hess, interp_error = model2.interpolate_model()
@@ -341,14 +340,14 @@ class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
                                    objfun(xi), msg='Wrong interp value at %s' % str(xi))
 
         # Compare distance of hessians
-        h1 = Hessian(n).as_full()
-        h2 = Hessian(n, vals=np.eye(n)).as_full()
-        self.assertLessEqual(np.linalg.norm(model.model_hess.as_full()-h1, ord='fro'),
-                             np.linalg.norm(model2.model_hess.as_full()-h1, ord='fro'), 'Not min frob Hess 1')
-        self.assertLessEqual(np.linalg.norm(model2.model_hess.as_full() - h2, ord='fro'),
-                             np.linalg.norm(model.model_hess.as_full() - h2, ord='fro'), 'Not min frob Hess 2')
-        # print(model.model_hess.as_full())
-        # print(model2.model_hess.as_full())
+        h1 = np.zeros((n,n))
+        h2 = np.eye(n)
+        self.assertLessEqual(np.linalg.norm(model.model_hess-h1, ord='fro'),
+                             np.linalg.norm(model2.model_hess-h1, ord='fro'), 'Not min frob Hess 1')
+        self.assertLessEqual(np.linalg.norm(model2.model_hess - h2, ord='fro'),
+                             np.linalg.norm(model.model_hess - h2, ord='fro'), 'Not min frob Hess 2')
+        # print(model.model_hess)
+        # print(model2.model_hess)
 
         # Build a new model
         model3 = Model(npt, x0, objfun(x0), xl, xu, 1, precondition=False)
@@ -356,7 +355,7 @@ class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
         model3.change_point(2, x2 - model.xbase, objfun(x2))
         model3.change_point(3, x3 - model.xbase, objfun(x3))
         # Force Hessian to be something else
-        model3.model_hess = Hessian(n, vals=np.eye(n))
+        model3.model_hess = np.eye(n)
         A2, left_scaling, right_scaling = model3.interpolation_matrix()
         self.assertTrue(np.allclose(A, A2), 'Interp matrix 3')
         interp_ok, interp_cond_num, norm_chg_grad, norm_chg_hess, interp_error = model3.interpolate_model(min_chg_hess=False)
@@ -366,7 +365,7 @@ class TestInterpMatrixUnderdeterminedQuadratic(unittest.TestCase):
         for xi in [x0, x1, x2, x3]:
             self.assertAlmostEqual(model3.model_value(xi - model3.xbase, d_based_at_xopt=False, with_const_term=True),
                                    objfun(xi), msg='Wrong interp value at %s' % str(xi))
-        self.assertTrue(np.allclose(model.model_hess.as_full(), model3.model_hess.as_full()),
+        self.assertTrue(np.allclose(model.model_hess, model3.model_hess),
                         'min_chg_hess=False not working')
 
 
@@ -409,16 +408,16 @@ class TestInterpMatrixUnderdeterminedQuadratic2(unittest.TestCase):
         self.assertTrue(interp_ok, 'Interpolation failed')
         self.assertAlmostEqual(interp_error, 0.0, msg='Expect exact interpolation')
         self.assertAlmostEqual(norm_chg_grad, np.linalg.norm(model.model_grad))
-        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess.as_full(), ord='fro'))
+        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess, ord='fro'))
         self.assertAlmostEqual(model.model_const, objfun(model.xbase), msg='Wrong constant term')
         for xi in [x0, x1, x2, x3, x4]:
             self.assertAlmostEqual(model.model_value(xi - model.xbase, d_based_at_xopt=False, with_const_term=True),
                                       objfun(xi), msg='Wrong interp value at %s' % str(xi))
         # Test some other parameter settings for model.model_value()
         g, hess = model.build_full_model()
-        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.vec_mul(model.xopt(abs_coordinates=False))),
+        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.dot(model.xopt(abs_coordinates=False))),
                         'Bad gradient')
-        self.assertTrue(np.allclose(hess.as_full(), model.model_hess.as_full()), 'Bad Hessian')
+        self.assertTrue(np.allclose(hess, model.model_hess), 'Bad Hessian')
 
         # Build a new model
         model2 = Model(npt, x0, objfun(x0), xl, xu, 1, precondition=False)
@@ -427,7 +426,7 @@ class TestInterpMatrixUnderdeterminedQuadratic2(unittest.TestCase):
         model2.change_point(3, x3 - model.xbase, objfun(x3))
         model2.change_point(4, x4 - model.xbase, objfun(x4))
         # Force Hessian to be something else
-        model2.model_hess = Hessian(n, vals=np.eye(n))
+        model2.model_hess = np.eye(n)
         A2, left_scaling, right_scaling = model2.interpolation_matrix()
         self.assertTrue(np.allclose(A, A2), 'Interp matrix 2')
         interp_ok, interp_cond_num, norm_chg_grad, norm_chg_hess, interp_error = model2.interpolate_model()
@@ -439,14 +438,14 @@ class TestInterpMatrixUnderdeterminedQuadratic2(unittest.TestCase):
                                    objfun(xi), msg='Wrong interp value at %s' % str(xi))
 
         # Compare distance of hessians
-        h1 = Hessian(n).as_full()
-        h2 = Hessian(n, vals=np.eye(n)).as_full()
-        self.assertLessEqual(np.linalg.norm(model.model_hess.as_full()-h1, ord='fro'),
-                             np.linalg.norm(model2.model_hess.as_full()-h1, ord='fro'), 'Not min frob Hess 1')
-        self.assertLessEqual(np.linalg.norm(model2.model_hess.as_full() - h2, ord='fro'),
-                             np.linalg.norm(model.model_hess.as_full() - h2, ord='fro'), 'Not min frob Hess 2')
-        # print(model.model_hess.as_full())
-        # print(model2.model_hess.as_full())
+        h1 = np.zeros((n,n))
+        h2 = np.eye(n)
+        self.assertLessEqual(np.linalg.norm(model.model_hess-h1, ord='fro'),
+                             np.linalg.norm(model2.model_hess-h1, ord='fro'), 'Not min frob Hess 1')
+        self.assertLessEqual(np.linalg.norm(model2.model_hess - h2, ord='fro'),
+                             np.linalg.norm(model.model_hess - h2, ord='fro'), 'Not min frob Hess 2')
+        # print(model.model_hess)
+        # print(model2.model_hess)
 
         # Build a new model
         model3 = Model(npt, x0, objfun(x0), xl, xu, 1, precondition=False)
@@ -455,7 +454,7 @@ class TestInterpMatrixUnderdeterminedQuadratic2(unittest.TestCase):
         model3.change_point(3, x3 - model.xbase, objfun(x3))
         model3.change_point(4, x4 - model.xbase, objfun(x4))
         # Force Hessian to be something else
-        model3.model_hess = Hessian(n, vals=np.eye(n))
+        model3.model_hess = np.eye(n)
         A2, left_scaling, right_scaling = model3.interpolation_matrix()
         self.assertTrue(np.allclose(A, A2), 'Interp matrix 3')
         interp_ok, interp_cond_num, norm_chg_grad, norm_chg_hess, interp_error = model3.interpolate_model(min_chg_hess=False)
@@ -465,7 +464,7 @@ class TestInterpMatrixUnderdeterminedQuadratic2(unittest.TestCase):
         for xi in [x0, x1, x2, x3, x4]:
             self.assertAlmostEqual(model3.model_value(xi - model3.xbase, d_based_at_xopt=False, with_const_term=True),
                                    objfun(xi), msg='Wrong interp value at %s' % str(xi))
-        self.assertTrue(np.allclose(model.model_hess.as_full(), model3.model_hess.as_full()),
+        self.assertTrue(np.allclose(model.model_hess, model3.model_hess),
                         'min_chg_hess=False not working')
 
 
@@ -493,16 +492,16 @@ class TestInterpMatrixFullQuadratic(unittest.TestCase):
         self.assertTrue(interp_ok, 'Interpolation failed')
         self.assertAlmostEqual(interp_error, 0.0, msg='Expect exact interpolation')
         self.assertAlmostEqual(norm_chg_grad, np.linalg.norm(model.model_grad))
-        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess.as_full(), ord='fro'))
+        self.assertAlmostEqual(norm_chg_hess, np.linalg.norm(model.model_hess, ord='fro'))
         self.assertAlmostEqual(model.model_const, objfun(model.xbase), msg='Wrong constant term')
         for xi in [x0, x1, x2, x3, x4, x5]:
             self.assertAlmostEqual(model.model_value(xi - model.xbase, d_based_at_xopt=False, with_const_term=True),
                                       objfun(xi), msg='Wrong interp value at %s' % str(xi))
         # Test some other parameter settings for model.model_value()
         g, hess = model.build_full_model()
-        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.vec_mul(model.xopt(abs_coordinates=False))),
+        self.assertTrue(np.allclose(g, model.model_grad + model.model_hess.dot(model.xopt(abs_coordinates=False))),
                         'Bad gradient')
-        self.assertTrue(np.allclose(hess.as_full(), model.model_hess.as_full()), 'Bad Hessian')
+        self.assertTrue(np.allclose(hess, model.model_hess), 'Bad Hessian')
 
 
 class TestLagrangePolyLinear(unittest.TestCase):

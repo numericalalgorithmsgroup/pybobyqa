@@ -34,7 +34,7 @@ from math import sqrt
 import numpy as np
 import scipy.linalg as LA
 
-from .hessian import Hessian, to_upper_triangular_vector
+from .hessian import to_upper_triangular_vector
 from .trust_region import trsbox_geometry
 from .util import sumsq, model_value
 
@@ -74,7 +74,7 @@ class Model(object):
         # Model information
         self.model_const = 0.0  # constant term for model m(s) = c + J*s
         self.model_grad = np.zeros((n,))  # Jacobian term for model m(s) = c + J*s
-        self.model_hess = Hessian(n)
+        self.model_hess = np.zeros((n,n))
 
         # Saved point (in absolute coordinates) - always check this value before quitting solver
         self.xsave = None
@@ -199,7 +199,7 @@ class Model(object):
         self.factorisation_current = False
 
         # Update model (always centred on xbase)
-        Hx = self.model_hess.vec_mul(xbase_shift)
+        Hx = self.model_hess.dot(xbase_shift)
         self.model_const += np.dot(self.model_grad + 0.5*Hx, xbase_shift)
         self.model_grad += Hx
         return
@@ -209,7 +209,7 @@ class Model(object):
             self.xsave = x.copy() if x_in_abs_coords else self.as_absolute_coordinates(x)
             self.fsave = f
             self.gradsave = self.model_grad.copy()
-            self.hesssave = self.model_hess.as_full().copy()
+            self.hesssave = self.model_hess.copy()
             self.nsamples_save = nsamples
             return True
         else:
@@ -219,7 +219,7 @@ class Model(object):
         # Return x and fval for optimal point (either from xsave+fsave or kopt)
         if self.fsave is None or self.fopt() <= self.fsave:  # optimal has changed since xsave+fsave were last set
             g, hess = self.build_full_model()  # model based at xopt
-            return self.xopt(abs_coordinates=True).copy(), self.fopt(), g, hess.as_full(), self.nsamples[self.kopt]
+            return self.xopt(abs_coordinates=True).copy(), self.fopt(), g, hess, self.nsamples[self.kopt]
         else:
             return self.xsave, self.fsave, self.gradsave, self.hesssave, self.nsamples_save
 
@@ -231,7 +231,7 @@ class Model(object):
         # Model is always centred around xbase
         const = self.model_const if with_const_term else 0.0
         d_to_use = d + self.xopt() if d_based_at_xopt else d
-        Hd = self.model_hess.vec_mul(d_to_use)
+        Hd = self.model_hess.dot(d_to_use)
         return const + np.dot(self.model_grad + 0.5 * Hd, d_to_use)
 
     def interpolation_matrix(self):
@@ -281,7 +281,7 @@ class Model(object):
                 # It's good to see which bits are needed for this specifically (here & 1 line below)
                 for t in range(self.npt()-1):
                     dx = self.xpt(fval_row_idx[t]) - self.xopt()
-                    rhs[t] = rhs[t] - 0.5 * np.dot(dx, self.model_hess.vec_mul(dx))  # include old Hessian
+                    rhs[t] = rhs[t] - 0.5 * np.dot(dx, self.model_hess.dot(dx))  # include old Hessian
 
         try:
             coeffs = self.solve_system(rhs)
@@ -296,7 +296,7 @@ class Model(object):
         # Old gradient and Hessian (save so can compute changes later)
         if verbose or get_norm_model_chg:
             old_model_grad = self.model_grad.copy()
-            old_model_hess = self.model_hess.as_full()
+            old_model_hess = self.model_hess.copy()
         else:
             old_model_grad = None
             old_model_hess = None
@@ -305,24 +305,21 @@ class Model(object):
         self.model_const = self.fopt()  # true in all cases
         if self.npt() == self.n() + 1:
             self.model_grad = coeffs.copy()
-            self.model_hess = Hessian(self.n())  # zeros
+            self.model_hess = np.zeros((self.n(), self.n()))
         elif self.npt() == (self.n() + 1) * (self.n() + 2) // 2:
             self.model_grad = coeffs[:self.n()]
-            self.model_hess = Hessian(self.n(), coeffs[self.n():])  # rest of coeffs are upper triangular part of Hess
+            self.model_hess = build_symmetric_matrix_from_vector(self.n(), coeffs[self.n():])  # rest of coeffs are upper triangular part of Hess
         else:
             self.model_grad = coeffs[self.npt()-1:]  # last n values
-            if min_chg_hess:
-                hess_full = self.model_hess.as_full()
-            else:
-                hess_full = np.zeros((self.n(), self.n()))
+            if not min_chg_hess:
+                self.model_hess = np.zeros((self.n(), self.n()))
             for i in range(self.npt()-1):
                 dx = self.xpt(fval_row_idx[i]) - self.xopt()
-                hess_full += coeffs[i] * np.outer(dx, dx)
-            self.model_hess = Hessian(self.n(), hess_full)
+                self.model_hess += coeffs[i] * np.outer(dx, dx)
 
         # Base model at xbase, not xopt (note negative signs)
         xopt = self.xopt()
-        Hx = self.model_hess.vec_mul(xopt)
+        Hx = self.model_hess.dot(xopt)
         self.model_const += np.dot(-self.model_grad + 0.5*Hx, xopt)
         self.model_grad += -Hx
 
@@ -331,7 +328,7 @@ class Model(object):
         norm_chg_hess = 0.0
         if verbose or get_norm_model_chg:
             norm_chg_grad = LA.norm(self.model_grad - old_model_grad)
-            norm_chg_hess = LA.norm(self.model_hess.as_full() - old_model_hess, ord='fro')
+            norm_chg_hess = LA.norm(self.model_hess - old_model_hess, ord='fro')
         if verbose:
             for k in range(self.npt()):
                 f_pred = self.model_value(self.xpt(k), d_based_at_xopt=False, with_const_term=True)
@@ -342,7 +339,7 @@ class Model(object):
 
     def build_full_model(self):
         # Make model centred around xopt
-        g = self.model_grad + self.model_hess.vec_mul(self.xopt())
+        g = self.model_grad + self.model_hess.dot(self.xopt())
         return g, self.model_hess
 
     def lagrange_polynomial(self, k, factorise_first=True):
@@ -382,21 +379,20 @@ class Model(object):
         c = 1.0 if k==self.kopt else 0.0  # true in all cases
         if self.npt() == self.n() + 1:
             g = coeffs.copy()
-            hess = Hessian(self.n())  # zeros
+            H = np.zeros((self.n(), self.n()))
         elif self.npt() == (self.n() + 1) * (self.n() + 2) // 2:
             g = coeffs[:self.n()]
-            hess = Hessian(self.n(), coeffs[self.n():])  # rest of coeffs are upper triangular part of Hess
+            H = build_symmetric_matrix_from_vector(self.n(), coeffs[self.n():])  # rest of coeffs are upper triangular part of Hess
         else:
             g = coeffs[self.npt() - 1:]  # last n values
             fval_row_idx = np.delete(np.arange(self.npt()), self.kopt)  # indices of all rows except kopt
-            hess_full = np.zeros((self.n(), self.n()))
+            H = np.zeros((self.n(), self.n()))
             for i in range(self.npt() - 1):
                 dx = self.xpt(fval_row_idx[i]) - self.xopt()
-                hess_full += coeffs[i] * np.outer(dx, dx)
-            hess = Hessian(self.n(), hess_full)
+                H += coeffs[i] * np.outer(dx, dx)
 
         # (c, g, hess) currently based around xopt
-        return c, g, hess
+        return c, g, H
 
     def poisedness_constant(self, delta, xbase=None, xbase_in_abs_coords=True):
         # Calculate the poisedness constant of the current interpolation set in B(xbase, delta)
@@ -407,14 +403,14 @@ class Model(object):
         elif xbase_in_abs_coords:
             xbase = xbase - self.xbase  # shift to correct position
         for k in range(self.npt()):
-            c, g, hess = self.lagrange_polynomial(k, factorise_first=True)  # based at self.xopt()
+            c, g, H = self.lagrange_polynomial(k, factorise_first=True)  # based at self.xopt()
             # Switch base of poly from xopt to xbase, as required by trsbox_geometry
             base_chg = self.xopt() - xbase
-            Hx = hess.vec_mul(base_chg)
+            Hx = H.dot(base_chg)
             c += np.dot(-g + 0.5 * Hx, base_chg)
             g += -Hx
-            xmax = trsbox_geometry(xbase, c, g, hess, self.sl, self.su, delta)
-            lmax = abs(c + model_value(g, hess, xmax-xbase))  # evaluate Lagrange poly
+            xmax = trsbox_geometry(xbase, c, g, H, self.sl, self.su, delta)
+            lmax = abs(c + model_value(g, H, xmax-xbase))  # evaluate Lagrange poly
             if overall_max is None or lmax > overall_max:
                 overall_max = lmax
         return overall_max
@@ -456,3 +452,14 @@ def build_interpolation_matrix(Y, approx_delta=1.0):
         right_scaling[p:] = approx_delta
     return A, left_scaling, right_scaling
 
+
+def build_symmetric_matrix_from_vector(n, entries):
+    assert entries.shape == (n*(n+1)//2,), "Entries vector has wrong size, got %g, expect %g (for n=%g)" % (len(entries), n*(n+1)//2, n)
+    A = np.zeros((n, n))
+    ih = -1
+    for j in range(n):  # j = 0, ..., n-1
+        for i in range(j + 1):  # i = 0, ..., j
+            ih += 1
+            A[i, j] = entries[ih]
+            A[j, i] = entries[ih]
+    return A
