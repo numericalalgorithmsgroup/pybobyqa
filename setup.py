@@ -62,6 +62,7 @@ setup(
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
     install_requires = ['numpy >= 1.11', 'scipy >= 0.17', 'pandas >= 0.17'],
+    extras_require = {'trustregion': 'trustregion >= 1.1'},
     test_suite='nose.collector',
     tests_require=['nose'],
     zip_safe = True,

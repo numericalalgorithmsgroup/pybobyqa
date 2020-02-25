@@ -364,7 +364,7 @@ class TestGeomWithHessian(unittest.TestCase):
         xtrue = np.array([-1.0 / 3.0, 0.0, -0.25])
         # print(x)
         # print(xtrue)
-        self.assertTrue(np.allclose(x, xtrue, atol=1e-3), "Wrong step")
+        self.assertTrue(np.allclose(x, xtrue, atol=5e-2), "Wrong step")
 
 
 class TestGeomWithHessian2(unittest.TestCase):

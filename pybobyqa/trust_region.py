@@ -41,9 +41,14 @@ alternative licensing.
 # Ensure compatibility with Python 2
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import logging
 from math import sqrt
 import numpy as np
+try:
+    import trustregion
+    USE_FORTRAN = True
+except ImportError:
+    # Fall back to Python implementation
+    USE_FORTRAN = False
 
 
 from .util import sumsq, model_value
@@ -51,10 +56,16 @@ from .util import sumsq, model_value
 
 __all__ = ['trsbox', 'trsbox_geometry']
 
-# ZERO_THRESH = 1e-14
+ZERO_THRESH = 1e-14
 
 
-def trsbox(xopt, g, H, sl, su, delta):
+def trsbox(xopt, g, H, sl, su, delta, use_fortran=USE_FORTRAN):
+    if use_fortran:
+        return trustregion.solve(g, H, delta,
+                                 sl=np.minimum(sl - xopt, -ZERO_THRESH),
+                                 su=np.maximum(su - xopt, ZERO_THRESH),
+                                 verbose_output=True)
+
     n = xopt.size
     assert xopt.shape == (n,), "xopt has wrong shape (should be vector)"
     assert g.shape == (n,), "g and xopt have incompatible sizes"
@@ -368,7 +379,7 @@ def d_within_bounds(d, xopt, sl, su, xbdi):
     return d
 
 
-def trsbox_geometry(xbase, c, g, H, lower, upper, Delta):
+def trsbox_geometry(xbase, c, g, H, lower, upper, Delta, use_fortran=USE_FORTRAN):
     # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xbase) + 0.5*(x-xbase)*H*(x-xbase)
     # Maximise |L(x)| in a box + trust region - that is, solve:
     #   max_x  abs(c + g' * (x - xbase) + 0.5*(x-xbase)*H*(x-xbase))
@@ -378,8 +389,8 @@ def trsbox_geometry(xbase, c, g, H, lower, upper, Delta):
     #   max_s  abs(c + g' * s + 0.5*s*H*s)
     #   s.t.   lower <= xbase + s <= upper
     #          ||s|| <= Delta
-    smin, gmin, crvmin = trsbox(xbase, g, H, lower, upper, Delta)  # minimise L(x)
-    smax, gmax, crvmax = trsbox(xbase, -g, -H, lower, upper, Delta)  # maximise L(x)
+    smin, gmin, crvmin = trsbox(xbase, g, H, lower, upper, Delta, use_fortran=use_fortran)  # minimise L(x)
+    smax, gmax, crvmax = trsbox(xbase, -g, -H, lower, upper, Delta, use_fortran=use_fortran)  # maximise L(x)
     if abs(c + model_value(g, H, smin)) >= abs(c + model_value(g, H, smax)):  # take largest abs value
         return xbase + smin
     else:
