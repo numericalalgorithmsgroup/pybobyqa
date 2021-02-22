@@ -43,7 +43,7 @@ Cartis, C., Fiala, J., Marteau, B. and Roberts, L., Improving the Flexibility an
 
 If you use Py-BOBYQA's global optimization heuristic, please cite the above and also
 
-Cartis, C., Roberts, L. and Sheridan-Methven, O., Escaping local minima with derivative-free methods: a numerical investigation, technical report, University of Oxford, (2018). 
+Cartis, C., Roberts, L. and Sheridan-Methven, O., Escaping local minima with derivative-free methods: a numerical investigation, Optimization, (2021). 
 
 Requirements
 ------------
