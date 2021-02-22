@@ -52,10 +52,10 @@ class TestEval(unittest.TestCase):
 class TestModelValue(unittest.TestCase):
     def runTest(self):
         n = 5
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = np.sin(A + A.T)  # force symmetric
-        vec = np.exp(np.arange(n, dtype=np.float))
-        g = np.cos(3*np.arange(n, dtype=np.float) - 2.0)
+        vec = np.exp(np.arange(n, dtype=float))
+        g = np.cos(3*np.arange(n, dtype=float) - 2.0)
         mval = np.dot(g, vec) + 0.5 * np.dot(vec, np.dot(H, vec))
         self.assertAlmostEqual(mval, model_value(g, H, vec), msg='Wrong value')
 

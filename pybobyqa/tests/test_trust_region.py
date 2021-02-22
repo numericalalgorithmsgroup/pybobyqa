@@ -89,7 +89,7 @@ class TestUncInternal(unittest.TestCase):
         # self.assertAlmostEqual(est_min, true_min, 'Wrong min value')
         s_cauchy, red_cauchy, crvmin_cauchy = cauchy_pt(g, H, Delta)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         # print(crvmin)
         self.assertAlmostEqual(crvmin, 1.2, 'Wrong crvmin')
 
@@ -112,7 +112,7 @@ class TestUncBdry(unittest.TestCase):
         # self.assertAlmostEqual(est_min, true_min, 'Wrong min value')
         s_cauchy, red_cauchy, crvmin_cauchy = cauchy_pt(g, H, Delta)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         self.assertAlmostEqual(crvmin, 0.0, 'Wrong crvmin')
 
 
@@ -134,7 +134,7 @@ class TestUncBdry2(unittest.TestCase):
         # self.assertAlmostEqual(est_min, true_min, 'Wrong min value')
         s_cauchy, red_cauchy, crvmin_cauchy = cauchy_pt(g, H, Delta)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         self.assertAlmostEqual(crvmin, 0.0, 'Wrong crvmin')
 
 
@@ -156,7 +156,7 @@ class TestUncBdry3(unittest.TestCase):
         # self.assertAlmostEqual(est_min, true_min, 'Wrong min value')
         s_cauchy, red_cauchy, crvmin_cauchy = cauchy_pt(g, H, Delta)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         self.assertAlmostEqual(crvmin, 0.0, 'Wrong crvmin')
         # self.assertAlmostEqual(crvmin, crvmin_cauchy, 'Wrong crvmin')
 
@@ -179,7 +179,7 @@ class TestUncHard(unittest.TestCase):
         # self.assertAlmostEqual(est_min, true_min, 'Wrong min value')
         s_cauchy, red_cauchy, crvmin_cauchy = cauchy_pt(g, H, Delta)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         self.assertAlmostEqual(crvmin, 0.0, 'Wrong crvmin')
 
 
@@ -203,7 +203,7 @@ class TestConInternal(unittest.TestCase):
         # print(s_cauchy)
         # print(d)
         self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
-        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
         # print(crvmin)
         self.assertAlmostEqual(crvmin, -1.0, 'Wrong crvmin')
 
