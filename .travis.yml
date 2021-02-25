@@ -13,4 +13,4 @@ install:
 
 script:
   - pip install nose
-  - python setup.py test
+  - nosetests -v
