@@ -1,10 +1,10 @@
 # Fdb version 3
-["makeindex Py-BOBYQA.idx"] 1582610283 "Py-BOBYQA.idx" "Py-BOBYQA.ind" "Py-BOBYQA" 1613984953
-  "Py-BOBYQA.idx" 1613984952 0 d41d8cd98f00b204e9800998ecf8427e ""
+["makeindex Py-BOBYQA.idx"] 1582610283 "Py-BOBYQA.idx" "Py-BOBYQA.ind" "Py-BOBYQA" 1614220991
+  "Py-BOBYQA.idx" 1614220990 0 d41d8cd98f00b204e9800998ecf8427e ""
   (generated)
   "Py-BOBYQA.ind"
   "Py-BOBYQA.ilg"
-["pdflatex"] 1613984952 "Py-BOBYQA.tex" "Py-BOBYQA.pdf" "Py-BOBYQA" 1613984953
+["pdflatex"] 1614220990 "Py-BOBYQA.tex" "Py-BOBYQA.pdf" "Py-BOBYQA" 1614220991
   "/etc/texmf/web2c/texmf.cnf" 1585531380 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1480098666 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
@@ -165,21 +165,21 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1586757552 2556815 161db45eb32a3ed5e427095833ec947f ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1585531429 724918 9f2ac0f6dd6683249c7737077a8c4a4a ""
-  "Py-BOBYQA.aux" 1613984953 10427 81ab91d752388f4f9f3c8469d8cbdc2d ""
+  "Py-BOBYQA.aux" 1614220990 10427 81ab91d752388f4f9f3c8469d8cbdc2d ""
   "Py-BOBYQA.ind" 1587347533 0 d41d8cd98f00b204e9800998ecf8427e "makeindex Py-BOBYQA.idx"
-  "Py-BOBYQA.out" 1613984953 7193 9f86131a0cc7df7e5bb741c72e74e749 ""
-  "Py-BOBYQA.tex" 1613984950 72390 d20e3091f5c711cfc06bf15db3ca5dc1 ""
-  "Py-BOBYQA.toc" 1613984953 3648 1a9c63a2d0d592bc2a810650a08f7c08 ""
+  "Py-BOBYQA.out" 1614220990 7193 9f86131a0cc7df7e5bb741c72e74e749 ""
+  "Py-BOBYQA.tex" 1614220988 72386 f7cd6f9f594ecffde74296dbc9302528 ""
+  "Py-BOBYQA.toc" 1614220990 3648 1a9c63a2d0d592bc2a810650a08f7c08 ""
   "footnotehyper-sphinx.sty" 1587347533 8888 1bbd7bdeae8c8bed1d10d551bddb1cc9 ""
   "sphinx.sty" 1587511476 82020 a38700b8aa22dfd94a8a5b905e69be73 ""
-  "sphinxhighlight.sty" 1613984952 8137 38a433148fcb7611515a989ff1750dd5 ""
+  "sphinxhighlight.sty" 1614220990 8137 38a433148fcb7611515a989ff1750dd5 ""
   "sphinxmanual.cls" 1587347533 4236 124cd90deb92742b5d3922bfc2cd70c0 ""
-  "sphinxmessages.sty" 1613984952 745 3f5fcd6cdd7964ed608767954a8ced6f ""
+  "sphinxmessages.sty" 1614220990 745 3f5fcd6cdd7964ed608767954a8ced6f ""
   "sphinxmulticell.sty" 1587347533 14606 0b6edc2b1a83546ed92026d1f6a311b5 ""
   (generated)
-  "Py-BOBYQA.out"
-  "Py-BOBYQA.aux"
-  "Py-BOBYQA.idx"
-  "Py-BOBYQA.pdf"
   "Py-BOBYQA.toc"
+  "Py-BOBYQA.pdf"
   "Py-BOBYQA.log"
+  "Py-BOBYQA.aux"
+  "Py-BOBYQA.out"
+  "Py-BOBYQA.idx"
