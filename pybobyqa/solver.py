@@ -667,9 +667,9 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
           objfun_has_noise=False, seek_global_minimum=False, scaling_within_bounds=False, do_logging=True, print_progress=False):
     n = len(x0)
     if type(x0) == list:
-        x0 = np.array(x0, dtype=np.float)
+        x0 = np.array(x0, dtype=float)
     else:
-        x0 = x0.astype(np.float)
+        x0 = x0.astype(float)
 
     # Set missing inputs (if not specified) to some sensible defaults
     if bounds is None:
@@ -680,14 +680,14 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         assert len(bounds) == 2, "bounds must be a 2-tuple of (lower, upper), where both are arrays of size(x0)"
         xl = bounds[0]
         if type(xl) == list:
-            xl = np.array(xl, dtype=np.float) if xl is not None else None
+            xl = np.array(xl, dtype=float) if xl is not None else None
         else:
-            xl = xl.astype(np.float) if xl is not None else None
+            xl = xl.astype(float) if xl is not None else None
         xu = bounds[1]
         if type(xu) == list:
-            xu = np.array(xu, dtype=np.float) if xu is not None else None
+            xu = np.array(xu, dtype=float) if xu is not None else None
         else:
-            xu = xu.astype(np.float) if xu is not None else None
+            xu = xu.astype(float) if xu is not None else None
 
     if (xl is None or xu is None) and scaling_within_bounds:
         scaling_within_bounds = False

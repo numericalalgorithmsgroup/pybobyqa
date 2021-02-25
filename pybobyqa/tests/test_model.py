@@ -45,7 +45,7 @@ def rosenbrock(x):
 
 def objfun(x):
     # An arbitrary-dimension objective function
-    return sin(np.dot(x, np.arange(1,len(x)+1,dtype=np.float)))  # f(x1,...,xn) = sin(x1 + 2*x2 + ... + n*xn)
+    return sin(np.dot(x, np.arange(1,len(x)+1,dtype=float)))  # f(x1,...,xn) = sin(x1 + 2*x2 + ... + n*xn)
 
 
 class TestAddValues(unittest.TestCase):

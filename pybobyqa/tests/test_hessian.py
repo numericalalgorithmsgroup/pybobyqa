@@ -48,7 +48,7 @@ class TestInitFromVector(unittest.TestCase):
     def runTest(self):
         n = 5
         nvals = n*(n+1)//2
-        x = np.arange(nvals, dtype=np.float)
+        x = np.arange(nvals, dtype=float)
         hess = Hessian(n, vals=x)
         self.assertEqual(hess.shape(), (nvals,), 'Wrong shape for initialisation')
         self.assertEqual(hess.dim(), n, 'Wrong dimension')
@@ -60,7 +60,7 @@ class TestInitFromMatrix(unittest.TestCase):
     def runTest(self):
         n = 3
         nvals = n*(n+1)//2
-        A = np.arange(n**2, dtype=np.float).reshape((n,n))
+        A = np.arange(n**2, dtype=float).reshape((n,n))
         hess = Hessian(n, vals=A+A.T)  # force symmetric
         self.assertEqual(hess.shape(), (nvals,), 'Wrong shape for initialisation')
         self.assertEqual(hess.dim(), n, 'Wrong dimension')
@@ -72,7 +72,7 @@ class TestInitFromMatrix(unittest.TestCase):
 class TestToFull(unittest.TestCase):
     def runTest(self):
         n = 7
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         self.assertTrue(np.all(hess.as_full() == H), 'Wrong values')
@@ -81,7 +81,7 @@ class TestToFull(unittest.TestCase):
 class TestGetElementGood(unittest.TestCase):
     def runTest(self):
         n = 3
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         for i in range(n):
@@ -93,7 +93,7 @@ class TestGetElementGood(unittest.TestCase):
 class TestGetElementBad(unittest.TestCase):
     def runTest(self):
         n = 4
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         # When testing for assertion errors, need lambda to stop assertion from actually happening
@@ -114,7 +114,7 @@ class TestGetElementBad(unittest.TestCase):
 class TestSetElementGood(unittest.TestCase):
     def runTest(self):
         n = 3
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         H2 = np.sin(H)
@@ -130,7 +130,7 @@ class TestSetElementGood(unittest.TestCase):
 class TestSetElementBad(unittest.TestCase):
     def runTest(self):
         n = 5
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         # When testing for assertion errors, need lambda to stop assertion from actually happening
@@ -151,10 +151,10 @@ class TestSetElementBad(unittest.TestCase):
 class TestMultGood(unittest.TestCase):
     def runTest(self):
         n = 5
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = np.sin(A + A.T)  # force symmetric
         hess = Hessian(n, vals=H)
-        vec = np.exp(np.arange(n, dtype=np.float))
+        vec = np.exp(np.arange(n, dtype=float))
         hs = np.dot(H, vec)
         self.assertTrue(array_compare(hess*vec, hs, thresh=1e-12), 'Wrong values')
 
@@ -162,21 +162,21 @@ class TestMultGood(unittest.TestCase):
 class TestMultBad(unittest.TestCase):
     def runTest(self):
         n = 5
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         # When testing for assertion errors, need lambda to stop assertion from actually happening
         self.assertRaises(AssertionError, lambda: hess * 1.0)
         self.assertRaises(AssertionError, lambda: hess * None)
         self.assertRaises(AssertionError, lambda: hess * [float(i) for i in range(n)])
-        self.assertRaises(AssertionError, lambda: hess * np.arange(n-1, dtype=np.float))
-        self.assertRaises(AssertionError, lambda: hess * np.arange(n+1, dtype=np.float))
+        self.assertRaises(AssertionError, lambda: hess * np.arange(n-1, dtype=float))
+        self.assertRaises(AssertionError, lambda: hess * np.arange(n+1, dtype=float))
 
 
 class TestNeg(unittest.TestCase):
     def runTest(self):
         n = 5
-        A = np.arange(n ** 2, dtype=np.float).reshape((n, n))
+        A = np.arange(n ** 2, dtype=float).reshape((n, n))
         H = A + A.T  # force symmetric
         hess = Hessian(n, vals=H)
         neghess = -hess

@@ -39,7 +39,7 @@ class Hessian(object):
     def __init__(self, n, vals=None):
         self.n = n
         if vals is None:
-            self.hq = np.zeros((n * (n + 1) // 2,), dtype=np.float)
+            self.hq = np.zeros((n * (n + 1) // 2,), dtype=float)
         else:
             assert isinstance(vals, np.ndarray), "Can only set Hessian from NumPy array"
             assert len(vals.shape) in [1, 2], "Can only set Hessian from vector or matrix"
