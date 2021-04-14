@@ -29,7 +29,12 @@ alternative licensing.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import numpy as np
-import pandas as pd
+try:
+    import pandas as pd
+    HAVE_PANDAS = True
+except ImportError:
+    # If pandas not available, return diagnostic info as a Python dict
+    HAVE_PANDAS = False
 from .util import remove_scaling
 
 
@@ -84,7 +89,10 @@ class DiagnosticInfo(object):
             if key == "xk" and not with_xk:
                 continue  # skip
             data_to_save[key] = self.data[key]
-        return pd.DataFrame(data_to_save)
+        if HAVE_PANDAS:
+            return pd.DataFrame(data_to_save)
+        else:
+            return data_to_save
 
     def to_csv(self, filename):
         df = self.to_dataframe()
