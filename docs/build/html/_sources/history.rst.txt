@@ -35,3 +35,7 @@ Version 1.2 (25 Feb 2020)
 * Don’t adjust starting point if it is close to the bounds (as long as it is feasible).
 * Option to stop default logging behavior and/or enable per-iteration printing.
 * Bugfix: correctly handle 1-sided bounds as inputs, avoid divide-by-zero warnings when auto-detecting restarts.
+
+Version 1.3 (14 Apr 2021)
+-------------------------
+* Remove NumPy deprecation warnings from use of np.int and np.float
