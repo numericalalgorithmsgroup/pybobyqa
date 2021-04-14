@@ -65,7 +65,7 @@ class Model(object):
         self.f_values = np.inf * np.ones((npt, ))  # overall objective value for each xpt
         self.f_values[0] = f0
         self.kopt = 0  # index of current iterate (should be best value so far)
-        self.nsamples = np.zeros((npt,), dtype=np.int)  # number of samples used to evaluate objective at each point
+        self.nsamples = np.zeros((npt,), dtype=int)  # number of samples used to evaluate objective at each point
         self.nsamples[0] = f0_nsamples
         self.fbeg = self.f_values[0]  # f(x0), saved to check for sufficient reduction
 
