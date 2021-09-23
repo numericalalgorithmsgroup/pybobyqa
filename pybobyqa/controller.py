@@ -505,6 +505,11 @@ class Controller(object):
         self.delta = self.rhobeg
         self.rho = self.rhobeg
         self.diffs = [0.0, 0.0, 0.0]
+        
+        # Forget history of slow iterations
+        self.last_iters_step_taken = []
+        self.last_fopts_step_taken = []
+        self.num_slow_iters = 0
 
         all_sq_dist = self.model.distances_to_xopt()[:self.model.npt()]
         closest_points = np.argsort(all_sq_dist)
