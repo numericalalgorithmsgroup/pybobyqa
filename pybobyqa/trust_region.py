@@ -43,6 +43,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from math import sqrt
 import numpy as np
+import warnings
+
 try:
     import trustregion
     USE_FORTRAN = True
@@ -71,7 +73,10 @@ def trsbox(xopt, g, H, sl, su, delta, use_fortran=USE_FORTRAN):
     assert g.shape == (n,), "g and xopt have incompatible sizes"
     assert len(H.shape) == 2, "H must be a matrix"
     assert H.shape == (n,n), "H and xopt have incompatible sizes"
-    assert np.allclose(H, H.T), "H must be symmetric"
+    if not np.allclose(H, H.T):
+        # Enforce symmetry
+        H = 0.5 * (H + H.T)
+        warnings.warn("Trust-region solver: fixing non-symmetric Hessian", RuntimeWarning)
     assert sl.shape == (n,), "sl and xopt have incompatible sizes"
     assert su.shape == (n,), "su and xopt have incompatible sizes"
     assert delta > 0.0, "delta must be strictly positive"
