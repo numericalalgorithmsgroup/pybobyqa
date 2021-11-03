@@ -269,7 +269,15 @@ class Controller(object):
     def trust_region_step(self):
         # Build model for full least squares objectives
         gopt, H = self.model.build_full_model()
-        d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
+        try:
+            d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
+        except ValueError:
+            # A ValueError may be raised if gopt or H have nan/inf values (issue #14)
+            # Although this should be picked up earlier, in this situation just return a zero 
+            # trust-region step, which leads to a safety step being called in the main algorithm.
+            d = np.zeros(gopt.shape)
+            gnew = gopt.copy()
+            crvmin = 0.0  # this usually represents 'step on trust-region boundary' but seems to be a sensible default for errors
         return d, gopt, H, gnew, crvmin
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
