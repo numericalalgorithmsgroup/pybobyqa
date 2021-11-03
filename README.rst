@@ -2,8 +2,8 @@
 Py-BOBYQA: Derivative-Free Solver for Bound-Constrained Minimization
 ====================================================================
 
-.. image::  https://travis-ci.org/numericalalgorithmsgroup/pybobyqa.svg?branch=master
-   :target: https://travis-ci.org/numericalalgorithmsgroup/pybobyqa
+.. image::  https://github.com/numericalalgorithmsgroup/pybobyqa/actions/workflows/python_testing.yml/badge.svg
+   :target: https://github.com/numericalalgorithmsgroup/pybobyqa/actions
    :alt: Build Status
 
 .. image::  https://img.shields.io/badge/License-GPL%20v3-blue.svg
