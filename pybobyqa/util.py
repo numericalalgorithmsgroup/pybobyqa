@@ -33,6 +33,8 @@ import sys
 __all__ = ['sumsq', 'eval_objective', 'model_value', 'random_orthog_directions_within_bounds',
            'random_directions_within_bounds', 'apply_scaling', 'remove_scaling']
 
+module_logger = logging.getLogger(__name__) 
+
 
 def sumsq(x):
     # There are several ways to calculate sum of squares of a vector:
@@ -56,9 +58,9 @@ def eval_objective(objfun, x, args=(), verbose=True, eval_num=0, pt_num=0, full_
 
     if verbose:
         if len(x) < full_x_thresh:
-            logging.info("Function eval %i at point %i has f = %.15g at x = " % (eval_num, pt_num, f) + str(x))
+            module_logger.info("Function eval %i at point %i has f = %.15g at x = " % (eval_num, pt_num, f) + str(x))
         else:
-            logging.info("Function eval %i at point %i has f = %.15g at x = [...]" % (eval_num, pt_num, f))
+            module_logger.info("Function eval %i at point %i has f = %.15g at x = [...]" % (eval_num, pt_num, f))
 
     return f
 

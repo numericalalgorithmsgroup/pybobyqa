@@ -42,6 +42,8 @@ from .util import *
 
 __all__ = ['solve']
 
+module_logger = logging.getLogger(__name__) 
+
 
 # A container for the results of the optimization routine
 class OptimResults(object):
@@ -149,11 +151,11 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
     num_directions = npt - 1
     if params("init.random_initial_directions"):
         if do_logging:
-            logging.info("Initialising (random directions)")
+            module_logger.info("Initialising (random directions)")
         exit_info = control.initialise_random_directions(number_of_samples, num_directions, params)
     else:
         if do_logging:
-            logging.info("Initialising (coordinate directions)")
+            module_logger.info("Initialising (coordinate directions)")
         exit_info = control.initialise_coordinate_directions(number_of_samples, num_directions, params)
     if exit_info is not None:
         x, f, gradmin, hessmin, nsamples = control.model.get_final_results()
@@ -174,7 +176,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
     # ------------------------------------------
     current_iter = -1
     if do_logging:
-        logging.info("Beginning main loop")
+        module_logger.info("Beginning main loop")
     if print_progress:
         print("{:^5}{:^7}{:^10}{:^10}{:^10}{:^10}{:^7}".format("Run", "Iter", "Obj", "Grad", "Delta", "rho", "Evals"))
     while True:
@@ -231,7 +233,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
         # Trust region step
         d, gopt, H, gnew, crvmin = control.trust_region_step()
         if do_logging:
-            logging.debug("Trust region step is d = " + str(d))
+            module_logger.debug("Trust region step is d = " + str(d))
         xnew = control.model.xopt() + d
         dnorm = min(LA.norm(d), control.delta)
 
@@ -250,7 +252,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
         if dnorm < params("general.safety_step_thresh") * control.rho:
             # (start safety step)
             if do_logging:
-                logging.debug("Safety step (main phase)")
+                module_logger.debug("Safety step (main phase)")
 
             if params("logging.save_diagnostic_info"):
                 diagnostic_info.update_ratio(np.nan)
@@ -295,12 +297,12 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                 # Reduce rho
                 control.reduce_rho(current_iter, params)
                 if do_logging:
-                    logging.info("New rho = %g after %i function evaluations" % (control.rho, control.nf))
+                    module_logger.info("New rho = %g after %i function evaluations" % (control.rho, control.nf))
                     if control.n() < params("logging.n_to_print_whole_x_vector"):
-                        logging.debug("Best so far: f = %.15g at x = " % (control.model.fopt())
+                        module_logger.debug("Best so far: f = %.15g at x = " % (control.model.fopt())
                                       + str(control.model.xopt(abs_coordinates=True)))
                     else:
-                        logging.debug("Best so far: f = %.15g at x = [...]" % (control.model.fopt()))
+                        module_logger.debug("Best so far: f = %.15g at x = [...]" % (control.model.fopt()))
                 continue  # next iteration
             else:
                 # Quit on rho=rhoend
@@ -340,7 +342,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
         else:
             # (start trust region step)
             if do_logging:
-                logging.debug("Standard trust region step")
+                module_logger.debug("Standard trust region step")
 
             # Add chgJ and delta to restart auto-detect set
             if params("restarts.use_restarts") and params("restarts.auto_detect"):
@@ -420,26 +422,26 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
             # Update delta
             if do_logging:
-                logging.debug("Ratio = %g" % ratio)
+                module_logger.debug("Ratio = %g" % ratio)
             if params("logging.save_diagnostic_info"):
                 diagnostic_info.update_ratio(ratio)
                 diagnostic_info.update_slow_iter(-1)  # n/a, unless otherwise update
             if ratio < params("tr_radius.eta1"):  # ratio < 0.1
                 control.delta = min(params("tr_radius.gamma_dec") * control.delta, dnorm)
                 if params("logging.save_diagnostic_info"):
-                    # logging.info("Last eval was for unsuccessful step (ratio = %g)" % ratio)
+                    # module_logger.info("Last eval was for unsuccessful step (ratio = %g)" % ratio)
                     diagnostic_info.update_iter_type(ITER_ACCEPTABLE_NO_GEOM if ratio > 0.0
                                                      else ITER_UNSUCCESSFUL_NO_GEOM)  # we flag geom update below
             elif ratio <= params("tr_radius.eta2"):  # 0.1 <= ratio <= 0.7
                 control.delta = max(params("tr_radius.gamma_dec") * control.delta, dnorm)
                 if params("logging.save_diagnostic_info"):
-                    # logging.info("Last eval was for acceptable step (ratio = %g)" % ratio)
+                    # module_logger.info("Last eval was for acceptable step (ratio = %g)" % ratio)
                     diagnostic_info.update_iter_type(ITER_SUCCESSFUL)
             else:  # (ratio > eta2 = 0.7)
                 control.delta = min(max(params("tr_radius.gamma_inc") * control.delta,
                                         params("tr_radius.gamma_inc_overline") * dnorm), 1.0e10)
                 if params("logging.save_diagnostic_info"):
-                    # logging.info("Last eval was for successful step (ratio = %g)" % ratio)
+                    # module_logger.info("Last eval was for successful step (ratio = %g)" % ratio)
                     diagnostic_info.update_iter_type(ITER_VERY_SUCCESSFUL)
             if control.delta <= 1.5 * control.rho:  # cap trust region radius at rho
                 control.delta = control.rho
@@ -472,7 +474,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
             # Update point
             if do_logging:
-                logging.debug("Updating with knew = %i" % knew)
+                module_logger.debug("Updating with knew = %i" % knew)
             control.model.change_point(knew, xnew, f_list[0])  # expect step, not absolute x
             for i in range(1, num_samples_run):
                 control.model.add_new_sample(knew, f_extra=f_list[i])
@@ -484,7 +486,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                     diagnostic_info.update_slow_iter(1 if this_iter_slow else 0)
                 if should_terminate:
                     if do_logging:
-                        logging.info("Slow iteration  - terminating/restarting")
+                        module_logger.info("Slow iteration  - terminating/restarting")
                     if params("restarts.use_restarts") and params("restarts.use_soft_restarts"):
                         number_of_samples = max(nsamples(control.delta, control.rho, current_iter, nruns_so_far), 1)
                         exit_info = control.soft_restart(number_of_samples, nruns_so_far, params,
@@ -539,7 +541,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                         slope2, intercept2, r_value2, p_value2, std_err2 = slope, intercept, r_value, p_value, std_err
 
                     if do_logging:
-                        logging.debug("Iter %g: (slope, intercept, r_value) = (%g, %g, %g)" % (current_iter, slope, intercept, r_value))
+                        module_logger.debug("Iter %g: (slope, intercept, r_value) = (%g, %g, %g)" % (current_iter, slope, intercept, r_value))
                     if min(slope, slope2) > params("restarts.auto_detect.min_chg_model_slope") \
                             and min(r_value, r_value2) > params("restarts.auto_detect.min_correl"):
                         # increasing trend, with at least some positive correlation
@@ -549,10 +551,10 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
                 if do_restart and params("restarts.use_soft_restarts"):
                     if do_logging:
-                        logging.info("Auto detection: need to do a restart")
-                        logging.debug("delta history = %s" % str(restart_auto_detect_delta))
-                        logging.debug("chg_grad history = %s" % str(restart_auto_detect_chg_grad))
-                        logging.debug("chg_hess history = %s" % str(restart_auto_detect_chg_hess))
+                        module_logger.info("Auto detection: need to do a restart")
+                        module_logger.debug("delta history = %s" % str(restart_auto_detect_delta))
+                        module_logger.debug("chg_grad history = %s" % str(restart_auto_detect_chg_grad))
+                        module_logger.debug("chg_hess history = %s" % str(restart_auto_detect_chg_hess))
                     number_of_samples = max(nsamples(control.delta, control.rho, current_iter, nruns_so_far), 1)
                     exit_info = control.soft_restart(number_of_samples, nruns_so_far, params,
                                                      x_in_abs_coords_to_save=None, f_to_save=None,
@@ -570,7 +572,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                     continue  # next iteration
                 elif do_restart:
                     if do_logging:
-                        logging.info("Auto detection: need to do a restart")
+                        module_logger.info("Auto detection: need to do a restart")
                     exit_info = ExitInformation(EXIT_AUTO_DETECT_RESTART_WARNING, "Auto-detected restart")
                     nruns_so_far += 1
                     break  # quit
@@ -578,7 +580,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
             # Otherwise (ratio < eta1 = 0.1), check & fix geometry
             if do_logging:
-                logging.debug("Checking and possibly improving geometry (unsuccessful step)")
+                module_logger.debug("Checking and possibly improving geometry (unsuccessful step)")
             distsq = max((2.0 * control.delta) ** 2, (10.0 * control.rho) ** 2)
             update_delta = False
             number_of_samples = max(nsamples(control.delta, control.rho, current_iter, nruns_so_far), 1)
@@ -624,12 +626,12 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
                 # Reduce rho
                 control.reduce_rho(current_iter, params)
                 if do_logging:
-                    logging.info("New rho = %g after %i function evaluations" % (control.rho, control.nf))
+                    module_logger.info("New rho = %g after %i function evaluations" % (control.rho, control.nf))
                     if control.n() < params("logging.n_to_print_whole_x_vector"):
-                        logging.debug("Best so far: f = %.15g at x = " % (control.model.fopt())
+                        module_logger.debug("Best so far: f = %.15g at x = " % (control.model.fopt())
                                       + str(control.model.xopt(abs_coordinates=True)))
                     else:
-                        logging.debug("Best so far: f = %.15g at x = [...]" % (control.model.fopt()))
+                        module_logger.debug("Best so far: f = %.15g at x = [...]" % (control.model.fopt()))
                 continue  # next iteration
             else:
                 # Quit on rho=rhoend
@@ -658,8 +660,8 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
     # Quit & return the important information
     x, f, gradmin, hessmin, nsamples = control.model.get_final_results()
     if do_logging:
-        logging.debug("At return from solver, number of function evals = %i" % nf)
-        logging.debug("Smallest objective value = %.15g at x = " % f + str(x))
+        module_logger.debug("At return from solver, number of function evals = %i" % nf)
+        module_logger.debug("Smallest objective value = %.15g at x = " % f + str(x))
     return x, f, gradmin, hessmin, nsamples, control.nf, control.nx, nruns_so_far, exit_info, diagnostic_info
 
 
@@ -823,7 +825,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         if not reduction_last_run:
             _rhobeg = _rhobeg * params("restarts.rhobeg_scale_after_unsuccessful_restart")
         
-        logging.info("Restarting from finish point (f = %g) after %g function evals; using rhobeg = %g and rhoend = %g"
+        module_logger.info("Restarting from finish point (f = %g) after %g function evals; using rhobeg = %g and rhoend = %g"
                      % (fmin, nf, _rhobeg, _rhoend))
         if params("restarts.hard.use_old_fk"):
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
@@ -835,7 +837,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
                            diagnostic_info, scaling_changes, do_logging=do_logging, print_progress=print_progress)
 
         if fmin2 < fmin or np.isnan(fmin):
-            logging.info("Successful run with new f = %s compared to old f = %s" % (fmin2, fmin))
+            module_logger.info("Successful run with new f = %s compared to old f = %s" % (fmin2, fmin))
             last_successful_run = nruns
             (xmin, fmin, nsamples_min) = (xmin2, fmin2, nsamples2)
             if gradmin2 is not None:  # may be None if finished during setup phase, in which case just use old gradient
@@ -844,7 +846,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
                 hessmin = hessmin2
             reduction_last_run = True
         else:
-            logging.info("Unsuccessful run with new f = %s compared to old f = %s" % (fmin2, fmin))
+            module_logger.info("Unsuccessful run with new f = %s compared to old f = %s" % (fmin2, fmin))
             reduction_last_run = False
             total_unsuccessful_restarts += 1
 
@@ -868,7 +870,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         results.diagnostic_info = df
 
     if do_logging:
-        logging.info("Did a total of %g run(s)" % nruns)
+        module_logger.info("Did a total of %g run(s)" % nruns)
 
     return results
 

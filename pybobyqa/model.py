@@ -41,6 +41,9 @@ from .util import sumsq, model_value
 __all__ = ['Model']
 
 
+module_logger = logging.getLogger(__name__) 
+
+
 class Model(object):
     def __init__(self, npt, x0, f0, xl, xu, f0_nsamples, n=None, abs_tol=-1e20, precondition=True, do_logging=True):
         if n is None:
@@ -260,7 +263,7 @@ class Model(object):
             return col_scale(LA.lu_solve((self.lu, self.piv), col_scale(rhs, self.left_scaling)), self.right_scaling)
         else:
             if self.do_logging:
-                logging.warning("model.solve_system not using factorisation")
+                module_logger.warning("model.solve_system not using factorisation")
             A, left_scaling, right_scaling = self.interpolation_matrix()
             return col_scale(LA.solve(A, col_scale(rhs, left_scaling)), right_scaling)
 

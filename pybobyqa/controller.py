@@ -43,6 +43,8 @@ __all__ = ['Controller', 'ExitInformation', 'EXIT_SLOW_WARNING', 'EXIT_MAXFUN_WA
            'EXIT_INPUT_ERROR', 'EXIT_TR_INCREASE_ERROR', 'EXIT_LINALG_ERROR', 'EXIT_FALSE_SUCCESS_WARNING',
            'EXIT_AUTO_DETECT_RESTART_WARNING']
 
+module_logger = logging.getLogger(__name__) 
+
 EXIT_AUTO_DETECT_RESTART_WARNING = 4  # warning, auto-detected restart criteria
 EXIT_FALSE_SUCCESS_WARNING = 3  # warning, maximum fake successful steps reached
 EXIT_SLOW_WARNING = 2  # warning, maximum number of slow (successful) iterations reached
@@ -131,7 +133,7 @@ class Controller(object):
 
     def initialise_coordinate_directions(self, number_of_samples, num_directions, params):
         if self.do_logging:
-            logging.debug("Initialising with coordinate directions")
+            module_logger.debug("Initialising with coordinate directions")
         # self.model already has x0 evaluated, so only need to initialise the other points
         # num_directions = params("growing.ndirs_initial")
         assert self.model.num_pts <= (self.n() + 1) * (self.n() + 2) // 2, "prelim: must have npt <= (n+1)(n+2)/2"
@@ -205,7 +207,7 @@ class Controller(object):
 
     def initialise_random_directions(self, number_of_samples, num_directions, params):
         if self.do_logging:
-            logging.debug("Initialising with random orthogonal directions")
+            module_logger.debug("Initialising with random orthogonal directions")
         # self.model already has x0 evaluated, so only need to initialise the other points
         # num_directions = params("growing.ndirs_initial")
         assert 1 <= num_directions < self.model.num_pts, "Initialisation: must have 1 <= ndirs_initial < npt"
@@ -282,7 +284,7 @@ class Controller(object):
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
         if self.do_logging:
-            logging.debug("Running geometry-fixing step")
+            module_logger.debug("Running geometry-fixing step")
         try:
             c, g, H = self.model.lagrange_polynomial(knew)  # based at xopt
             # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
@@ -467,12 +469,12 @@ class Controller(object):
         if this_iter_slow:
             self.num_slow_iters += 1
             if self.do_logging:
-                logging.info("Slow iteration (%g consecutive so far, max allowed %g)"
+                module_logger.info("Slow iteration (%g consecutive so far, max allowed %g)"
                          % (self.num_slow_iters, params("slow.max_slow_iters")))
         else:
             self.num_slow_iters = 0
             if self.do_logging:
-                logging.debug("Non-slow iteration")
+                module_logger.debug("Non-slow iteration")
         return this_iter_slow, self.num_slow_iters >= params("slow.max_slow_iters")
 
     def soft_restart(self, number_of_samples, nruns_so_far, params, x_in_abs_coords_to_save=None, f_to_save=None,
@@ -507,7 +509,7 @@ class Controller(object):
                               self.model.nsamples[self.model.kopt], x_in_abs_coords=True)
 
         if self.do_logging:
-            logging.info("Soft restart [currently, f = %g after %g function evals]" % (self.model.fopt(), self.nf))
+            module_logger.info("Soft restart [currently, f = %g after %g function evals]" % (self.model.fopt(), self.nf))
         # Resetting method: reset delta and rho, then move the closest 'num_steps' points to xk to improve geometry
         # Note: closest points because we are suddenly increasing delta & rho, so we want to encourage spreading out points
         self.delta = self.rhobeg
