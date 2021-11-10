@@ -287,10 +287,17 @@ class Controller(object):
             module_logger.debug("Running geometry-fixing step")
         try:
             c, g, H = self.model.lagrange_polynomial(knew)  # based at xopt
-            # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
-            xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
         except LA.LinAlgError:
             exit_info = ExitInformation(EXIT_LINALG_ERROR, "Singular matrix encountered in geometry step")
+            return exit_info  # didn't fix geometry - return & quit
+        
+        # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
+        try:
+            xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
+        except ValueError:
+            # A ValueError may be raised if gopt or H have nan/inf values (issue #23)
+            # Ideally this should be picked up earlier in self.model.lagrange_polynomial(...)
+            exit_info = ExitInformation(EXIT_LINALG_ERROR, "Error when calculating geometry-improving step")
             return exit_info  # didn't fix geometry - return & quit
 
         gopt, H = self.model.build_full_model()  # save here, to calculate predicted value from geometry step
