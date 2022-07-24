@@ -41,7 +41,7 @@ to upgrade Py-BOBYQA to the latest version.
 
 Manual installation
 -------------------
-The source code for Py-BOBYQA is `available on Github <https://https://github.com/numericalalgorithmsgroup/pybobyqa>`_:
+The source code for Py-BOBYQA is `available on Github <https://github.com/numericalalgorithmsgroup/pybobyqa>`_:
 
  .. code-block:: bash
  
