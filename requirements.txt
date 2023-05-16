@@ -1,3 +1,2 @@
 numpy>=1.11
 scipy>=0.18
-pandas>=0.17
