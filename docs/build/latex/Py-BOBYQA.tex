@@ -73,8 +73,8 @@
 
 
 \title{Py-BOBYQA Documentation}
-\date{25 July 2022}
-\release{1.3}
+\date{16 May 2023}
+\release{1.4}
 \author{Lindon Roberts}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -89,11 +89,11 @@
 \phantomsection\label{\detokenize{index::doc}}
 
 
-\sphinxstylestrong{Release:} 1.3
+\sphinxstylestrong{Release:} 1.4
 
-\sphinxstylestrong{Date:} 14 April 2021
+\sphinxstylestrong{Date:} 16 May 2023
 
-\sphinxstylestrong{Author:} \sphinxhref{mailto:lindon.roberts@maths.ox.ac.uk}{Lindon Roberts}
+\sphinxstylestrong{Author:} \sphinxhref{mailto:lindon.roberts@sydney.edu.au}{Lindon Roberts}
 
 Py\sphinxhyphen{}BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound constraints), without requiring any derivatives of the objective. Py\sphinxhyphen{}BOBYQA is a Python implementation of the \sphinxhref{http://mat.uc.pt/~zhang/software.html\#powell\_software}{BOBYQA} solver by Powell (documentation \sphinxhref{http://www.damtp.cam.ac.uk/user/na/NA\_papers/NA2009\_06.pdf}{here}). It is particularly useful when evaluations of the objective function are expensive and/or noisy.
 
@@ -145,7 +145,7 @@ Additionally, the following python packages should be installed (these will be i
 \sphinxhref{http://www.scipy.org/}{SciPy 0.18 or higher}
 
 \item {} 
-\sphinxhref{https://pandas.pydata.org/}{Pandas 0.17 or higher}
+Optionally, \sphinxhref{https://pandas.pydata.org/}{Pandas 0.17 or higher}, to return the diagnostic information as a DataFrame
 
 \end{itemize}
 
@@ -975,7 +975,7 @@ The default values, used if no override is given, in some cases vary depending o
 
 \chapter{Diagnostic Information}
 \label{\detokenize{diagnostic:diagnostic-information}}\label{\detokenize{diagnostic::doc}}
-In {\hyperref[\detokenize{userguide::doc}]{\sphinxcrossref{\DUrole{doc}{Using Py\sphinxhyphen{}BOBYQA}}}}, we saw that the output of Py\sphinxhyphen{}BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (\sphinxcode{\sphinxupquote{soln.diagnostic\_info}}). This object is a \sphinxhref{http://pandas.pydata.org/}{Pandas} DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).
+In {\hyperref[\detokenize{userguide::doc}]{\sphinxcrossref{\DUrole{doc}{Using Py\sphinxhyphen{}BOBYQA}}}}, we saw that the output of Py\sphinxhyphen{}BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (\sphinxcode{\sphinxupquote{soln.diagnostic\_info}}). This object is a \sphinxhref{http://pandas.pydata.org/}{Pandas} DataFrame, with one row per iteration of the algorithm. If Pandas is not available, it returns a dictionary where each key listed below has a list of values, one per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).
 
 To save this information to a CSV file, use:
 \begin{quote}
@@ -1171,6 +1171,23 @@ Bugfix: correctly handle 1\sphinxhyphen{}sided bounds as inputs, avoid divide\sp
 \label{\detokenize{history:version-1-3-14-apr-2021}}\begin{itemize}
 \item {} 
 Remove NumPy deprecation warnings from use of np.int and np.float
+
+\end{itemize}
+
+
+\section{Version 1.4 (16 May 2023)}
+\label{\detokenize{history:version-1-4-16-may-2023}}\begin{itemize}
+\item {} 
+Return diagnostic information as dictionary if Pandas not available (removes Pandas dependency)
+
+\item {} 
+Handle Nan/Inf values in model gradient and Hessian by gracefully exiting trust\sphinxhyphen{}region subproblem
+
+\item {} 
+Bugfix: automatically make model Hessian symmetric before trust\sphinxhyphen{}region subproblem with warning, instead of returning an error
+
+\item {} 
+Bugfix: reset slow iteration counter when doing soft restarts
 
 \end{itemize}
 

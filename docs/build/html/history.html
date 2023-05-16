@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Version History &mdash; Py-BOBYQA v1.3 documentation</title>
+  <title>Version History &mdash; Py-BOBYQA v1.4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.3
+                1.4
               </div>
             
           
@@ -99,6 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-1-5-apr-2019">Version 1.1.1 (5 Apr 2019)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-25-feb-2020">Version 1.2 (25 Feb 2020)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-3-14-apr-2021">Version 1.3 (14 Apr 2021)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-16-may-2023">Version 1.4 (16 May 2023)</a></li>
 </ul>
 </li>
 </ul>
@@ -217,6 +218,15 @@
 <h2>Version 1.3 (14 Apr 2021)<a class="headerlink" href="#version-1-3-14-apr-2021" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Remove NumPy deprecation warnings from use of np.int and np.float</p></li>
+</ul>
+</div>
+<div class="section" id="version-1-4-16-may-2023">
+<h2>Version 1.4 (16 May 2023)<a class="headerlink" href="#version-1-4-16-may-2023" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Return diagnostic information as dictionary if Pandas not available (removes Pandas dependency)</p></li>
+<li><p>Handle Nan/Inf values in model gradient and Hessian by gracefully exiting trust-region subproblem</p></li>
+<li><p>Bugfix: automatically make model Hessian symmetric before trust-region subproblem with warning, instead of returning an error</p></li>
+<li><p>Bugfix: reset slow iteration counter when doing soft restarts</p></li>
 </ul>
 </div>
 </div>

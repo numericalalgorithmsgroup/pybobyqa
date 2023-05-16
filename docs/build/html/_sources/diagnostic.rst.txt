@@ -1,6 +1,6 @@
 Diagnostic Information
 ======================
-In :doc:`userguide`, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (:code:`soln.diagnostic_info`). This object is a `Pandas <http://pandas.pydata.org/>`_ DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).
+In :doc:`userguide`, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (:code:`soln.diagnostic_info`). This object is a `Pandas <http://pandas.pydata.org/>`_ DataFrame, with one row per iteration of the algorithm. If Pandas is not available, it returns a dictionary where each key listed below has a list of values, one per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).
 
 To save this information to a CSV file, use:
 

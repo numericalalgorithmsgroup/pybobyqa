@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.3.30)  25 JUL 2022 10:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.3.30)  16 MAY 2023 12:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1213,24 +1213,24 @@ Chapter 7.
 ] [26
 
 ] (./Py-BOBYQA.ind)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1199.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1216.
  [27
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1199.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1216.
  (./Py-BOBYQA.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1199.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1199.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1216.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1216.
 
 Package rerunfilecheck Info: File `Py-BOBYQA.out' has not changed.
-(rerunfilecheck)             Checksum: 1487A3169862E6F6FCB18D6514EEF8DC;7391.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1199.
+(rerunfilecheck)             Checksum: A96FBB2D8D32ED70F6AA629CE1114E99;7589.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1216.
  ) 
 Here is how much of TeX's memory you used:
- 13812 strings out of 494923
- 191675 string characters out of 6180742
- 323745 words of memory out of 5000000
- 16726 multiletter control sequences out of 15000+600000
+ 13815 strings out of 494923
+ 191732 string characters out of 6180742
+ 323797 words of memory out of 5000000
+ 16728 multiletter control sequences out of 15000+600000
  52360 words of font info for 74 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
  37i,17n,48p,988b,548s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1252,10 +1252,10 @@ urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic
 /uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Py-BOBYQA.pdf (31 pages, 262694 bytes).
+Output written on Py-BOBYQA.pdf (31 pages, 262272 bytes).
 PDF statistics:
- 540 PDF objects out of 1000 (max. 8388607)
- 478 compressed objects within 5 object streams
- 85 named destinations out of 1000 (max. 500000)
- 389 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 545 PDF objects out of 1000 (max. 8388607)
+ 483 compressed objects within 5 object streams
+ 86 named destinations out of 1000 (max. 500000)
+ 397 words of extra memory for PDF output out of 10000 (max. 10000000)
 

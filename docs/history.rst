@@ -39,3 +39,10 @@ Version 1.2 (25 Feb 2020)
 Version 1.3 (14 Apr 2021)
 -------------------------
 * Remove NumPy deprecation warnings from use of np.int and np.float
+
+Version 1.4 (16 May 2023)
+-------------------------
+* Return diagnostic information as dictionary if Pandas not available (removes Pandas dependency)
+* Handle Nan/Inf values in model gradient and Hessian by gracefully exiting trust-region subproblem
+* Bugfix: automatically make model Hessian symmetric before trust-region subproblem with warning, instead of returning an error
+* Bugfix: reset slow iteration counter when doing soft restarts

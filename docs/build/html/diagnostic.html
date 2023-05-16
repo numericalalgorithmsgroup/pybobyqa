@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Diagnostic Information &mdash; Py-BOBYQA v1.3 documentation</title>
+  <title>Diagnostic Information &mdash; Py-BOBYQA v1.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.3
+                1.4
               </div>
             
           
@@ -166,7 +166,7 @@
             
   <div class="section" id="diagnostic-information">
 <h1>Diagnostic Information<a class="headerlink" href="#diagnostic-information" title="Permalink to this headline">¶</a></h1>
-<p>In <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (<code class="code docutils literal notranslate"><span class="pre">soln.diagnostic_info</span></code>). This object is a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> DataFrame, with one row per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).</p>
+<p>In <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a>, we saw that the output of Py-BOBYQA returns a container which includes diagnostic information about the progress of the algorithm (<code class="code docutils literal notranslate"><span class="pre">soln.diagnostic_info</span></code>). This object is a <a class="reference external" href="http://pandas.pydata.org/">Pandas</a> DataFrame, with one row per iteration of the algorithm. If Pandas is not available, it returns a dictionary where each key listed below has a list of values, one per iteration of the algorithm. In this section, we explain the meaning of each type of output (the columns of the DataFrame).</p>
 <p>To save this information to a CSV file, use:</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Previously: define objfun and x0</span>
