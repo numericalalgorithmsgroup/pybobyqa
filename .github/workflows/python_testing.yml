@@ -24,4 +24,4 @@ jobs:
         pip install pytest
     - name: Run unit tests
       run: |
-        python -m pytest --pyargs dfols
+        python -m pytest --pyargs pybobyqa
