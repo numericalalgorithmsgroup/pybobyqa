@@ -46,3 +46,8 @@ Version 1.4 (16 May 2023)
 * Handle Nan/Inf values in model gradient and Hessian by gracefully exiting trust-region subproblem
 * Bugfix: automatically make model Hessian symmetric before trust-region subproblem with warning, instead of returning an error
 * Bugfix: reset slow iteration counter when doing soft restarts
+
+Version 1.4.1 (11 Apr 2024)
+-------------------------
+* Migrate package setup to pyproject.toml (required for Python version 3.12)
+* Drop support for Python 2.7 and <=3.7 due to new setup process
