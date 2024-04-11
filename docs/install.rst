@@ -5,13 +5,13 @@ Requirements
 ------------
 Py-BOBYQA requires the following software to be installed:
 
-* `Python 2.7 or Python 3 <http://www.python.org/>`_
+* Python 3.8 or higher (http://www.python.org/)
 
 Additionally, the following python packages should be installed (these will be installed automatically if using `pip <http://www.pip-installer.org/>`_, see `Installation using pip`_):
 
-* `NumPy 1.11 or higher <http://www.numpy.org/>`_ 
-* `SciPy 0.18 or higher <http://www.scipy.org/>`_
-* Optionally, `Pandas 0.17 or higher <https://pandas.pydata.org/>`_, to return the diagnostic information as a DataFrame
+* NumPy (http://www.numpy.org/)
+* SciPy (http://www.scipy.org/)
+* Pandas (http://pandas.pydata.org/)
 
 **Optional package:** Py-BOBYQA versions 1.2 and higher also support the `trustregion <https://github.com/lindonroberts/trust-region>`_ package for fast trust-region subproblem solutions. To install this, make sure you have a Fortran compiler (e.g. `gfortran <https://gcc.gnu.org/wiki/GFortran>`_) and NumPy installed, then run :code:`pip install trustregion`. You do not have to have trustregion installed for Py-BOBYQA to work, and it is not installed by default.
 
@@ -71,11 +71,12 @@ To upgrade Py-BOBYQA to the latest version, navigate to the top-level directory 
 
 Testing
 -------
-If you installed Py-BOBYQA manually, you can test your installation by running:
+If you installed Py-BOBYQA manually, you can test your installation using the pytest package:
 
  .. code-block:: bash
 
-    $ python setup.py test
+    $ pip install pytest
+    $ python -m pytest --pyargs pybobyqa
 
 Uninstallation
 --------------

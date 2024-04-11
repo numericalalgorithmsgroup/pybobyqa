@@ -27,7 +27,7 @@ Py-BOBYQA is a flexible package for solving bound-constrained general objective 
 More details about Py-BOBYQA and its enhancements over BOBYQA can be found in our papers:
 
 1. Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41 [`arXiv preprint: 1804.00154 <https://arxiv.org/abs/1804.00154>`_] 
-2. Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization* (2021). [`arXiv preprint: 1812.11343 <https://arxiv.org/abs/1812.11343>`_] 
+2. Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization*, 71:8 (2022), pp. 2343-2373. [`arXiv preprint: 1812.11343 <https://arxiv.org/abs/1812.11343>`_] 
 
 Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality. For reproducibility of all figures, please feel free to contact the authors.
 
@@ -47,19 +47,19 @@ Cartis, C., Fiala, J., Marteau, B. and Roberts, L., Improving the Flexibility an
 
 If you use Py-BOBYQA's global optimization heuristic, please cite the above and also
 
-Cartis, C., Roberts, L. and Sheridan-Methven, O., Escaping local minima with derivative-free methods: a numerical investigation, Optimization, (2021). 
+Cartis, C., Roberts, L. and Sheridan-Methven, O., Escaping local minima with derivative-free methods: a numerical investigation, Optimization, 71:8 (2022), pp. 2343-2373. 
 
 Requirements
 ------------
 Py-BOBYQA requires the following software to be installed:
 
-* Python 2.7 or Python 3 (http://www.python.org/)
+* Python 3.8 or higher (http://www.python.org/)
 
 Additionally, the following python packages should be installed (these will be installed automatically if using *pip*, see `Installation using pip`_):
 
-* NumPy 1.11 or higher (http://www.numpy.org/)
-* SciPy 0.18 or higher (http://www.scipy.org/)
-* Optionally, Pandas 0.17 or higher (http://pandas.pydata.org/), to return the diagnostic information as a DataFrame
+* NumPy (http://www.numpy.org/)
+* SciPy (http://www.scipy.org/)
+* Pandas (http://pandas.pydata.org/)
 
 **Optional package:** Py-BOBYQA versions 1.2 and higher also support the `trustregion <https://github.com/lindonroberts/trust-region>`_ package for fast trust-region subproblem solutions. To install this, make sure you have a Fortran compiler (e.g. `gfortran <https://gcc.gnu.org/wiki/GFortran>`_) and NumPy installed, then run :code:`pip install trustregion`. You do not have to have trustregion installed for Py-BOBYQA to work, and it is not installed by default.
 
@@ -125,11 +125,12 @@ To upgrade Py-BOBYQA to the latest version, navigate to the top-level directory 
 
 Testing
 -------
-If you installed Py-BOBYQA manually, you can test your installation by running:
+If you installed Py-BOBYQA manually, you can test your installation using the pytest package:
 
  .. code-block:: bash
 
-    $ python setup.py test
+    $ pip install pytest
+    $ python -m pytest --pyargs pybobyqa
 
 Alternatively, the HTML documentation provides some simple examples of how to run Py-BOBYQA.
 

@@ -14,7 +14,7 @@ Py-BOBYQA is designed to solve the local optimization problem
 where the bound constraints :math:`a \leq x \leq b` are optional. The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds). The objective function :math:`f(x)` is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
 
 Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
-For an in-depth technical description of the algorithm see the paper [CFMR2018]_, and for the global optimization heuristic, see [CRO2018]_.
+For an in-depth technical description of the algorithm see the paper [CFMR2018]_, and for the global optimization heuristic, see [CRO2022]_.
 
 How to use Py-BOBYQA
 --------------------
@@ -402,12 +402,12 @@ The output of this is:
       Warning (max evals): Objective has been called MAXFUN times
       ******************************
 
-As we can see, the :code:`seek_global_minimum` flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in [CRO2018]_.
+As we can see, the :code:`seek_global_minimum` flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in [CRO2022]_.
 
 References
 ----------
 
 .. [CFMR2018]   
    Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41 [`preprint <https://arxiv.org/abs/1804.00154>`_] 
-.. [CRO2018]   
-   Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization* (2021). [`preprint <https://arxiv.org/abs/1812.11343>`_] 
+.. [CRO2022]   
+   Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization*, 71:8 (2022), pp. 2343-2373. [`arXiv preprint: 1812.11343 <https://arxiv.org/abs/1812.11343>`_] 
