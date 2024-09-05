@@ -94,11 +94,11 @@ class ExitInformation(object):
 
 
 class Controller(object):
-    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=True):
+    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, projections, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=True):
         self.objfun = objfun
         self.maxfun = maxfun
         self.args = args
-        self.model = Model(npt, x0, f0, xl, xu, f0_nsamples, abs_tol=params("model.abs_tol"),
+        self.model = Model(npt, x0, f0, xl, xu, projections, f0_nsamples, abs_tol=params("model.abs_tol"),
                            precondition=params("interpolation.precondition"), do_logging=do_logging)
         self.nf = nf
         self.nx = nx
@@ -271,15 +271,24 @@ class Controller(object):
     def trust_region_step(self):
         # Build model for full least squares objectives
         gopt, H = self.model.build_full_model()
-        try:
-            d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
-        except ValueError:
-            # A ValueError may be raised if gopt or H have nan/inf values (issue #14)
-            # Although this should be picked up earlier, in this situation just return a zero 
-            # trust-region step, which leads to a safety step being called in the main algorithm.
+        if np.any(np.isinf(gopt)) or np.any(np.isnan(gopt)) or np.any(np.isinf(H)) or np.any(np.isnan(H)):
+            # Skip computing the step if gopt or H are badly formed
             d = np.zeros(gopt.shape)
             gnew = gopt.copy()
             crvmin = 0.0  # this usually represents 'step on trust-region boundary' but seems to be a sensible default for errors
+        else:
+            try:
+                if self.model.projections is None:
+                    d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
+                else:
+                    d, gnew, crvmin = ctrsbox(self.model.xbase, self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.model.projections, self.delta)
+            except ValueError:
+                # A ValueError may be raised if gopt or H have nan/inf values (issue #14)
+                # Although this should be picked up earlier, in this situation just return a zero
+                # trust-region step, which leads to a safety step being called in the main algorithm.
+                d = np.zeros(gopt.shape)
+                gnew = gopt.copy()
+                crvmin = 0.0  # this usually represents 'step on trust-region boundary' but seems to be a sensible default for errors
         return d, gopt, H, gnew, crvmin
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
@@ -293,7 +302,12 @@ class Controller(object):
         
         # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
         try:
-            xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
+            if np.any(np.isinf(g)) or np.any(np.isnan(g)) or np.any(np.isinf(H)) or np.any(np.isnan(H)):
+                raise ValueError
+            if self.model.projections is None:
+                xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
+            else:
+                xnew = ctrsbox_geometry(self.model.xbase, self.model.xopt(), c, g, H, self.model.sl, self.model.su, self.model.projections, adelt)
         except ValueError:
             # A ValueError may be raised if gopt or H have nan/inf values (issue #23)
             # Ideally this should be picked up earlier in self.model.lagrange_polynomial(...)
