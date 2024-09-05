@@ -417,6 +417,9 @@ def trsbox_geometry(xbase, c, g, H, lower, upper, Delta, use_fortran=USE_FORTRAN
 
 
 def ctrsbox(xbase, xopt, g, H, sl, su, projections, delta, dykstra_max_iters=100, dykstra_tol=1e-10, gtol=1e-8):
+    if projections is None or len(projections) == 0:
+        return trsbox(xopt, g, H, sl, su, delta)
+
     n = xopt.size
     assert xopt.shape == (n,), "xopt has wrong shape (should be vector)"
     assert xbase.shape == (n,), "xbase and xopt has wrong shape (should be vector)"
@@ -484,7 +487,7 @@ def ctrsbox(xbase, xopt, g, H, sl, su, projections, delta, dykstra_max_iters=100
 
 
 def ctrsbox_geometry(xbase, xopt, c, g, H, lower, upper, projections, Delta, dykstra_max_iters=100, dykstra_tol=1e-10, gtol=1e-8):
-    # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xbase) + 0.5*(x-xbase)*H*(x-xbase)
+    # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xopt) + 0.5*(x-xopt)*H*(x-xopt)
     # Maximise |L(x)| in the feasible region + trust region - that is, solve:
     #   max_x  abs(c + g' * (x - xopt) + 0.5*(x-xopt)*H*(x-xopt))
     #    s.t.  lower <= x <= upper
@@ -495,6 +498,9 @@ def ctrsbox_geometry(xbase, xopt, c, g, H, lower, upper, projections, Delta, dyk
     #   s.t.   lower <= xopt + s <= upper
     #          ||s|| <= Delta
     #          xbase + xopt + s in the intersection of all convex sets C with proj_{C} in the list 'projections'
+    if projections is None or len(projections) == 0:
+        return trsbox_geometry(xopt, g, H, lower, upper, Delta)
+
     smin, gmin, crvmin = ctrsbox(xbase, xopt, g, H, lower, upper, projections, Delta,
                                  dykstra_max_iters=dykstra_max_iters, dykstra_tol=dykstra_tol, gtol=gtol)  # minimise L(x)
     smax, gmax, crvmax = ctrsbox(xbase, xopt, -g, -H, lower, upper, projections, Delta,

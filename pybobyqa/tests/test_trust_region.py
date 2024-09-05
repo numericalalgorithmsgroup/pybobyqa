@@ -27,7 +27,7 @@ from math import sqrt
 import numpy as np
 import unittest
 
-from pybobyqa.trust_region import trsbox, trsbox_geometry
+from pybobyqa.trust_region import trsbox, trsbox_geometry, ctrsbox, ctrsbox_geometry
 from pybobyqa.util import model_value
 
 
@@ -70,6 +70,11 @@ def cauchy_pt_box(g, hess, delta, lower, upper):
         crvmin = -1.0
     return s, red, crvmin
 
+def p_box(x, l, u):
+    return np.minimum(np.maximum(x,l), u)
+
+def p_ball(x, c, r):
+    return c + (r/np.max([np.linalg.norm(x-c),r]))*(x-c)
 
 class TestUncInternal(unittest.TestCase):
     def runTest(self):
@@ -382,3 +387,198 @@ class TestGeomWithHessian2(unittest.TestCase):
         # print(x)
         # print(xtrue)
         self.assertTrue(np.allclose(x, xtrue, atol=1e-3), "Wrong step")
+
+
+class TestGeom3CDFO(unittest.TestCase):
+    def runTest(self):
+        n = 2
+        xbase = np.zeros((n,))
+        xopt = np.ones((n,))
+        g = np.array([1.0, -1.0])
+        a = np.array([-2.0, -2.0])
+        b = np.array([1.0, 2.0])
+        H = np.zeros((n, n))
+        proj = lambda x: p_box(x, a, b)
+        delta = 5.0
+        c = 3.0  # may want to max instead
+        x = ctrsbox_geometry(xbase, xopt, c, g, H, a, b, [proj], delta)
+        xtrue = np.array([1.0, -2.0])
+        print("x = ", x)
+        print("xtrue = ", xtrue)
+        self.assertTrue(np.max(np.abs(x - xtrue)) < 1e-10, 'Wrong step')
+
+
+class TestGeomWithHessianCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        c = -1.0
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[-2.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
+        Delta = 5.0 / 12.0
+        xbase = np.zeros((n,))
+        xopt = np.zeros((n,))
+        sl = -1e20 * np.ones((n,))
+        su = 1e20 * np.ones((n,))
+        proj = lambda x: p_box(x, sl, su)
+        x = ctrsbox_geometry(xbase, xopt, c, g, H, sl, su, [proj], Delta)
+        xtrue = np.array([-1.0 / 3.0, 0.0, -0.25])
+        # print(x)
+        # print(xtrue)
+        self.assertTrue(np.allclose(x, xtrue, atol=5e-2), "Wrong step")
+
+
+class TestGeomWithHessian2CDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        c = 1.0  # changed this value to force max rather than min
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[-2.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
+        Delta = 5.0 / 12.0
+        xbase = np.zeros((n,))
+        xopt = np.zeros((n,))
+        sl = -1e20 * np.ones((n,))
+        su = 1e20 * np.ones((n,))
+        proj = lambda x: p_box(x, sl, su)
+        x = ctrsbox_geometry(xbase, xopt, c, g, H, sl, su, [proj], Delta)
+        xtrue = np.array([0.25, 0.0, 1.0 / 3.0])  # max solution
+        # print(x)
+        # print(xtrue)
+        self.assertTrue(np.allclose(x, xtrue, atol=1e-3), "Wrong step")
+
+
+class TestUncInternalCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.zeros((n,))
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 2.0
+        xopt = np.ones((n,))  # trying nonzero (since bounds inactive)
+        sl = xopt-3*Delta * np.ones((n,))
+        su = xopt+3*Delta * np.ones((n,))
+        proj = lambda x: p_box(x, sl, su)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [proj], Delta)
+        true_d = np.array([-1.0, 0.0, -0.5])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        s_cauchy, red_cauchy, _crvmin_cauchy = cauchy_pt(g, H, Delta)
+        self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
+        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+
+
+class TestUncBdryCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.zeros((n,))
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 5.0 / 12.0
+        xopt = np.zeros((n,))
+        sl = xopt - 3 * Delta * np.ones((n,))
+        su = xopt + 3 * Delta * np.ones((n,))
+        proj = lambda x: p_box(x, sl, su)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [proj], Delta)
+        true_d = np.array([-1.0 / 3.0, 0.0, -0.25])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        s_cauchy, red_cauchy, _crvmin_cauchy = cauchy_pt(g, H, Delta)
+        self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
+
+
+class TestUncHardCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.zeros((n,))
+        g = np.array([0.0, 0.0, 1.0])
+        H = np.array([[-2.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
+        Delta = sqrt(2.0)
+        xopt = np.zeros((n,))
+        sl = xopt - 3 * Delta * np.ones((n,))
+        su = xopt + 3 * Delta * np.ones((n,))
+        proj = lambda x: p_box(x, sl, su)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [proj], Delta)
+        true_d = np.array([1.0, 0.0, -1.0])  # non-unique solution
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        s_cauchy, red_cauchy, _crvmin_cauchy = cauchy_pt(g, H, Delta)
+        self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
+        self.assertTrue(np.allclose(gnew, g + H.dot(d)), 'Wrong gnew')
+
+
+class TestConInternalCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.zeros((n,))
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 2.0
+        xopt = np.ones((n,))  # trying nonzero (since bounds inactive)
+        sl = xopt + np.array([-0.5, -10.0, -10.0])
+        su = xopt + np.array([10.0, 10.0, 10.0])
+        proj = lambda x: p_box(x, sl, su)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [proj], Delta)
+        true_d = np.array([-1.0, 0.0, -0.5])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        s_cauchy, red_cauchy, _crvmin_cauchy = cauchy_pt_box(g, H, Delta, sl-xopt, su-xopt)
+        self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
+        self.assertTrue(np.all(gnew == g + H.dot(d)), 'Wrong gnew')
+
+
+class TestConBdryCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.ones((n,))
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 5.0 / 12.0
+        xopt = np.zeros((n,))
+        sl = xopt + np.array([-0.3, -0.01, -0.1])
+        su = xopt + np.array([10.0, 1.0, 10.0])
+        proj = lambda x: p_box(x, xbase + sl, xbase + su)  # xbase != 0, adjust projections accordingly
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [proj], Delta)  # proj=duplicate of sl, su
+        true_d = np.array([-1.0 / 3.0, 0.0, -0.25])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        s_cauchy, red_cauchy, _crvmin_cauchy = cauchy_pt_box(g, H, Delta, sl - xopt, su - xopt)
+        self.assertTrue(est_min <= red_cauchy, 'Cauchy reduction not achieved')
+        self.assertTrue(np.max(np.abs(gnew - g - H.dot(d))) < 1e-10, 'Wrong gnew')
+
+
+class TestBoxBallInternalCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        xbase = np.zeros((n,))
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 2.0
+        xopt = np.ones((n,))  # trying nonzero (since bounds inactive)
+        sl = xopt + np.array([-0.5, -10.0, -10.0])
+        su = xopt + np.array([10.0, 10.0, 10.0])
+        boxproj = lambda x: p_box(x, sl, su)
+        ballproj = lambda x: p_ball(x, xopt, 5)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [ballproj], Delta)
+        true_d = np.array([-0.5, 0.0, -0.5])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        self.assertTrue(est_min <= true_min + 1e-3, 'Sufficient decrease not achieved')
+
+
+class TestBoxBallBdryCDFO(unittest.TestCase):
+    def runTest(self):
+        n = 3
+        g = np.array([1.0, 0.0, 1.0])
+        H = np.array([[1.0, 0.0, 0.0], [0.0, 2.0, 0.0], [0.0, 0.0, 2.0]])
+        Delta = 5.0 / 12.0
+        xbase = np.zeros((n,))
+        xopt = np.zeros((n,))
+        sl = xopt + np.array([-0.3, -0.01, -0.1])
+        su = xopt + np.array([10.0, 1.0, 10.0])
+        boxproj = lambda x: p_box(x, sl, su)
+        ballproj = lambda x: p_ball(x, xopt, 0.25)
+        d, gnew, _crvmin = ctrsbox(xbase, xopt, g, H, sl, su, [ballproj], Delta)
+        true_d = np.array([-0.22913085, 0.0, -0.09999527])
+        est_min = model_value(g, H, d)
+        true_min = model_value(g, H, true_d)
+        self.assertTrue(est_min <= true_min + 1e-3, 'Sufficient decrease not achieved')

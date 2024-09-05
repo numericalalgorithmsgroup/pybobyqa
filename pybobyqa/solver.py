@@ -768,6 +768,10 @@ def solve(objfun, x0, args=(), bounds=None, projections=None, npt=None, rhobeg=N
     if exit_info is None and projections is not None and type(projections) != list:
         exit_info = ExitInformation(EXIT_INPUT_ERROR, "projections must be a list of functions")
 
+    if projections is not None and len(projections) == 0:
+        # empty list given
+        projections = None
+
     if maxfun <= npt:
         warnings.warn("maxfun <= npt: Are you sure your budget is large enough?", RuntimeWarning)
 
