@@ -231,7 +231,7 @@ def solve_main(objfun, x0, args, xl, xu, projections, npt, rhobeg, rhoend, maxfu
 
 
         # Trust region step
-        d, gopt, H, gnew, crvmin = control.trust_region_step()
+        d, gopt, H, gnew, crvmin = control.trust_region_step(params)
         if do_logging:
             module_logger.debug("Trust region step is d = " + str(d))
         xnew = control.model.xopt() + d
@@ -812,6 +812,20 @@ def solve(objfun, x0, args=(), bounds=None, projections=None, npt=None, rhobeg=N
     if np.any(idx):
         warnings.warn("x0 above upper bound, adjusting", RuntimeWarning)
     x0[idx] = xu[idx]
+
+    # Enforce feasibility of x0 with respect to projection constraints
+    if projections is not None:
+        x0_feasible = True
+        for i, proj in enumerate(projections):
+            if np.linalg.norm(x0 - proj(x0)) > params("projections.feasible_tol"):
+                x0_feasible = False
+                warnings.warn("x0 not feasible with respect to projections[%g], adjusting" % i, RuntimeWarning)
+                break  # quit loop, only need to find one bad constraint
+        if not x0_feasible:
+            proj_box = lambda w: pbox(w, xl, xu)
+            P = list(projections)  # make a copy of the projections list
+            P.append(proj_box)
+            x0 = dykstra(P, x0)
 
     # Call main solver (first time)
     diagnostic_info = DiagnosticInfo()

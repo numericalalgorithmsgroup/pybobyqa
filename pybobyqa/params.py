@@ -86,6 +86,12 @@ class ParameterList(object):
         self.params["restarts.auto_detect.min_chg_model_slope"] = 1.5e-2
         self.params["restarts.auto_detect.min_correl"] = 0.1
 
+        # Projections
+        self.params["projections.dykstra.d_tol"] = 1e-10
+        self.params["projections.dykstra.max_iters"] = 100
+        self.params["projections.feasible_tol"] = 1e-10
+        self.params["projections.pgd_tol"] = 1e-8
+
         self.params_changed = {}
         for p in self.params:
             self.params_changed[p] = False
@@ -193,6 +199,14 @@ class ParameterList(object):
             type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
         elif key == "restarts.auto_detect.min_correl":
             type_str, nonetype_ok, lower, upper = 'float', False, 0.0, 1.0
+        elif key == "projections.dykstra.d_tol":
+            type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
+        elif key == "projections.dykstra.max_iters":
+            type_str, nonetype_ok, lower, upper = 'int', False, 1, None
+        elif key == "projections.feasible_tol":
+            type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
+        elif key == "projections.pgd_tol":
+            type_str, nonetype_ok, lower, upper = 'float', False, 0.0, None
         else:
             assert False, "ParameterList.param_type() has unknown key: %s" % key
         return type_str, nonetype_ok, lower, upper
