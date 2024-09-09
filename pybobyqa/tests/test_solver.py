@@ -45,6 +45,8 @@ def rosenbrock_gradient(x):
 def rosenbrock_hessian(x):
     return np.array([[2.0 + 100.0 * (8.0*x[0]**2 - 4.0*(-x[0]**2 + x[1])), -400.0*x[0]], [-400.0*x[0], 200.0]])
 
+def p_ball(x,c,r):
+    return c + (r/np.max([np.linalg.norm(x-c),r]))*(x-c)
 
 class TestRosenbrockGeneric(unittest.TestCase):
     # Minimise the (2d) Rosenbrock function
@@ -160,3 +162,23 @@ class TestRosenbrockFullyQuadratic(unittest.TestCase):
         # self.assertTrue(array_compare(soln.hessian, rosenbrock_hessian(soln.x), thresh=1e-0), "Wrong Hessian")
         self.assertLessEqual(np.max(np.abs(rosenbrock_hessian(soln.x) / soln.hessian)) - 1, 1e-1, "Wrong Hessian")
         self.assertTrue(abs(soln.f) < 1e-10, "Wrong fmin")
+
+
+class TestRosenbrockBounds3(unittest.TestCase):
+    # Minimise the (2d) Rosenbrock function, with extra ball constraint
+    def runTest(self):
+        # n, m = 2, 2
+        x0 = np.array([-1.2, 0.7])  # standard start point does not satisfy bounds
+        lower = np.array([0.7, -2.0])
+        upper = np.array([1.0, 2.0])
+        ballproj = lambda x: p_ball(x, np.array([0.5, 1]), 0.25)
+        xmin = np.array([0.70424386, 0.85583188])  # approximate
+        fmin = rosenbrock(xmin)
+        np.random.seed(0)
+        soln = pybobyqa.solve(rosenbrock, x0, bounds=(lower, upper), projections=[ballproj])
+        self.assertTrue(array_compare(soln.x, xmin, thresh=1e-2), "Wrong xmin")
+        self.assertTrue(abs(soln.f - fmin) < 1e-4, "Wrong fmin")
+        self.assertTrue(array_compare(soln.gradient, rosenbrock_gradient(soln.x), thresh=1e-2), "Wrong gradient")
+        # Hessian entries are quite large, O(100-1000), so can have a fairly large tolerance (use relative terms)
+        self.assertLessEqual(np.max(np.abs(rosenbrock_hessian(soln.x) / soln.hessian)) - 1, 1e-1, "Wrong Hessian")
+        # self.assertTrue(array_compare(soln.hessian, rosenbrock_hessian(soln.x), thresh=1e-0), "Wrong Hessian")

@@ -149,7 +149,11 @@ def solve_main(objfun, x0, args, xl, xu, projections, npt, rhobeg, rhoend, maxfu
     # Initialise interpolation set
     number_of_samples = max(nsamples(control.delta, control.rho, 0, nruns_so_far), 1)
     num_directions = npt - 1
-    if params("init.random_initial_directions"):
+    if projections is not None:
+        if do_logging:
+            module_logger.info("Initialising (feasible directions for constraints)")
+        exit_info = control.initialise_general_constraints(number_of_samples, num_directions, params)
+    elif params("init.random_initial_directions"):
         if do_logging:
             module_logger.info("Initialising (random directions)")
         exit_info = control.initialise_random_directions(number_of_samples, num_directions, params)

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization &mdash; Py-BOBYQA v1.4.1 documentation</title>
+  <title>Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization &mdash; Py-BOBYQA v1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,8 +15,8 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=350a9c04"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/documentation_options.js?v=aaadad1f"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
             Py-BOBYQA
           </a>
               <div class="version">
-                1.4.1
+                1.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -83,21 +83,24 @@
              
   <section id="py-bobyqa-derivative-free-optimizer-for-bound-constrained-minimization">
 <h1>Py-BOBYQA: Derivative-Free Optimizer for Bound-Constrained Minimization<a class="headerlink" href="#py-bobyqa-derivative-free-optimizer-for-bound-constrained-minimization" title="Link to this heading"></a></h1>
-<p><strong>Release:</strong> 1.4.1</p>
-<p><strong>Date:</strong> 11 April 2024</p>
+<p><strong>Release:</strong> 1.5</p>
+<p><strong>Date:</strong> 09 September 2024</p>
 <p><strong>Author:</strong> <a class="reference external" href="mailto:lindon&#46;roberts&#37;&#52;&#48;sydney&#46;edu&#46;au">Lindon Roberts</a></p>
-<p>Py-BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound constraints), without requiring any derivatives of the objective. Py-BOBYQA is a Python implementation of the <a class="reference external" href="http://mat.uc.pt/~zhang/software.html#powell_software">BOBYQA</a> solver by Powell (documentation <a class="reference external" href="http://www.damtp.cam.ac.uk/user/na/NA_papers/NA2009_06.pdf">here</a>). It is particularly useful when evaluations of the objective function are expensive and/or noisy.</p>
+<p>Py-BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound and other convex constraints), without requiring any derivatives of the objective. Py-BOBYQA is a Python implementation of the <a class="reference external" href="http://mat.uc.pt/~zhang/software.html#powell_software">BOBYQA</a> solver by Powell (documentation <a class="reference external" href="http://www.damtp.cam.ac.uk/user/na/NA_papers/NA2009_06.pdf">here</a>). It is particularly useful when evaluations of the objective function are expensive and/or noisy.</p>
 <p>That is, Py-BOBYQA solves</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\min_{x\in\mathbb{R}^n}  &amp;\quad  f(x)\\
-\text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
-<p>The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds).</p>
+\text{s.t.} &amp;\quad  a \leq x \leq b \\
+&amp;\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}\end{split}\]</div>
+<p>If provided, the constraints the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds),
+although the general <span class="math notranslate nohighlight">\(x \in C\)</span> constraint may be slightly violated from rounding errors.</p>
 <p>Full details of the Py-BOBYQA algorithm are given in our papers:</p>
 <ol class="arabic simple">
 <li><p>Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, <a class="reference external" href="https://doi.org/10.1145/3338517">Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers</a>, <em>ACM Transactions on Mathematical Software</em>, 45:3 (2019), pp. 32:1-32:41 [<a class="reference external" href="https://arxiv.org/abs/1804.00154">preprint</a>]</p></li>
 <li><p>Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, <a class="reference external" href="https://doi.org/10.1080/02331934.2021.1883015">Escaping local minima with derivative-free methods: a numerical investigation</a>, <em>Optimization</em>, 71:8 (2022), pp. 2343-2373. [<a class="reference external" href="https://arxiv.org/abs/1812.11343">arXiv preprint: 1812.11343</a>]</p></li>
+<li><p>Lindon Roberts, <a class="reference external" href="https://arxiv.org/abs/2403.14960">Model Construction for Convex-Constrained Derivative-Free Optimization</a>, <em>arXiv preprint arXiv:2403.14960</em> (2024).</p></li>
 </ol>
-<p>Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA’s global optimization heuristic functionality.</p>
+<p>Please cite [1] when using Py-BOBYQA for local optimization, [1,2] when using Py-BOBYQA’s global optimization heuristic functionality, and [1,3] if using the general convex constraints <span class="math notranslate nohighlight">\(x \in C\)</span> functionality.</p>
 <p>If you are interested in solving least-squares minimization problems, you may wish to try <a class="reference external" href="https://github.com/numericalalgorithmsgroup/dfols">DFO-LS</a>, which has the same features as Py-BOBYQA (plus some more), and exploits the least-squares problem structure, so performs better on such problems.</p>
 <p>Since v1.1, Py-BOBYQA has a heuristic for global optimization (see <a class="reference internal" href="userguide.html"><span class="doc">Using Py-BOBYQA</span></a> for details). As this is a heuristic, there are no guarantees it will find a global minimum, but it is more likely to escape local minima if there are better values nearby.</p>
 <p>Py-BOBYQA is released under the GNU General Public License. Please <a class="reference external" href="http://www.nag.com/content/worldwide-contact-information">contact NAG</a> for alternative licensing.</p>
@@ -124,6 +127,7 @@
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#optional-arguments">Optional Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#a-simple-example">A Simple Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#adding-bounds-and-more-output">Adding Bounds and More Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="userguide.html#adding-general-convex-constraints">Adding General Convex Constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#example-noisy-objective-evaluation">Example: Noisy Objective Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#example-global-optimization">Example: Global Optimization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="userguide.html#references">References</a></li>
@@ -139,6 +143,7 @@
 <li class="toctree-l2"><a class="reference internal" href="advanced.html#stochastic-noise-information">Stochastic Noise Information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced.html#interpolation-management">Interpolation Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced.html#multiple-restarts">Multiple Restarts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced.html#general-convex-constraints">General Convex Constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced.html#references">References</a></li>
 </ul>
 </li>
@@ -160,13 +165,15 @@
 <li class="toctree-l2"><a class="reference internal" href="history.html#version-1-3-14-apr-2021">Version 1.3 (14 Apr 2021)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="history.html#version-1-4-16-may-2023">Version 1.4 (16 May 2023)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="history.html#version-1-4-1-11-apr-2024">Version 1.4.1 (11 Apr 2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="history.html#version-1-5-9-sep-2024">Version 1.5 (9 Sep 2024)</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <section id="acknowledgements">
 <h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading"></a></h2>
-<p>This software was developed under the supervision of <a class="reference external" href="https://www.maths.ox.ac.uk/people/coralia.cartis">Coralia Cartis</a>, and was supported by the EPSRC Centre For Doctoral Training in <a class="reference external" href="https://www.maths.ox.ac.uk/study-here/postgraduate-study/industrially-focused-mathematical-modelling-epsrc-cdt">Industrially Focused Mathematical Modelling</a> (EP/L015803/1) in collaboration with the <a class="reference external" href="http://www.nag.com/">Numerical Algorithms Group</a>.</p>
+<p>This software was initially developed under the supervision of <a class="reference external" href="https://www.maths.ox.ac.uk/people/coralia.cartis">Coralia Cartis</a>, and was supported by the EPSRC Centre For Doctoral Training in <a class="reference external" href="https://www.maths.ox.ac.uk/study-here/postgraduate-study/industrially-focused-mathematical-modelling-epsrc-cdt">Industrially Focused Mathematical Modelling</a> (EP/L015803/1) in collaboration with the <a class="reference external" href="http://www.nag.com/">Numerical Algorithms Group</a>.
+Development of Py-BOBYQA has also been supported by the Australian Research Council (DE240100006).</p>
 </section>
 </section>
 

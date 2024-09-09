@@ -51,3 +51,7 @@ Version 1.4.1 (11 Apr 2024)
 -------------------------
 * Migrate package setup to pyproject.toml (required for Python version 3.12)
 * Drop support for Python 2.7 and <=3.7 due to new setup process
+
+Version 1.5 (9 Sep 2024)
+-------------------------
+* Added support for general convex constraints
