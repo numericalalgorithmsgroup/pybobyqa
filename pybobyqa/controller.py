@@ -94,11 +94,11 @@ class ExitInformation(object):
 
 
 class Controller(object):
-    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=True):
+    def __init__(self, objfun, x0, args, f0, f0_nsamples, xl, xu, projections, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=True):
         self.objfun = objfun
         self.maxfun = maxfun
         self.args = args
-        self.model = Model(npt, x0, f0, xl, xu, f0_nsamples, abs_tol=params("model.abs_tol"),
+        self.model = Model(npt, x0, f0, xl, xu, projections, f0_nsamples, abs_tol=params("model.abs_tol"),
                            precondition=params("interpolation.precondition"), do_logging=do_logging)
         self.nf = nf
         self.nx = nx
@@ -268,18 +268,145 @@ class Controller(object):
 
         return None
 
-    def trust_region_step(self):
+    def initialise_general_constraints(self, number_of_samples, num_directions, params):
+        # Initialisation when we have general projection constraints, as well as bound constraints
+        # Basic idea: start with bound-respecting coordinate directions, just like initialise_coordinate_directions
+        # Then, use geometry-improving procedures to make all these points feasible wrt projection constraints
+        # Only after this is all done, then evaluate the initial points
+        # (after the initial coordinate directions given, add points to model with nan objective value)
+        if self.do_logging:
+            module_logger.debug("Initialising to satisfy general projection constraints")
+        # self.model already has x0 evaluated (and x0 feasible), so only need to initialise the other points
+        # num_directions = params("growing.ndirs_initial")
+        assert self.model.num_pts <= (self.n() + 1) * (self.n() + 2) // 2, "prelim: must have npt <= (n+1)(n+2)/2"
+        assert 1 <= num_directions < self.model.num_pts, "Initialisation: must have 1 <= ndirs_initial < npt"
+
+        at_lower_boundary = (self.model.sl > -0.01 * self.delta)  # sl = xl - x0, should be -ve, actually < -rhobeg
+        at_upper_boundary = (self.model.su < 0.01 * self.delta)  # su = xu - x0, should be +ve, actually > rhobeg
+
+        # **** STEP 1 ****
+        # Build initial coordinate-based directions
+        xpts_added = np.zeros((num_directions + 1, self.n()))
+        for k in range(1, num_directions + 1):
+            # k = 0 --> base point (xpt = 0)  [ not here]
+            # k = 1, ..., 2n --> coordinate directions [1,...,n and n+1,...,2n]
+            # k = 2n+1, ..., (n+1)(n+2)/2 --> off-diagonal directions
+            if 1 <= k < self.n() + 1:  # first step along coord directions
+                dirn = k - 1  # direction to move in (0,...,n-1)
+                stepa = self.delta if not at_upper_boundary[dirn] else -self.delta
+                stepb = None
+                xpts_added[k, dirn] = stepa
+
+            elif self.n() + 1 <= k < 2 * self.n() + 1:  # second step along coord directions
+                dirn = k - self.n() - 1  # direction to move in (0,...,n-1)
+                stepa = xpts_added[k - self.n(), dirn]
+                stepb = -self.delta
+                if at_lower_boundary[dirn]:
+                    stepb = min(2.0 * self.delta, self.model.su[dirn])  # su = xu - x0, should be +ve
+                if at_upper_boundary[dirn]:
+                    stepb = max(-2.0 * self.delta, self.model.sl[dirn])  # sl = xl - x0, should be -ve
+                xpts_added[k, dirn] = stepb
+
+            else:  # k = 2n+1, ..., (n+1)(n+2)/2
+                # p = (k - 1) % n + 1  # cycles through (1,...,n), starting at 2n+1 --> 1
+                # l = (k - 2 * n - 1) / n + 1  # (1,...,1, 2, ..., 2, etc.) where each number appears n times
+                # q = (p + l if p + l <= n else p + l - n)
+                stepa = None
+                stepb = None
+                itemp = (k - self.n() - 1) // self.n()
+                q = k - itemp * self.n() - self.n()
+                p = q + itemp
+                if p > self.n():
+                    p, q = q, p - self.n()  # does swap correctly in Python
+
+                xpts_added[k, p - 1] = xpts_added[p, p - 1]
+                xpts_added[k, q - 1] = xpts_added[q, q - 1]
+
+            # Add this new point to the model with a nan function value for now, since it is likely to be moved
+            # to ensure the projection constraints are respected
+            x = self.model.as_absolute_coordinates(xpts_added[k, :])
+            self.model.change_point(k, x - self.model.xbase, np.nan)  # expect step, not absolute x
+
+            # (no need to switch the k-th and (k-N)-th points, since we can't compare function values at this stage)
+
+        # **** STEP 2 ****
+        # Now go through all interpolation points and check if they are feasible wrt projection constraints
+        # If not, do a geometry-improving step (again with nan objective value)
+        for k in range(1, num_directions + 1):
+            x = self.model.as_absolute_coordinates(xpts_added[k, :])
+            this_x_feasible = True
+            for i, proj in enumerate(self.model.projections):
+                if np.linalg.norm(x - proj(x)) > params("projections.feasible_tol"):
+                    this_x_feasible = False
+                    break  # quit loop, only need to find one bad constraint
+
+            # Calculate Lagrange polynomial and update this point
+            if not this_x_feasible:
+                try:
+                    c, g, H = self.model.lagrange_polynomial(k)  # based at xopt
+                    if np.any(np.isinf(g)) or np.any(np.isnan(g)) or np.any(np.isinf(H)) or np.any(np.isnan(H)):
+                        raise ValueError
+                    xnew = ctrsbox_geometry(self.model.xbase, self.model.xopt(), c, g, H, self.model.sl, self.model.su,
+                                            self.model.projections, self.delta,
+                                            dykstra_max_iters=params("projections.dykstra.max_iters"),
+                                            dykstra_tol=params("projections.feasible_tol"),
+                                            gtol=params("projections.pgd_tol"))
+                except LA.LinAlgError:
+                    exit_info = ExitInformation(EXIT_LINALG_ERROR, "Singular matrix encountered in initialization geometry step")
+                    return exit_info  # didn't fix geometry - return & quit
+                except ValueError:
+                    # A ValueError may be raised if gopt or H have nan/inf values (issue #23)
+                    # Ideally this should be picked up earlier in self.model.lagrange_polynomial(...)
+                    exit_info = ExitInformation(EXIT_LINALG_ERROR, "Error when calculating initialization geometry-improving step")
+                    return exit_info  # didn't fix geometry - return & quit
+
+                # Update point and fill with np.nan again, just for now
+                self.model.change_point(k, xnew, np.nan)  # expect step, not absolute x
+
+        # **** STEP 3 ****
+        # Now we are ready to evaluate our initial points
+        for k in range(1, num_directions + 1):
+            x = self.model.xpt(k, abs_coordinates=True)
+            f_list, num_samples_run, exit_info = self.evaluate_objective(x, number_of_samples, params)
+
+            # Handle exit conditions (f < min obj value or maxfun reached)
+            if exit_info is not None:
+                if num_samples_run > 0:
+                    self.model.save_point(x, np.mean(f_list[:num_samples_run]), num_samples_run, x_in_abs_coords=True)
+                return exit_info  # didn't fix geometry - return & quit
+
+            # Otherwise, add new results
+            self.model.change_point(k, x - self.model.xbase, f_list[0])  # expect step, not absolute x
+            for i in range(1, num_samples_run):
+                self.model.add_new_sample(k, f_extra=f_list[i])
+
+        return None   # return & continue
+
+    def trust_region_step(self, params):
         # Build model for full least squares objectives
         gopt, H = self.model.build_full_model()
-        try:
-            d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
-        except ValueError:
-            # A ValueError may be raised if gopt or H have nan/inf values (issue #14)
-            # Although this should be picked up earlier, in this situation just return a zero 
-            # trust-region step, which leads to a safety step being called in the main algorithm.
+        if np.any(np.isinf(gopt)) or np.any(np.isnan(gopt)) or np.any(np.isinf(H)) or np.any(np.isnan(H)):
+            # Skip computing the step if gopt or H are badly formed
             d = np.zeros(gopt.shape)
             gnew = gopt.copy()
             crvmin = 0.0  # this usually represents 'step on trust-region boundary' but seems to be a sensible default for errors
+        else:
+            try:
+                if self.model.projections is None:
+                    d, gnew, crvmin = trsbox(self.model.xopt(), gopt, H, self.model.sl, self.model.su, self.delta)
+                else:
+                    d, gnew, crvmin = ctrsbox(self.model.xbase, self.model.xopt(), gopt, H, self.model.sl, self.model.su,
+                                              self.model.projections, self.delta,
+                                              dykstra_max_iters=params("projections.dykstra.max_iters"),
+                                              dykstra_tol=params("projections.feasible_tol"),
+                                              gtol=params("projections.pgd_tol"))
+            except ValueError:
+                # A ValueError may be raised if gopt or H have nan/inf values (issue #14)
+                # Although this should be picked up earlier, in this situation just return a zero
+                # trust-region step, which leads to a safety step being called in the main algorithm.
+                d = np.zeros(gopt.shape)
+                gnew = gopt.copy()
+                crvmin = 0.0  # this usually represents 'step on trust-region boundary' but seems to be a sensible default for errors
         return d, gopt, H, gnew, crvmin
 
     def geometry_step(self, knew, adelt, number_of_samples, params):
@@ -293,7 +420,16 @@ class Controller(object):
         
         # Solve problem: bounds are sl <= xnew <= su, and ||xnew-xopt|| <= adelt
         try:
-            xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
+            if np.any(np.isinf(g)) or np.any(np.isnan(g)) or np.any(np.isinf(H)) or np.any(np.isnan(H)):
+                raise ValueError
+            if self.model.projections is None:
+                xnew = trsbox_geometry(self.model.xopt(), c, g, H, self.model.sl, self.model.su, adelt)
+            else:
+                xnew = ctrsbox_geometry(self.model.xbase, self.model.xopt(), c, g, H, self.model.sl, self.model.su,
+                                        self.model.projections, adelt,
+                                        dykstra_max_iters=params("projections.dykstra.max_iters"),
+                                        dykstra_tol=params("projections.feasible_tol"),
+                                        gtol=params("projections.pgd_tol"))
         except ValueError:
             # A ValueError may be raised if gopt or H have nan/inf values (issue #23)
             # Ideally this should be picked up earlier in self.model.lagrange_polynomial(...)

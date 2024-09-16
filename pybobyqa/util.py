@@ -31,7 +31,8 @@ import sys
 
 
 __all__ = ['sumsq', 'eval_objective', 'model_value', 'random_orthog_directions_within_bounds',
-           'random_directions_within_bounds', 'apply_scaling', 'remove_scaling']
+           'random_directions_within_bounds', 'apply_scaling', 'remove_scaling',
+           'dykstra', 'pball', 'pbox']
 
 module_logger = logging.getLogger(__name__) 
 
@@ -205,3 +206,49 @@ def remove_scaling(x_scaled, scaling_changes):
         return x_scaled
     shift, scale = scaling_changes
     return shift + x_scaled * scale
+
+
+def dykstra(P, x0, max_iter=100, tol=1e-10):
+    # Dykstra's algorithm for computing the projection of x0 into the intersection
+    # of several convex sets, each with its own projection operator.
+    # For more details, including the robust termination condition, see
+    # E. G. Birgin, M. Raydan. Robust Stopping Criteria for Dykstra's Algorithm.
+    # SIAM J. Scientific Computing, 26:4 (2005), pp. 1405-1414.
+
+    # Here, x0 is the point to project, and P is a list of projection functions,
+    # i.e. proj_{ith set}(x) = P[i](x)
+    x = x0.copy()
+    p = len(P)
+    y = np.zeros((p, x0.shape[0]))
+
+    n = 0
+    cI = float('inf')
+    while n < max_iter and cI >= tol:
+        cI = 0.0
+        for i in range(p):
+            # Update iterate
+            prev_x = x.copy()
+            x = P[i](prev_x - y[i,:])
+
+            # Update increment
+            prev_y = y[i, :].copy()
+            y[i, :] = x - (prev_x - prev_y)
+
+            # Stop condition
+            cI += np.linalg.norm(prev_y - y[i, :])**2
+
+        n += 1
+
+    return x
+
+
+def pball(x, c, r):
+    # Projection operator for a Euclidean ball with center c and radius r
+    # i.e. pball(x, c, r) = proj_{B(c,r)}(x)
+    return c + r/max(np.linalg.norm(x-c), r) * (x-c)
+
+
+def pbox(x, l, u):
+    # Projection operator for box constraints, l <= x <= u
+    # i.e. pbox(x, c, r) = proj_{[l,u]}(x)
+    return np.minimum(np.maximum(x, l), u)

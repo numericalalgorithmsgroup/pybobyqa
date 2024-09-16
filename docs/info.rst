@@ -3,12 +3,13 @@ Overview
 
 When to use Py-BOBYQA
 ---------------------
-Py-BOBYQA is designed to solve the nonlinear least-squares minimization problem (with optional bound constraints)
+Py-BOBYQA is designed to solve the nonlinear least-squares minimization problem (with optional bound and general convex constraints)
 
 .. math::
 
    \min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
-   \text{s.t.} &\quad  a \leq x \leq b
+   \text{s.t.} &\quad  a \leq x \leq b\\
+   &\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}
 
 We call :math:`f(x)` the objective function.
 

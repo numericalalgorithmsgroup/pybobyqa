@@ -64,8 +64,8 @@
 
 
 \title{Py-BOBYQA Documentation}
-\date{11 April 2024}
-\release{1.4.1}
+\date{16 September 2024}
+\release{1.5.0}
 \author{Lindon Roberts}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -86,25 +86,27 @@
 
 
 \sphinxAtStartPar
-\sphinxstylestrong{Release:} 1.4.1
+\sphinxstylestrong{Release:} 1.5.0
 
 \sphinxAtStartPar
-\sphinxstylestrong{Date:} 11 April 2024
+\sphinxstylestrong{Date:} 16 September 2024
 
 \sphinxAtStartPar
 \sphinxstylestrong{Author:} \sphinxhref{mailto:lindon.roberts@sydney.edu.au}{Lindon Roberts}
 
 \sphinxAtStartPar
-Py\sphinxhyphen{}BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound constraints), without requiring any derivatives of the objective. Py\sphinxhyphen{}BOBYQA is a Python implementation of the \sphinxhref{http://mat.uc.pt/~zhang/software.html\#powell\_software}{BOBYQA} solver by Powell (documentation \sphinxhref{http://www.damtp.cam.ac.uk/user/na/NA\_papers/NA2009\_06.pdf}{here}). It is particularly useful when evaluations of the objective function are expensive and/or noisy.
+Py\sphinxhyphen{}BOBYQA is a flexible package for finding local solutions to nonlinear, nonconvex minimization problems (with optional bound and other convex constraints), without requiring any derivatives of the objective. Py\sphinxhyphen{}BOBYQA is a Python implementation of the \sphinxhref{http://mat.uc.pt/~zhang/software.html\#powell\_software}{BOBYQA} solver by Powell (documentation \sphinxhref{http://www.damtp.cam.ac.uk/user/na/NA\_papers/NA2009\_06.pdf}{here}). It is particularly useful when evaluations of the objective function are expensive and/or noisy.
 
 \sphinxAtStartPar
 That is, Py\sphinxhyphen{}BOBYQA solves
 \begin{equation*}
 \begin{split}\min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
-\text{s.t.} &\quad  a \leq x \leq b\end{split}
+\text{s.t.} &\quad  a \leq x \leq b \\
+&\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}\end{split}
 \end{equation*}
 \sphinxAtStartPar
-The upper and lower bounds on the variables are non\sphinxhyphen{}relaxable (i.e. Py\sphinxhyphen{}BOBYQA will never ask to evaluate a point outside the bounds).
+If provided, the constraints the variables are non\sphinxhyphen{}relaxable (i.e. Py\sphinxhyphen{}BOBYQA will never ask to evaluate a point outside the bounds),
+although the general \(x \in C\) constraint may be slightly violated from rounding errors.
 
 \sphinxAtStartPar
 Full details of the Py\sphinxhyphen{}BOBYQA algorithm are given in our papers:
@@ -118,10 +120,14 @@ Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, \sphinxhref{http
 \sphinxAtStartPar
 Coralia Cartis, Lindon Roberts and Oliver Sheridan\sphinxhyphen{}Methven, \sphinxhref{https://doi.org/10.1080/02331934.2021.1883015}{Escaping local minima with derivative\sphinxhyphen{}free methods: a numerical investigation}, \sphinxstyleemphasis{Optimization}, 71:8 (2022), pp. 2343\sphinxhyphen{}2373. {[}\sphinxhref{https://arxiv.org/abs/1812.11343}{arXiv preprint: 1812.11343}{]}
 
+\item {} 
+\sphinxAtStartPar
+Lindon Roberts, \sphinxhref{https://arxiv.org/abs/2403.14960}{Model Construction for Convex\sphinxhyphen{}Constrained Derivative\sphinxhyphen{}Free Optimization}, \sphinxstyleemphasis{arXiv preprint arXiv:2403.14960} (2024).
+
 \end{enumerate}
 
 \sphinxAtStartPar
-Please cite {[}1{]} when using Py\sphinxhyphen{}BOBYQA for local optimization, and {[}1,2{]} when using Py\sphinxhyphen{}BOBYQA’s global optimization heuristic functionality.
+Please cite {[}1{]} when using Py\sphinxhyphen{}BOBYQA for local optimization, {[}1,2{]} when using Py\sphinxhyphen{}BOBYQA’s global optimization heuristic functionality, and {[}1,3{]} if using the general convex constraints \(x \in C\) functionality.
 
 \sphinxAtStartPar
 If you are interested in solving least\sphinxhyphen{}squares minimization problems, you may wish to try \sphinxhref{https://github.com/numericalalgorithmsgroup/dfols}{DFO\sphinxhyphen{}LS}, which has the same features as Py\sphinxhyphen{}BOBYQA (plus some more), and exploits the least\sphinxhyphen{}squares problem structure, so performs better on such problems.
@@ -173,32 +179,20 @@ Pandas (\sphinxurl{http://pandas.pydata.org/})
 \section{Installation using pip}
 \label{\detokenize{install:installation-using-pip}}
 \sphinxAtStartPar
-For easy installation, use \sphinxhref{http://www.pip-installer.org/}{pip} as root:
+For easy installation, use \sphinxhref{http://www.pip-installer.org/}{pip}:
 \begin{quote}
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }\PYG{o}{[}sudo\PYG{o}{]}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }Py\PYGZhy{}BOBYQA
+\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }Py\PYGZhy{}BOBYQA
 \end{sphinxVerbatim}
 \end{quote}
-
-\sphinxAtStartPar
-If you do not have root privileges or you want to install Py\sphinxhyphen{}BOBYQA for your private use, you can use:
-\begin{quote}
-
-\begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }Py\PYGZhy{}BOBYQA
-\end{sphinxVerbatim}
-\end{quote}
-
-\sphinxAtStartPar
-which will install Py\sphinxhyphen{}BOBYQA in your home directory.
 
 \sphinxAtStartPar
 Note that if an older install of Py\sphinxhyphen{}BOBYQA is present on your system you can use:
 \begin{quote}
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }\PYG{o}{[}sudo\PYG{o}{]}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }\PYGZhy{}\PYGZhy{}upgrade\PYG{+w}{ }Py\PYGZhy{}BOBYQA
+\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }\PYGZhy{}\PYGZhy{}upgrade\PYG{+w}{ }Py\PYGZhy{}BOBYQA
 \end{sphinxVerbatim}
 \end{quote}
 
@@ -223,21 +217,9 @@ Py\sphinxhyphen{}BOBYQA is written in pure Python and requires no compilation. I
 \begin{quote}
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }\PYG{o}{[}sudo\PYG{o}{]}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }.
+\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }.
 \end{sphinxVerbatim}
 \end{quote}
-
-\sphinxAtStartPar
-If you do not have root privileges or you want to install Py\sphinxhyphen{}BOBYQA for your private use, you can use:
-\begin{quote}
-
-\begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }.
-\end{sphinxVerbatim}
-\end{quote}
-
-\sphinxAtStartPar
-instead.
 
 \sphinxAtStartPar
 To upgrade Py\sphinxhyphen{}BOBYQA to the latest version, navigate to the top\sphinxhyphen{}level directory (i.e. the one containing \sphinxcode{\sphinxupquote{setup.py}}) and rerun the installation using \sphinxcode{\sphinxupquote{pip}}, as above:
@@ -245,7 +227,7 @@ To upgrade Py\sphinxhyphen{}BOBYQA to the latest version, navigate to the top\sp
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYGZdl{}\PYG{+w}{ }git\PYG{+w}{ }pull
-\PYGZdl{}\PYG{+w}{ }\PYG{o}{[}sudo\PYG{o}{]}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }.\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} with admin privileges}
+\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }install\PYG{+w}{ }.
 \end{sphinxVerbatim}
 \end{quote}
 
@@ -270,7 +252,7 @@ If Py\sphinxhyphen{}BOBYQA was installed using \sphinxhref{http://www.pip-instal
 \begin{quote}
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYGZdl{}\PYG{+w}{ }\PYG{o}{[}sudo\PYG{o}{]}\PYG{+w}{ }pip\PYG{+w}{ }uninstall\PYG{+w}{ }Py\PYGZhy{}BOBYQA
+\PYGZdl{}\PYG{+w}{ }pip\PYG{+w}{ }uninstall\PYG{+w}{ }Py\PYGZhy{}BOBYQA
 \end{sphinxVerbatim}
 \end{quote}
 
@@ -286,10 +268,11 @@ If Py\sphinxhyphen{}BOBYQA was installed manually you have to remove the install
 \section{When to use Py\sphinxhyphen{}BOBYQA}
 \label{\detokenize{info:when-to-use-py-bobyqa}}
 \sphinxAtStartPar
-Py\sphinxhyphen{}BOBYQA is designed to solve the nonlinear least\sphinxhyphen{}squares minimization problem (with optional bound constraints)
+Py\sphinxhyphen{}BOBYQA is designed to solve the nonlinear least\sphinxhyphen{}squares minimization problem (with optional bound and general convex constraints)
 \begin{equation*}
 \begin{split}\min_{x\in\mathbb{R}^n}  &\quad  f(x)\\
-\text{s.t.} &\quad  a \leq x \leq b\end{split}
+\text{s.t.} &\quad  a \leq x \leq b\\
+&\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}\end{split}
 \end{equation*}
 \sphinxAtStartPar
 We call \(f(x)\) the objective function.
@@ -342,14 +325,20 @@ This section describes the main interface to Py\sphinxhyphen{}BOBYQA and how to 
 Py\sphinxhyphen{}BOBYQA is designed to solve the local optimization problem
 \begin{equation*}
 \begin{split}\min_{x\in\mathbb{R}^n}  &\quad  f(x) \\
-\text{s.t.} &\quad  a \leq x \leq b\end{split}
+\text{s.t.} &\quad  a \leq x \leq b\\
+&\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}\end{split}
 \end{equation*}
 \sphinxAtStartPar
-where the bound constraints \(a \leq x \leq b\) are optional. The upper and lower bounds on the variables are non\sphinxhyphen{}relaxable (i.e. Py\sphinxhyphen{}BOBYQA will never ask to evaluate a point outside the bounds). The objective function \(f(x)\) is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see \sphinxhref{https://neos-guide.org/Optimization-Guide}{here} for details).
+where the bound constraints \(a \leq x \leq b\) and general convex constraints \(x \in C\) are optional.
+The upper and lower bounds on the variables are non\sphinxhyphen{}relaxable (i.e. Py\sphinxhyphen{}BOBYQA will never ask to evaluate a point outside the bounds).
+The general convex constraints are also non\sphinxhyphen{}relaxable, but they may be slightly violated at some points from rounding errors.
+The objective function \(f(x)\) is usually nonlinear and nonquadratic.
+If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see \sphinxhref{https://neos-guide.org/Optimization-Guide}{here} for details).
 
 \sphinxAtStartPar
 Py\sphinxhyphen{}BOBYQA iteratively constructs an interpolation\sphinxhyphen{}based model for the objective, and determines a step using a trust\sphinxhyphen{}region framework.
 For an in\sphinxhyphen{}depth technical description of the algorithm see the paper \sphinxcite{userguide:cfmr2018}, and for the global optimization heuristic, see \sphinxcite{userguide:cro2022}.
+For details about how Py\sphinxhyphen{}BOBYQA handles general convex constraints, see \sphinxcite{userguide:r2024}.
 
 
 \section{How to use Py\sphinxhyphen{}BOBYQA}
@@ -466,12 +455,12 @@ The \sphinxcode{\sphinxupquote{solve}} function has several optional arguments w
 \begin{quote}
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
-\PYG{n}{pybobyqa}\PYG{o}{.}\PYG{n}{solve}\PYG{p}{(}\PYG{n}{objfun}\PYG{p}{,} \PYG{n}{x0}\PYG{p}{,} \PYG{n}{args}\PYG{o}{=}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,} \PYG{n}{bounds}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{npt}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
-            \PYG{n}{rhobeg}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{rhoend}\PYG{o}{=}\PYG{l+m+mf}{1e\PYGZhy{}8}\PYG{p}{,} \PYG{n}{maxfun}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{nsamples}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
-            \PYG{n}{user\PYGZus{}params}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{objfun\PYGZus{}has\PYGZus{}noise}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
-            \PYG{n}{seek\PYGZus{}global\PYGZus{}minimum}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
-            \PYG{n}{scaling\PYGZus{}within\PYGZus{}bounds}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
-            \PYG{n}{do\PYGZus{}logging}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{print\PYGZus{}progress}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{)}
+\PYG{n}{pybobyqa}\PYG{o}{.}\PYG{n}{solve}\PYG{p}{(}\PYG{n}{objfun}\PYG{p}{,} \PYG{n}{x0}\PYG{p}{,} \PYG{n}{args}\PYG{o}{=}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,} \PYG{n}{bounds}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{projections}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
+               \PYG{n}{npt}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{rhobeg}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{rhoend}\PYG{o}{=}\PYG{l+m+mf}{1e\PYGZhy{}8}\PYG{p}{,} \PYG{n}{maxfun}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
+               \PYG{n}{nsamples}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{user\PYGZus{}params}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,} \PYG{n}{objfun\PYGZus{}has\PYGZus{}noise}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
+               \PYG{n}{seek\PYGZus{}global\PYGZus{}minimum}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
+               \PYG{n}{scaling\PYGZus{}within\PYGZus{}bounds}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,}
+               \PYG{n}{do\PYGZus{}logging}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{print\PYGZus{}progress}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{)}
 \end{sphinxVerbatim}
 \end{quote}
 
@@ -485,6 +474,10 @@ These arguments are:
 \item {} 
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{bounds}} \sphinxhyphen{} a tuple \sphinxcode{\sphinxupquote{(lower, upper)}} with the vectors \(a\) and \(b\) of lower and upper bounds on \(x\) (default is \(a_i=-10^{20}\) and \(b_i=10^{20}\)). To set bounds for either \sphinxcode{\sphinxupquote{lower}} or \sphinxcode{\sphinxupquote{upper}}, but not both, pass a tuple \sphinxcode{\sphinxupquote{(lower, None)}} or \sphinxcode{\sphinxupquote{(None, upper)}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{projections}} \sphinxhyphen{} a list of functions defining the Euclidean projections for each general convex constraint \(C_i\). Each element of the list \sphinxcode{\sphinxupquote{projections}} is a function that takes an input vector \(x\) and returns the closest point to \(x\) that is in \(C_i\). An example of using this is given below.
 
 \item {} 
 \sphinxAtStartPar
@@ -692,6 +685,105 @@ An alternative option available is to get Py\sphinxhyphen{}BOBYQA to print to te
   1    133   1.00e\PYGZhy{}02  2.00e\PYGZhy{}01  1.50e\PYGZhy{}08  1.00e\PYGZhy{}08   145
 \end{sphinxVerbatim}
 \end{quote}
+
+
+\section{Adding General Convex Constraints}
+\label{\detokenize{userguide:adding-general-convex-constraints}}
+\sphinxAtStartPar
+We can also add more general convex constraints \(x \in C := C_1 \cap \cdots \cap C_n\) to our problem, where
+each \(C_i\) is a convex set. To do this, we need to know the Euclidean projection operator for each \(C_i\):
+\begin{equation*}
+\begin{split}\operatorname{proj}_{C_i}(x) := \operatorname{argmin}_{y\in C_i} \|y-x\|_2^2.\end{split}
+\end{equation*}
+\sphinxAtStartPar
+i.e. given a point \(x\), return the closest point to \(x\) in the set \(C_i\).
+There are many examples of simple convex sets \(C_i\) for which this function has a known, simple form, such as:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Bound constraints (but since Py\sphinxhyphen{}BOBYQA supports this directly, it is better to give these explicitly via the \sphinxcode{\sphinxupquote{bounds}} input, as above)
+
+\item {} 
+\sphinxAtStartPar
+Euclidean ball constraints: \(\|x-c\|_2 \leq r\)
+
+\item {} 
+\sphinxAtStartPar
+Unit simplex: \(x_i \geq 0\) and \(\sum_{i=1}^{n} x_i \leq 1\)
+
+\item {} 
+\sphinxAtStartPar
+Linear inequalities: \(a^T x \geq b\)
+
+\end{itemize}
+
+\sphinxAtStartPar
+In Py\sphinxhyphen{}BOBYQA, set the input \sphinxcode{\sphinxupquote{projections}} to be a list of projection functions, one per \(C_i\).
+Internally, Py\sphinxhyphen{}BOBYQA computes the projection onto the intersection of these sets and the bound constraints
+using \sphinxhref{https://en.wikipedia.org/wiki/Dykstra\%27s\_projection\_algorithm}{Dykstra’s projection algorithm}.
+
+\sphinxAtStartPar
+For the explicit expressions for the above projections, and more examples, see for example \sphinxhref{https://proximity-operator.net/indicatorfunctions.html}{this online database}
+or Section 6.4.6 of the textbook \sphinxcite{userguide:b2017}.
+
+\sphinxAtStartPar
+As an example, let’s minimize the above Rosenbrock function with different bounds, and with a Euclidean
+ball constraint, namely \((x_1-0.5)^2 + (x_2-1)^2 \leq 0.25^2\).
+
+\sphinxAtStartPar
+To do this, we can run
+\begin{quote}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k}{as} \PYG{n+nn}{np}
+\PYG{k+kn}{import} \PYG{n+nn}{pybobyqa}
+
+\PYG{c+c1}{\PYGZsh{} Define the objective function}
+\PYG{k}{def} \PYG{n+nf}{rosenbrock}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{return} \PYG{l+m+mf}{100.0} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{*}\PYG{o}{*} \PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{*}\PYG{o}{*} \PYG{l+m+mi}{2} \PYG{o}{+} \PYG{p}{(}\PYG{l+m+mf}{1.0} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)} \PYG{o}{*}\PYG{o}{*} \PYG{l+m+mi}{2}
+
+\PYG{c+c1}{\PYGZsh{} Define the starting point}
+\PYG{n}{x0} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{1.2}\PYG{p}{,} \PYG{l+m+mf}{1.0}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Define bound constraints (lower \PYGZlt{}= x \PYGZlt{}= upper)}
+\PYG{n}{lower} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mf}{0.7}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.0}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{upper} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mf}{1.0}\PYG{p}{,} \PYG{l+m+mf}{2.0}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Define the ball constraint ||x\PYGZhy{}center|| \PYGZlt{}= radius, and its projection operator}
+\PYG{n}{center} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{l+m+mf}{1.0}\PYG{p}{]}\PYG{p}{)}
+\PYG{n}{radius} \PYG{o}{=} \PYG{l+m+mf}{0.25}
+\PYG{n}{ball\PYGZus{}proj} \PYG{o}{=} \PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{center} \PYG{o}{+} \PYG{p}{(}\PYG{n}{radius}\PYG{o}{/}\PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{linalg}\PYG{o}{.}\PYG{n}{norm}\PYG{p}{(}\PYG{n}{x}\PYG{o}{\PYGZhy{}}\PYG{n}{center}\PYG{p}{)}\PYG{p}{,} \PYG{n}{radius}\PYG{p}{)}\PYG{p}{)} \PYG{o}{*} \PYG{p}{(}\PYG{n}{x}\PYG{o}{\PYGZhy{}}\PYG{n}{center}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Call Py\PYGZhy{}BOBYQA (with bounds and projection operator)}
+\PYG{c+c1}{\PYGZsh{} Note: it is better to provide bounds explicitly, instead of using the corresponding}
+\PYG{c+c1}{\PYGZsh{}       projection function}
+\PYG{c+c1}{\PYGZsh{} Note: input \PYGZsq{}projections\PYGZsq{} must be a list of projection functions}
+\PYG{n}{soln} \PYG{o}{=} \PYG{n}{pybobyqa}\PYG{o}{.}\PYG{n}{solve}\PYG{p}{(}\PYG{n}{rosenbrock}\PYG{p}{,} \PYG{n}{x0}\PYG{p}{,} \PYG{n}{bounds}\PYG{o}{=}\PYG{p}{(}\PYG{n}{lower}\PYG{p}{,}\PYG{n}{upper}\PYG{p}{)}\PYG{p}{,} \PYG{n}{projections}\PYG{o}{=}\PYG{p}{[}\PYG{n}{ball\PYGZus{}proj}\PYG{p}{]}\PYG{p}{)}
+
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{soln}\PYG{p}{)}
+\end{sphinxVerbatim}
+\end{quote}
+
+\sphinxAtStartPar
+Py\sphinxhyphen{}BOBYQA correctly finds the solution to the constrained problem:
+\begin{quote}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+****** Py\PYGZhy{}BOBYQA Results ******
+Solution xmin = [0.70424386 0.85583188]
+Objective value f(xmin) = 13.03829114
+Needed 25 objective evaluations (at 25 points)
+Approximate gradient = [\PYGZhy{}101.9667031    71.97449424]
+Approximate Hessian = [[ 253.11858775 \PYGZhy{}279.39193327]
+ [\PYGZhy{}279.39193327  201.49725358]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+\end{sphinxVerbatim}
+\end{quote}
+
+\sphinxAtStartPar
+Just like for bound constraints, Py\sphinxhyphen{}BOBYQA will automatically ensure the starting point is feasible with respect to all constraints (bounds and general convex constraints).
 
 
 \section{Example: Noisy Objective Evaluation}
@@ -961,15 +1053,15 @@ The default values, used if no override is given, in some cases vary depending o
 \label{\detokenize{advanced:initialization-of-points}}\begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{init.random\_initial\_directions}} \sphinxhyphen{} Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is \sphinxcode{\sphinxupquote{True}}.
+\sphinxcode{\sphinxupquote{init.random\_initial\_directions}} \sphinxhyphen{} Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is \sphinxcode{\sphinxupquote{True}}. Not used if general convex constraints provided.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{init.random\_directions\_make\_orthogonal}} \sphinxhyphen{} If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is \sphinxcode{\sphinxupquote{True}}.
+\sphinxcode{\sphinxupquote{init.random\_directions\_make\_orthogonal}} \sphinxhyphen{} If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is \sphinxcode{\sphinxupquote{True}}. Not used if general convex constraints provided.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{init.run\_in\_parallel}} \sphinxhyphen{} If using random directions, whether or not to ask for all \sphinxcode{\sphinxupquote{objfun}} to be evaluated at all points without any intermediate processing. Default is \sphinxcode{\sphinxupquote{False}}.
+\sphinxcode{\sphinxupquote{init.run\_in\_parallel}} \sphinxhyphen{} If using random directions, whether or not to ask for all \sphinxcode{\sphinxupquote{objfun}} to be evaluated at all points without any intermediate processing. Default is \sphinxcode{\sphinxupquote{False}}. Not used if general convex constraints provided.
 
 \end{itemize}
 
@@ -1124,6 +1216,27 @@ The default values, used if no override is given, in some cases vary depending o
 \item {} 
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{restarts.auto\_detect.min\_correl}} \sphinxhyphen{} Minimum correlation of the data sets \((k, \log(\|g_k-g_{k-1}\|))\) and \((k, \log(\|H_k-H_{k-1}\|_F))\) required to cause a restart. Default is 0.1.
+
+\end{itemize}
+
+
+\section{General Convex Constraints}
+\label{\detokenize{advanced:general-convex-constraints}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{projections.dykstra.d\_tol}} \sphinxhyphen{} termination tolerance for Dykstra’s algorithm for computing the projection onto the intersection of all convex constraints. Default is \(10^{-10}\).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{projections.dykstra.max\_iters}} \sphinxhyphen{} maximum iterations of Dykstra’s algorithm for computing the projection onto the intersection of all convex constraints. Default is 100.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{projections.feasible\_tol}} \sphinxhyphen{} tolerance for checking feasibility of initial points with respect to general convex constraints. Default is \(10^{-10}\).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{projections.pgd\_tol}} \sphinxhyphen{} termination tolerance for trust\sphinxhyphen{}region and geometry\sphinxhyphen{}improving subproblems. Default is \(10^{-8}\).
 
 \end{itemize}
 
@@ -1413,10 +1526,20 @@ Drop support for Python 2.7 and \textless{}=3.7 due to new setup process
 \end{itemize}
 
 
+\section{Version 1.5.0 (16 Sep 2024)}
+\label{\detokenize{history:version-1-5-0-16-sep-2024}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Added support for general convex constraints
+
+\end{itemize}
+
+
 \chapter{Acknowledgements}
 \label{\detokenize{index:acknowledgements}}
 \sphinxAtStartPar
-This software was developed under the supervision of \sphinxhref{https://www.maths.ox.ac.uk/people/coralia.cartis}{Coralia Cartis}, and was supported by the EPSRC Centre For Doctoral Training in \sphinxhref{https://www.maths.ox.ac.uk/study-here/postgraduate-study/industrially-focused-mathematical-modelling-epsrc-cdt}{Industrially Focused Mathematical Modelling} (EP/L015803/1) in collaboration with the \sphinxhref{http://www.nag.com/}{Numerical Algorithms Group}.
+This software was initially developed under the supervision of \sphinxhref{https://www.maths.ox.ac.uk/people/coralia.cartis}{Coralia Cartis}, and was supported by the EPSRC Centre For Doctoral Training in \sphinxhref{https://www.maths.ox.ac.uk/study-here/postgraduate-study/industrially-focused-mathematical-modelling-epsrc-cdt}{Industrially Focused Mathematical Modelling} (EP/L015803/1) in collaboration with the \sphinxhref{http://www.nag.com/}{Numerical Algorithms Group}.
+Development of Py\sphinxhyphen{}BOBYQA has also been supported by the Australian Research Council (DE240100006).
 
 \begin{sphinxthebibliography}{Powell20}
 \bibitem[CFMR2018]{info:cfmr2018}
@@ -1431,6 +1554,12 @@ Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, \sphinxhref{http
 \bibitem[CRO2022]{userguide:cro2022}
 \sphinxAtStartPar
 Coralia Cartis, Lindon Roberts and Oliver Sheridan\sphinxhyphen{}Methven, \sphinxhref{https://doi.org/10.1080/02331934.2021.1883015}{Escaping local minima with derivative\sphinxhyphen{}free methods: a numerical investigation}, \sphinxstyleemphasis{Optimization}, 71:8 (2022), pp. 2343\sphinxhyphen{}2373. {[}\sphinxhref{https://arxiv.org/abs/1812.11343}{arXiv preprint: 1812.11343}{]}
+\bibitem[R2024]{userguide:r2024}
+\sphinxAtStartPar
+Lindon Roberts, \sphinxhref{https://arxiv.org/abs/2403.14960}{Model Construction for Convex\sphinxhyphen{}Constrained Derivative\sphinxhyphen{}Free Optimization}, \sphinxstyleemphasis{arXiv preprint arXiv:2403.14960} (2024).
+\bibitem[B2017]{userguide:b2017}
+\sphinxAtStartPar
+Amir Beck, \sphinxhref{https://doi.org/10.1137/1.9781611974997}{First\sphinxhyphen{}Order Methods in Optimization}, SIAM (2017).
 \bibitem[CFMR2018]{advanced:cfmr2018}
 \sphinxAtStartPar
 Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, \sphinxhref{https://doi.org/10.1145/3338517}{Improving the Flexibility and Robustness of Model\sphinxhyphen{}Based Derivative\sphinxhyphen{}Free Optimization Solvers}, \sphinxstyleemphasis{ACM Transactions on Mathematical Software}, 45:3 (2019), pp. 32:1\sphinxhyphen{}32:41 {[}\sphinxhref{https://arxiv.org/abs/1804.00154}{preprint}{]}

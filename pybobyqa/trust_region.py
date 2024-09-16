@@ -9,7 +9,21 @@ produces a new vector d which (approximately) solves the trust region subproblem
     s.t.    ||d|| <= delta
             sl <= xopt + d <= su
 The other outputs: gnew is the gradient of the model at d, and crvmin has
-information about the curvature of the model at the solution.
+information about the curvature of the model at the solution:
+- If ||d||=delta, then crvmin = 0
+- If d is constrained in all directions by the box constraints, then crvmin = -1
+- Otherwise, crvmin > 0 is the smallest positive curvature seen in the Hessian, min_{k} (dk^T H dk / ||dk||^2) for iterates dk
+
+For problems with general convex constraints, we have an alternative function
+    d, gnew, crvmin = ctrsbox(xbase, xopt, g, H, sl, su, projections, delta)
+which solves the subproblem
+    min_{d}  g'*d + 0.5*d'*H*d
+    s.t.    ||d|| <= delta
+            sl <= xopt + d <= su
+            xbase + xopt + d in the intersection of all convex sets C with proj_{C} in the list 'projections'
+The outputs are the same as trsbox, but without the negative case for crvmin.
+This version is solved using projected gradient descent; see Chapter 10 of
+A. Beck, First-Order Methods in Optimization. SIAM, 2017.
 
 Notes
 ----
@@ -53,10 +67,10 @@ except ImportError:
     USE_FORTRAN = False
 
 
-from .util import sumsq, model_value
+from .util import sumsq, model_value, dykstra, pball, pbox
 
 
-__all__ = ['trsbox', 'trsbox_geometry']
+__all__ = ['trsbox', 'trsbox_geometry', 'ctrsbox', 'ctrsbox_geometry']
 
 ZERO_THRESH = 1e-14
 
@@ -400,3 +414,98 @@ def trsbox_geometry(xbase, c, g, H, lower, upper, Delta, use_fortran=USE_FORTRAN
         return xbase + smin
     else:
         return xbase + smax
+
+
+def ctrsbox(xbase, xopt, g, H, sl, su, projections, delta, dykstra_max_iters=100, dykstra_tol=1e-10, gtol=1e-8):
+    if projections is None or len(projections) == 0:
+        return trsbox(xopt, g, H, sl, su, delta)
+
+    n = xopt.size
+    assert xopt.shape == (n,), "xopt has wrong shape (should be vector)"
+    assert xbase.shape == (n,), "xbase and xopt has wrong shape (should be vector)"
+    assert g.shape == (n,), "g and xopt have incompatible sizes"
+    assert len(H.shape) == 2, "H must be a matrix"
+    assert H.shape == (n, n), "H and xopt have incompatible sizes"
+    if not np.allclose(H, H.T):
+        # Enforce symmetry
+        H = 0.5 * (H + H.T)
+        warnings.warn("Trust-region solver: fixing non-symmetric Hessian", RuntimeWarning)
+    assert sl.shape == (n,), "sl and xopt have incompatible sizes"
+    assert su.shape == (n,), "su and xopt have incompatible sizes"
+    assert delta > 0.0, "delta must be strictly positive"
+
+    # Get full list of required projections (i.e. including TR constraint and box constraints)
+    proj_tr = lambda w: pball(w, xbase + xopt, delta)
+    proj_box = lambda w: pbox(w, xbase + sl, xbase + su)
+    P = list(projections)  # make a copy of the projections list
+    P.append(proj_tr)
+    P.append(proj_box)
+
+    # Compute the joint projection into all constraints, but using increments from xopt
+    def proj(d0):
+        p = dykstra(P, xbase + xopt + d0, max_iter=dykstra_max_iters, tol=dykstra_tol)
+        # we want the step only, so we subtract xbase+xopt
+        # from the new point: proj(xk+d) - xk
+        return p - xopt - xbase
+
+    # Compute Lipschitz constant of quadratic objective, L >= ||H||_2
+    # Stepsize for projected GD will be Lk=L
+    L = np.linalg.norm(H)  # use L = ||H||_F >= ||H|_2 as valid L-smooth constant
+    L = max(L, delta / np.linalg.norm(g))  # another upper bound; if L~0 then will take steps (1/L)*g, and don't want to go beyond trust-region
+
+    MAX_LOOP_ITERS = 100 * n ** 2
+
+    d = np.zeros((n,))
+    gnew = g.copy()
+    crvmin = -1.0
+
+    # projected GD loop
+    for ii in range(MAX_LOOP_ITERS):
+        s = proj(d - (1 / L) * gnew) - d  # new step is dnew = d + s
+
+        # take the step
+        d += s
+        gnew += H.dot(s)
+
+        # update CRVMIN
+        crv = np.dot(H.dot(s), s) / sumsq(s) if sumsq(s) >= ZERO_THRESH else crvmin
+        crvmin = min(crvmin, crv) if crvmin != -1.0 else crv
+
+        # exit condition
+        if np.linalg.norm(s) <= gtol:
+            break
+
+    # Lastly, ensure the explicit bounds are hard-enforced
+    if np.linalg.norm(d) > delta:
+        d *= delta / np.linalg.norm(d)
+    d = np.maximum(np.minimum(xopt + d, su), sl) - xopt  # does not increase ||d||
+    gnew = g + H.dot(d)
+
+    if np.linalg.norm(d) >= delta - ZERO_THRESH:
+        crvmin = 0.0
+    return d, gnew, crvmin
+
+
+def ctrsbox_geometry(xbase, xopt, c, g, H, lower, upper, projections, Delta, dykstra_max_iters=100, dykstra_tol=1e-10, gtol=1e-8):
+    # Given a Lagrange polynomial defined by: L(x) = c + g' * (x - xopt) + 0.5*(x-xopt)*H*(x-xopt)
+    # Maximise |L(x)| in the feasible region + trust region - that is, solve:
+    #   max_x  abs(c + g' * (x - xopt) + 0.5*(x-xopt)*H*(x-xopt))
+    #    s.t.  lower <= x <= upper
+    #          ||x-xopt|| <= Delta
+    #          xbase+x in the intersection of all convex sets C with proj_{C} in the list 'projections'
+    # Setting s = x-xbase (or x = xopt + s), this is equivalent to:
+    #   max_s  abs(c + g' * s + 0.5*s*H*s)
+    #   s.t.   lower <= xopt + s <= upper
+    #          ||s|| <= Delta
+    #          xbase + xopt + s in the intersection of all convex sets C with proj_{C} in the list 'projections'
+    if projections is None or len(projections) == 0:
+        return trsbox_geometry(xopt, g, H, lower, upper, Delta)
+
+    smin, gmin, crvmin = ctrsbox(xbase, xopt, g, H, lower, upper, projections, Delta,
+                                 dykstra_max_iters=dykstra_max_iters, dykstra_tol=dykstra_tol, gtol=gtol)  # minimise L(x)
+    smax, gmax, crvmax = ctrsbox(xbase, xopt, -g, -H, lower, upper, projections, Delta,
+                                 dykstra_max_iters=dykstra_max_iters, dykstra_tol=dykstra_tol, gtol=gtol)  # maximise L(x)
+    if abs(c + model_value(g, H, smin)) >= abs(c + model_value(g, H, smax)):  # take largest abs value
+        return xopt + smin
+    else:
+        return xopt + smax

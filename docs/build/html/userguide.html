@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using Py-BOBYQA &mdash; Py-BOBYQA v1.4.1 documentation</title>
+  <title>Using Py-BOBYQA &mdash; Py-BOBYQA v1.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,8 +15,8 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=350a9c04"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/documentation_options.js?v=e0a75244"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -38,7 +38,7 @@
             Py-BOBYQA
           </a>
               <div class="version">
-                1.4.1
+                1.5.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -58,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#optional-arguments">Optional Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#a-simple-example">A Simple Example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-bounds-and-more-output">Adding Bounds and More Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-general-convex-constraints">Adding General Convex Constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example-noisy-objective-evaluation">Example: Noisy Objective Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example-global-optimization">Example: Global Optimization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
@@ -100,10 +101,16 @@
 <p>Py-BOBYQA is designed to solve the local optimization problem</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\min_{x\in\mathbb{R}^n}  &amp;\quad  f(x) \\
-\text{s.t.} &amp;\quad  a \leq x \leq b\end{split}\]</div>
-<p>where the bound constraints <span class="math notranslate nohighlight">\(a \leq x \leq b\)</span> are optional. The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds). The objective function <span class="math notranslate nohighlight">\(f(x)\)</span> is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see <a class="reference external" href="https://neos-guide.org/Optimization-Guide">here</a> for details).</p>
+\text{s.t.} &amp;\quad  a \leq x \leq b\\
+&amp;\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}\end{split}\]</div>
+<p>where the bound constraints <span class="math notranslate nohighlight">\(a \leq x \leq b\)</span> and general convex constraints <span class="math notranslate nohighlight">\(x \in C\)</span> are optional.
+The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds).
+The general convex constraints are also non-relaxable, but they may be slightly violated at some points from rounding errors.
+The objective function <span class="math notranslate nohighlight">\(f(x)\)</span> is usually nonlinear and nonquadratic.
+If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see <a class="reference external" href="https://neos-guide.org/Optimization-Guide">here</a> for details).</p>
 <p>Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
-For an in-depth technical description of the algorithm see the paper <a class="reference internal" href="#cfmr2018" id="id1"><span>[CFMR2018]</span></a>, and for the global optimization heuristic, see <a class="reference internal" href="#cro2022" id="id2"><span>[CRO2022]</span></a>.</p>
+For an in-depth technical description of the algorithm see the paper <a class="reference internal" href="#cfmr2018" id="id1"><span>[CFMR2018]</span></a>, and for the global optimization heuristic, see <a class="reference internal" href="#cro2022" id="id2"><span>[CRO2022]</span></a>.
+For details about how Py-BOBYQA handles general convex constraints, see <a class="reference internal" href="#r2024" id="id3"><span>[R2024]</span></a>.</p>
 </section>
 <section id="how-to-use-py-bobyqa">
 <h2>How to use Py-BOBYQA<a class="headerlink" href="#how-to-use-py-bobyqa" title="Link to this heading"></a></h2>
@@ -151,12 +158,12 @@ As Py-BOBYQA is a local solver, providing different values for <code class="code
 <h2>Optional Arguments<a class="headerlink" href="#optional-arguments" title="Link to this heading"></a></h2>
 <p>The <code class="code docutils literal notranslate"><span class="pre">solve</span></code> function has several optional arguments which the user may provide:</p>
 <blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">npt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">rhobeg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoend</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">user_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">objfun_has_noise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">seek_global_minimum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">scaling_within_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">do_logging</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">objfun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">projections</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">npt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhobeg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoend</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">nsamples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">objfun_has_noise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">seek_global_minimum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">scaling_within_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">do_logging</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -164,6 +171,7 @@ As Py-BOBYQA is a local solver, providing different values for <code class="code
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">args</span></code> - a tuple of extra arguments passed to the objective function.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">bounds</span></code> - a tuple <code class="code docutils literal notranslate"><span class="pre">(lower,</span> <span class="pre">upper)</span></code> with the vectors <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> of lower and upper bounds on <span class="math notranslate nohighlight">\(x\)</span> (default is <span class="math notranslate nohighlight">\(a_i=-10^{20}\)</span> and <span class="math notranslate nohighlight">\(b_i=10^{20}\)</span>). To set bounds for either <code class="code docutils literal notranslate"><span class="pre">lower</span></code> or <code class="code docutils literal notranslate"><span class="pre">upper</span></code>, but not both, pass a tuple <code class="code docutils literal notranslate"><span class="pre">(lower,</span> <span class="pre">None)</span></code> or <code class="code docutils literal notranslate"><span class="pre">(None,</span> <span class="pre">upper)</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">projections</span></code> - a list of functions defining the Euclidean projections for each general convex constraint <span class="math notranslate nohighlight">\(C_i\)</span>. Each element of the list <code class="code docutils literal notranslate"><span class="pre">projections</span></code> is a function that takes an input vector <span class="math notranslate nohighlight">\(x\)</span> and returns the closest point to <span class="math notranslate nohighlight">\(x\)</span> that is in <span class="math notranslate nohighlight">\(C_i\)</span>. An example of using this is given below.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">npt</span></code> - the number of interpolation points to use (default is <span class="math notranslate nohighlight">\(2n+1\)</span> for a problem with <code class="code docutils literal notranslate"><span class="pre">len(x0)=n</span></code> if <code class="code docutils literal notranslate"><span class="pre">objfun_has_noise=False</span></code>, otherwise it is set to <span class="math notranslate nohighlight">\((n+1)(n+2)/2\)</span>). Py-BOBYQA requires <span class="math notranslate nohighlight">\(n+1 \leq npt \leq (n+1)(n+2)/2\)</span>. Larger values are particularly useful for noisy problems.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">rhobeg</span></code> - the initial value of the trust region radius (default is 0.1 if <code class="code docutils literal notranslate"><span class="pre">scaling_within_bounds=True</span></code>, otherwise <span class="math notranslate nohighlight">\(0.1\max(\|x_0\|_{\infty}, 1)\)</span>).</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">rhoend</span></code> - minimum allowed value of trust region radius, which determines when a successful termination occurs (default is <span class="math notranslate nohighlight">\(10^{-8}\)</span>).</p></li>
@@ -300,6 +308,75 @@ Did a total of 1 run(s)
 </pre></div>
 </div>
 </div></blockquote>
+</section>
+<section id="adding-general-convex-constraints">
+<h2>Adding General Convex Constraints<a class="headerlink" href="#adding-general-convex-constraints" title="Link to this heading"></a></h2>
+<p>We can also add more general convex constraints <span class="math notranslate nohighlight">\(x \in C := C_1 \cap \cdots \cap C_n\)</span> to our problem, where
+each <span class="math notranslate nohighlight">\(C_i\)</span> is a convex set. To do this, we need to know the Euclidean projection operator for each <span class="math notranslate nohighlight">\(C_i\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{proj}_{C_i}(x) := \operatorname{argmin}_{y\in C_i} \|y-x\|_2^2.\]</div>
+<p>i.e. given a point <span class="math notranslate nohighlight">\(x\)</span>, return the closest point to <span class="math notranslate nohighlight">\(x\)</span> in the set <span class="math notranslate nohighlight">\(C_i\)</span>.
+There are many examples of simple convex sets <span class="math notranslate nohighlight">\(C_i\)</span> for which this function has a known, simple form, such as:</p>
+<ul class="simple">
+<li><p>Bound constraints (but since Py-BOBYQA supports this directly, it is better to give these explicitly via the <code class="code docutils literal notranslate"><span class="pre">bounds</span></code> input, as above)</p></li>
+<li><p>Euclidean ball constraints: <span class="math notranslate nohighlight">\(\|x-c\|_2 \leq r\)</span></p></li>
+<li><p>Unit simplex: <span class="math notranslate nohighlight">\(x_i \geq 0\)</span> and <span class="math notranslate nohighlight">\(\sum_{i=1}^{n} x_i \leq 1\)</span></p></li>
+<li><p>Linear inequalities: <span class="math notranslate nohighlight">\(a^T x \geq b\)</span></p></li>
+</ul>
+<p>In Py-BOBYQA, set the input <code class="code docutils literal notranslate"><span class="pre">projections</span></code> to be a list of projection functions, one per <span class="math notranslate nohighlight">\(C_i\)</span>.
+Internally, Py-BOBYQA computes the projection onto the intersection of these sets and the bound constraints
+using <a class="reference external" href="https://en.wikipedia.org/wiki/Dykstra%27s_projection_algorithm">Dykstra’s projection algorithm</a>.</p>
+<p>For the explicit expressions for the above projections, and more examples, see for example <a class="reference external" href="https://proximity-operator.net/indicatorfunctions.html">this online database</a>
+or Section 6.4.6 of the textbook <a class="reference internal" href="#b2017" id="id5"><span>[B2017]</span></a>.</p>
+<p>As an example, let’s minimize the above Rosenbrock function with different bounds, and with a Euclidean
+ball constraint, namely <span class="math notranslate nohighlight">\((x_1-0.5)^2 + (x_2-1)^2 \leq 0.25^2\)</span>.</p>
+<p>To do this, we can run</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pybobyqa</span>
+
+<span class="c1"># Define the objective function</span>
+<span class="k">def</span> <span class="nf">rosenbrock</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="c1"># Define the starting point</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># Define bound constraints (lower &lt;= x &lt;= upper)</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">])</span>
+<span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+
+<span class="c1"># Define the ball constraint ||x-center|| &lt;= radius, and its projection operator</span>
+<span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">ball_proj</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">center</span> <span class="o">+</span> <span class="p">(</span><span class="n">radius</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">center</span><span class="p">),</span> <span class="n">radius</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">center</span><span class="p">)</span>
+
+<span class="c1"># Call Py-BOBYQA (with bounds and projection operator)</span>
+<span class="c1"># Note: it is better to provide bounds explicitly, instead of using the corresponding</span>
+<span class="c1">#       projection function</span>
+<span class="c1"># Note: input &#39;projections&#39; must be a list of projection functions</span>
+<span class="n">soln</span> <span class="o">=</span> <span class="n">pybobyqa</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">rosenbrock</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span><span class="n">upper</span><span class="p">),</span> <span class="n">projections</span><span class="o">=</span><span class="p">[</span><span class="n">ball_proj</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">soln</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Py-BOBYQA correctly finds the solution to the constrained problem:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>****** Py-BOBYQA Results ******
+Solution xmin = [0.70424386 0.85583188]
+Objective value f(xmin) = 13.03829114
+Needed 25 objective evaluations (at 25 points)
+Approximate gradient = [-101.9667031    71.97449424]
+Approximate Hessian = [[ 253.11858775 -279.39193327]
+ [-279.39193327  201.49725358]]
+Exit flag = 0
+Success: rho has reached rhoend
+******************************
+</pre></div>
+</div>
+</div></blockquote>
+<p>Just like for bound constraints, Py-BOBYQA will automatically ensure the starting point is feasible with respect to all constraints (bounds and general convex constraints).</p>
 </section>
 <section id="example-noisy-objective-evaluation">
 <h2>Example: Noisy Objective Evaluation<a class="headerlink" href="#example-noisy-objective-evaluation" title="Link to this heading"></a></h2>
@@ -483,7 +560,7 @@ Warning (max evals): Objective has been called MAXFUN times
 </pre></div>
 </div>
 </div></blockquote>
-<p>As we can see, the <code class="code docutils literal notranslate"><span class="pre">seek_global_minimum</span></code> flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in <a class="reference internal" href="#cro2022" id="id4"><span>[CRO2022]</span></a>.</p>
+<p>As we can see, the <code class="code docutils literal notranslate"><span class="pre">seek_global_minimum</span></code> flag helped Py-BOBYQA escape the local minimum from the first run, and find the global minimum. More details are given in <a class="reference internal" href="#cro2022" id="id6"><span>[CRO2022]</span></a>.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
@@ -494,8 +571,16 @@ Warning (max evals): Objective has been called MAXFUN times
 </div>
 <div class="citation" id="cro2022" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>CRO2022<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
 <p>Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, <a class="reference external" href="https://doi.org/10.1080/02331934.2021.1883015">Escaping local minima with derivative-free methods: a numerical investigation</a>, <em>Optimization</em>, 71:8 (2022), pp. 2343-2373. [<a class="reference external" href="https://arxiv.org/abs/1812.11343">arXiv preprint: 1812.11343</a>]</p>
+</div>
+<div class="citation" id="r2024" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">R2024</a><span class="fn-bracket">]</span></span>
+<p>Lindon Roberts, <a class="reference external" href="https://arxiv.org/abs/2403.14960">Model Construction for Convex-Constrained Derivative-Free Optimization</a>, <em>arXiv preprint arXiv:2403.14960</em> (2024).</p>
+</div>
+<div class="citation" id="b2017" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">B2017</a><span class="fn-bracket">]</span></span>
+<p>Amir Beck, <a class="reference external" href="https://doi.org/10.1137/1.9781611974997">First-Order Methods in Optimization</a>, SIAM (2017).</p>
 </div>
 </div>
 </section>

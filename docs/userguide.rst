@@ -9,12 +9,18 @@ Py-BOBYQA is designed to solve the local optimization problem
 .. math::
 
    \min_{x\in\mathbb{R}^n}  &\quad  f(x) \\
-   \text{s.t.} &\quad  a \leq x \leq b
+   \text{s.t.} &\quad  a \leq x \leq b\\
+   &\quad x \in C := C_1 \cap \cdots \cap C_n, \quad \text{all $C_i$ convex}
 
-where the bound constraints :math:`a \leq x \leq b` are optional. The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds). The objective function :math:`f(x)` is usually nonlinear and nonquadratic. If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
+where the bound constraints :math:`a \leq x \leq b` and general convex constraints :math:`x \in C` are optional.
+The upper and lower bounds on the variables are non-relaxable (i.e. Py-BOBYQA will never ask to evaluate a point outside the bounds).
+The general convex constraints are also non-relaxable, but they may be slightly violated at some points from rounding errors.
+The objective function :math:`f(x)` is usually nonlinear and nonquadratic.
+If you know your objective is linear or quadratic, you should consider a solver designed for such functions (see `here <https://neos-guide.org/Optimization-Guide>`_ for details).
 
 Py-BOBYQA iteratively constructs an interpolation-based model for the objective, and determines a step using a trust-region framework.
 For an in-depth technical description of the algorithm see the paper [CFMR2018]_, and for the global optimization heuristic, see [CRO2022]_.
+For details about how Py-BOBYQA handles general convex constraints, see [R2024]_.
 
 How to use Py-BOBYQA
 --------------------
@@ -65,17 +71,18 @@ The :code:`solve` function has several optional arguments which the user may pro
 
   .. code-block:: python
   
-      pybobyqa.solve(objfun, x0, args=(), bounds=None, npt=None,
-		  rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, 
-                  user_params=None, objfun_has_noise=False, 
-                  seek_global_minimum=False, 
-                  scaling_within_bounds=False,
-                  do_logging=True, print_progress=False)
+      pybobyqa.solve(objfun, x0, args=(), bounds=None, projections=None,
+                     npt=None, rhobeg=None, rhoend=1e-8, maxfun=None,
+                     nsamples=None, user_params=None, objfun_has_noise=False,
+                     seek_global_minimum=False,
+                     scaling_within_bounds=False,
+                     do_logging=True, print_progress=False)
 
 These arguments are:
 
 * :code:`args` - a tuple of extra arguments passed to the objective function.
 * :code:`bounds` - a tuple :code:`(lower, upper)` with the vectors :math:`a` and :math:`b` of lower and upper bounds on :math:`x` (default is :math:`a_i=-10^{20}` and :math:`b_i=10^{20}`). To set bounds for either :code:`lower` or :code:`upper`, but not both, pass a tuple :code:`(lower, None)` or :code:`(None, upper)`.
+* :code:`projections` - a list of functions defining the Euclidean projections for each general convex constraint :math:`C_i`. Each element of the list :code:`projections` is a function that takes an input vector :math:`x` and returns the closest point to :math:`x` that is in :math:`C_i`. An example of using this is given below.
 * :code:`npt` - the number of interpolation points to use (default is :math:`2n+1` for a problem with :code:`len(x0)=n` if :code:`objfun_has_noise=False`, otherwise it is set to :math:`(n+1)(n+2)/2`). Py-BOBYQA requires :math:`n+1 \leq npt \leq (n+1)(n+2)/2`. Larger values are particularly useful for noisy problems.
 * :code:`rhobeg` - the initial value of the trust region radius (default is 0.1 if :code:`scaling_within_bounds=True`, otherwise :math:`0.1\max(\|x_0\|_{\infty}, 1)`).
 * :code:`rhoend` - minimum allowed value of trust region radius, which determines when a successful termination occurs (default is :math:`10^{-8}`).
@@ -216,6 +223,81 @@ An alternative option available is to get Py-BOBYQA to print to terminal progres
       ...
         1    132   1.00e-02  2.00e-01  1.50e-08  1.00e-08   144  
         1    133   1.00e-02  2.00e-01  1.50e-08  1.00e-08   145  
+
+Adding General Convex Constraints
+---------------------------------
+We can also add more general convex constraints :math:`x \in C := C_1 \cap \cdots \cap C_n` to our problem, where
+each :math:`C_i` is a convex set. To do this, we need to know the Euclidean projection operator for each :math:`C_i`:
+
+.. math::
+
+   \operatorname{proj}_{C_i}(x) := \operatorname{argmin}_{y\in C_i} \|y-x\|_2^2.
+
+i.e. given a point :math:`x`, return the closest point to :math:`x` in the set :math:`C_i`.
+There are many examples of simple convex sets :math:`C_i` for which this function has a known, simple form, such as:
+
+* Bound constraints (but since Py-BOBYQA supports this directly, it is better to give these explicitly via the :code:`bounds` input, as above)
+* Euclidean ball constraints: :math:`\|x-c\|_2 \leq r`
+* Unit simplex: :math:`x_i \geq 0` and :math:`\sum_{i=1}^{n} x_i \leq 1`
+* Linear inequalities: :math:`a^T x \geq b`
+
+In Py-BOBYQA, set the input :code:`projections` to be a list of projection functions, one per :math:`C_i`.
+Internally, Py-BOBYQA computes the projection onto the intersection of these sets and the bound constraints
+using `Dykstra's projection algorithm <https://en.wikipedia.org/wiki/Dykstra%27s_projection_algorithm>`_.
+
+For the explicit expressions for the above projections, and more examples, see for example `this online database <https://proximity-operator.net/indicatorfunctions.html>`_
+or Section 6.4.6 of the textbook [B2017]_.
+
+As an example, let's minimize the above Rosenbrock function with different bounds, and with a Euclidean
+ball constraint, namely :math:`(x_1-0.5)^2 + (x_2-1)^2 \leq 0.25^2`.
+
+To do this, we can run
+
+  .. code-block:: python
+
+      import numpy as np
+      import pybobyqa
+
+      # Define the objective function
+      def rosenbrock(x):
+          return 100.0 * (x[1] - x[0] ** 2) ** 2 + (1.0 - x[0]) ** 2
+
+      # Define the starting point
+      x0 = np.array([-1.2, 1.0])
+
+      # Define bound constraints (lower <= x <= upper)
+      lower = np.array([0.7, -2.0])
+      upper = np.array([1.0, 2.0])
+
+      # Define the ball constraint ||x-center|| <= radius, and its projection operator
+      center = np.array([0.5, 1.0])
+      radius = 0.25
+      ball_proj = lambda x: center + (radius/max(np.linalg.norm(x-center), radius)) * (x-center)
+
+      # Call Py-BOBYQA (with bounds and projection operator)
+      # Note: it is better to provide bounds explicitly, instead of using the corresponding
+      #       projection function
+      # Note: input 'projections' must be a list of projection functions
+      soln = pybobyqa.solve(rosenbrock, x0, bounds=(lower,upper), projections=[ball_proj])
+
+      print(soln)
+
+Py-BOBYQA correctly finds the solution to the constrained problem:
+
+  .. code-block:: none
+
+      ****** Py-BOBYQA Results ******
+      Solution xmin = [0.70424386 0.85583188]
+      Objective value f(xmin) = 13.03829114
+      Needed 25 objective evaluations (at 25 points)
+      Approximate gradient = [-101.9667031    71.97449424]
+      Approximate Hessian = [[ 253.11858775 -279.39193327]
+       [-279.39193327  201.49725358]]
+      Exit flag = 0
+      Success: rho has reached rhoend
+      ******************************
+
+Just like for bound constraints, Py-BOBYQA will automatically ensure the starting point is feasible with respect to all constraints (bounds and general convex constraints).
 
 Example: Noisy Objective Evaluation
 -----------------------------------
@@ -411,3 +493,7 @@ References
    Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41 [`preprint <https://arxiv.org/abs/1804.00154>`_] 
 .. [CRO2022]   
    Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization*, 71:8 (2022), pp. 2343-2373. [`arXiv preprint: 1812.11343 <https://arxiv.org/abs/1812.11343>`_] 
+.. [R2024]
+   Lindon Roberts, `Model Construction for Convex-Constrained Derivative-Free Optimization <https://arxiv.org/abs/2403.14960>`_, *arXiv preprint arXiv:2403.14960* (2024).
+.. [B2017]
+   Amir Beck, `First-Order Methods in Optimization <https://doi.org/10.1137/1.9781611974997>`_, SIAM (2017).

@@ -21,9 +21,9 @@ Logging and Output
 
 Initialization of Points
 ------------------------
-* :code:`init.random_initial_directions` - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is :code:`True`.
-* :code:`init.random_directions_make_orthogonal` - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is :code:`True`.
-* :code:`init.run_in_parallel` - If using random directions, whether or not to ask for all :code:`objfun` to be evaluated at all points without any intermediate processing. Default is :code:`False`.
+* :code:`init.random_initial_directions` - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is :code:`True`. Not used if general convex constraints provided.
+* :code:`init.random_directions_make_orthogonal` - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is :code:`True`. Not used if general convex constraints provided.
+* :code:`init.run_in_parallel` - If using random directions, whether or not to ask for all :code:`objfun` to be evaluated at all points without any intermediate processing. Default is :code:`False`. Not used if general convex constraints provided.
 
 Trust Region Management
 -----------------------
@@ -74,6 +74,12 @@ Multiple Restarts
 * :code:`restarts.auto_detect.min_chg_model_slope` - Minimum rate of increase of :math:`\log(\|g_k-g_{k-1}\|)` and :math:`\log(\|H_k-H_{k-1}\|_F)` over the past iterations to cause a restart. Default is 0.015.
 * :code:`restarts.auto_detect.min_correl` - Minimum correlation of the data sets :math:`(k, \log(\|g_k-g_{k-1}\|))` and :math:`(k, \log(\|H_k-H_{k-1}\|_F))` required to cause a restart. Default is 0.1.
 
+General Convex Constraints
+--------------------------
+* :code:`projections.dykstra.d_tol` - termination tolerance for Dykstra's algorithm for computing the projection onto the intersection of all convex constraints. Default is :math:`10^{-10}`.
+* :code:`projections.dykstra.max_iters` - maximum iterations of Dykstra's algorithm for computing the projection onto the intersection of all convex constraints. Default is 100.
+* :code:`projections.feasible_tol` - tolerance for checking feasibility of initial points with respect to general convex constraints. Default is :math:`10^{-10}`.
+* :code:`projections.pgd_tol` - termination tolerance for trust-region and geometry-improving subproblems. Default is :math:`10^{-8}`.
 
 References
 ----------

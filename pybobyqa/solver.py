@@ -96,7 +96,7 @@ class OptimResults(object):
         return output
 
 
-def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf_so_far, nx_so_far, nsamples, params,
+def solve_main(objfun, x0, args, xl, xu, projections, npt, rhobeg, rhoend, maxfun, nruns_so_far, nf_so_far, nx_so_far, nsamples, params,
                diagnostic_info, scaling_changes, f0_avg_old=None, f0_nsamples_old=None, do_logging=True, print_progress=False):
     # Evaluate at x0 (keep nf, nx correct and check for f small)
     if f0_avg_old is None:
@@ -144,12 +144,16 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
         nx = nx_so_far
 
     # Initialise controller
-    control = Controller(objfun, x0, args, f0_avg, num_samples_run, xl, xu, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=do_logging)
+    control = Controller(objfun, x0, args, f0_avg, num_samples_run, xl, xu, projections, npt, rhobeg, rhoend, nf, nx, maxfun, params, scaling_changes, do_logging=do_logging)
 
     # Initialise interpolation set
     number_of_samples = max(nsamples(control.delta, control.rho, 0, nruns_so_far), 1)
     num_directions = npt - 1
-    if params("init.random_initial_directions"):
+    if projections is not None:
+        if do_logging:
+            module_logger.info("Initialising (feasible directions for constraints)")
+        exit_info = control.initialise_general_constraints(number_of_samples, num_directions, params)
+    elif params("init.random_initial_directions"):
         if do_logging:
             module_logger.info("Initialising (random directions)")
         exit_info = control.initialise_random_directions(number_of_samples, num_directions, params)
@@ -231,7 +235,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
 
 
         # Trust region step
-        d, gopt, H, gnew, crvmin = control.trust_region_step()
+        d, gopt, H, gnew, crvmin = control.trust_region_step(params)
         if do_logging:
             module_logger.debug("Trust region step is d = " + str(d))
         xnew = control.model.xopt() + d
@@ -665,7 +669,7 @@ def solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns_so_f
     return x, f, gradmin, hessmin, nsamples, control.nf, control.nx, nruns_so_far, exit_info, diagnostic_info
 
 
-def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
+def solve(objfun, x0, args=(), bounds=None, projections=None, npt=None, rhobeg=None, rhoend=1e-8, maxfun=None, nsamples=None, user_params=None,
           objfun_has_noise=False, seek_global_minimum=False, scaling_within_bounds=False, do_logging=True, print_progress=False):
     n = len(x0)
     if type(x0) == list:
@@ -694,7 +698,11 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     if (xl is None or xu is None) and scaling_within_bounds:
         scaling_within_bounds = False
         warnings.warn("Ignoring scaling_within_bounds=True for unconstrained problem/1-sided bounds", RuntimeWarning)
-    
+
+    if (projections is not None) and scaling_within_bounds:
+        scaling_within_bounds = False
+        warnings.warn("Ignoring scaling_within_bounds=True for problems with projections given", RuntimeWarning)
+
     exit_info = None
     if seek_global_minimum and (xl is None or xu is None):
         exit_info = ExitInformation(EXIT_INPUT_ERROR, "If seeking global minimum, must specify upper and lower bounds")
@@ -761,6 +769,13 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     if exit_info is None and np.min(xu - xl) < 2.0 * rhobeg:
         exit_info = ExitInformation(EXIT_INPUT_ERROR, "gap between lower and upper must be at least 2*rhobeg")
 
+    if exit_info is None and projections is not None and type(projections) != list:
+        exit_info = ExitInformation(EXIT_INPUT_ERROR, "projections must be a list of functions")
+
+    if projections is not None and len(projections) == 0:
+        # empty list given
+        projections = None
+
     if maxfun <= npt:
         warnings.warn("maxfun <= npt: Are you sure your budget is large enough?", RuntimeWarning)
 
@@ -792,15 +807,29 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
         return results
 
     # Enforce lower & upper bounds on x0
-    idx = (x0 <= xl)
+    idx = (x0 < xl)
     if np.any(idx):
         warnings.warn("x0 below lower bound, adjusting", RuntimeWarning)
     x0[idx] = xl[idx]
 
-    idx = (x0 >= xu)
+    idx = (x0 > xu)
     if np.any(idx):
         warnings.warn("x0 above upper bound, adjusting", RuntimeWarning)
     x0[idx] = xu[idx]
+
+    # Enforce feasibility of x0 with respect to projection constraints
+    if projections is not None:
+        x0_feasible = True
+        for i, proj in enumerate(projections):
+            if np.linalg.norm(x0 - proj(x0)) > params("projections.feasible_tol"):
+                x0_feasible = False
+                warnings.warn("x0 not feasible with respect to projections[%g], adjusting" % i, RuntimeWarning)
+                break  # quit loop, only need to find one bad constraint
+        if not x0_feasible:
+            proj_box = lambda w: pbox(w, xl, xu)
+            P = list(projections)  # make a copy of the projections list
+            P.append(proj_box)
+            x0 = dykstra(P, x0)
 
     # Call main solver (first time)
     diagnostic_info = DiagnosticInfo()
@@ -808,7 +837,7 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
     nf = 0
     nx = 0
     xmin, fmin, gradmin, hessmin, nsamples_min, nf, nx, nruns, exit_info, diagnostic_info = \
-        solve_main(objfun, x0, args, xl, xu, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
+        solve_main(objfun, x0, args, xl, xu, projections, npt, rhobeg, rhoend, maxfun, nruns, nf, nx, nsamples, params,
                     diagnostic_info, scaling_changes, do_logging=do_logging, print_progress=print_progress)
 
     # Hard restarts loop
@@ -829,11 +858,11 @@ def solve(objfun, x0, args=(), bounds=None, npt=None, rhobeg=None, rhoend=1e-8, 
                      % (fmin, nf, _rhobeg, _rhoend))
         if params("restarts.hard.use_old_fk"):
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, args, xl, xu, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, projections, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
                             diagnostic_info, scaling_changes, f0_avg_old=fmin, f0_nsamples_old=nsamples_min, do_logging=do_logging, print_progress=print_progress)
         else:
             xmin2, fmin2, gradmin2, hessmin2, nsamples2, nf, nx, nruns, exit_info, diagnostic_info = \
-                solve_main(objfun, xmin, args, xl, xu, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
+                solve_main(objfun, xmin, args, xl, xu, projections, npt, _rhobeg, _rhoend, maxfun, nruns, nf, nx, nsamples, params,
                            diagnostic_info, scaling_changes, do_logging=do_logging, print_progress=print_progress)
 
         if fmin2 < fmin or np.isnan(fmin):

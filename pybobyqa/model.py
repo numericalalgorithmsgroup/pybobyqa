@@ -36,7 +36,7 @@ import scipy.linalg as LA
 
 from .hessian import to_upper_triangular_vector
 from .trust_region import trsbox_geometry
-from .util import sumsq, model_value
+from .util import sumsq, model_value, dykstra
 
 __all__ = ['Model']
 
@@ -45,7 +45,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Model(object):
-    def __init__(self, npt, x0, f0, xl, xu, f0_nsamples, n=None, abs_tol=-1e20, precondition=True, do_logging=True):
+    def __init__(self, npt, x0, f0, xl, xu, projections, f0_nsamples, n=None, abs_tol=-1e20, precondition=True, do_logging=True):
         if n is None:
             n = len(x0)
         assert npt >= n + 1, "Require npt >= n+1 for quadratic models"
@@ -62,6 +62,7 @@ class Model(object):
         self.xbase = x0.copy()
         self.sl = xl - self.xbase  # lower bound w.r.t. xbase (require xpt >= sl)
         self.su = xu - self.xbase  # upper bound w.r.t. xbase (require xpt <= su)
+        self.projections = projections  # list of projection-based constraints (excluding explicit bounds)
         self.points = np.zeros((npt, n))  # interpolation points w.r.t. xbase
 
         # Function values

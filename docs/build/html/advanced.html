@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Usage &mdash; Py-BOBYQA v1.4.1 documentation</title>
+  <title>Advanced Usage &mdash; Py-BOBYQA v1.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,8 +15,8 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=350a9c04"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/documentation_options.js?v=e0a75244"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -38,7 +38,7 @@
             Py-BOBYQA
           </a>
               <div class="version">
-                1.4.1
+                1.5.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -63,6 +63,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#stochastic-noise-information">Stochastic Noise Information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interpolation-management">Interpolation Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#multiple-restarts">Multiple Restarts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#general-convex-constraints">General Convex Constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
@@ -119,9 +120,9 @@
 <section id="initialization-of-points">
 <h2>Initialization of Points<a class="headerlink" href="#initialization-of-points" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_initial_directions</span></code> - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_directions_make_orthogonal</span></code> - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">init.run_in_parallel</span></code> - If using random directions, whether or not to ask for all <code class="code docutils literal notranslate"><span class="pre">objfun</span></code> to be evaluated at all points without any intermediate processing. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_initial_directions</span></code> - Build the initial interpolation set using random directions (as opposed to coordinate directions). Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>. Not used if general convex constraints provided.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.random_directions_make_orthogonal</span></code> - If building initial interpolation set with random directions, whether or not these should be orthogonalized. Default is <code class="code docutils literal notranslate"><span class="pre">True</span></code>. Not used if general convex constraints provided.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">init.run_in_parallel</span></code> - If using random directions, whether or not to ask for all <code class="code docutils literal notranslate"><span class="pre">objfun</span></code> to be evaluated at all points without any intermediate processing. Default is <code class="code docutils literal notranslate"><span class="pre">False</span></code>. Not used if general convex constraints provided.</p></li>
 </ul>
 </section>
 <section id="trust-region-management">
@@ -183,6 +184,15 @@
 <li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.history</span></code> - How many iterations of data on model changes and trust region radii to store. There are two criteria used: trust region radius decreases (no increases over the history, more decreases than no changes), and change in model Jacobian (consistently increasing trend as measured by slope and correlation coefficient of line of best fit). Default is 30.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.min_chg_model_slope</span></code> - Minimum rate of increase of <span class="math notranslate nohighlight">\(\log(\|g_k-g_{k-1}\|)\)</span> and <span class="math notranslate nohighlight">\(\log(\|H_k-H_{k-1}\|_F)\)</span> over the past iterations to cause a restart. Default is 0.015.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">restarts.auto_detect.min_correl</span></code> - Minimum correlation of the data sets <span class="math notranslate nohighlight">\((k, \log(\|g_k-g_{k-1}\|))\)</span> and <span class="math notranslate nohighlight">\((k, \log(\|H_k-H_{k-1}\|_F))\)</span> required to cause a restart. Default is 0.1.</p></li>
+</ul>
+</section>
+<section id="general-convex-constraints">
+<h2>General Convex Constraints<a class="headerlink" href="#general-convex-constraints" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">projections.dykstra.d_tol</span></code> - termination tolerance for Dykstra’s algorithm for computing the projection onto the intersection of all convex constraints. Default is <span class="math notranslate nohighlight">\(10^{-10}\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">projections.dykstra.max_iters</span></code> - maximum iterations of Dykstra’s algorithm for computing the projection onto the intersection of all convex constraints. Default is 100.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">projections.feasible_tol</span></code> - tolerance for checking feasibility of initial points with respect to general convex constraints. Default is <span class="math notranslate nohighlight">\(10^{-10}\)</span>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">projections.pgd_tol</span></code> - termination tolerance for trust-region and geometry-improving subproblems. Default is <span class="math notranslate nohighlight">\(10^{-8}\)</span>.</p></li>
 </ul>
 </section>
 <section id="references">
