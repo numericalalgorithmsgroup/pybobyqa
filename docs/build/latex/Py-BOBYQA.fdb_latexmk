@@ -1,10 +1,10 @@
 # Fdb version 3
-["makeindex Py-BOBYQA.idx"] 1582610283 "Py-BOBYQA.idx" "Py-BOBYQA.ind" "Py-BOBYQA" 1725852577
-  "Py-BOBYQA.idx" 1725852575 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+["makeindex Py-BOBYQA.idx"] 1582610283 "Py-BOBYQA.idx" "Py-BOBYQA.ind" "Py-BOBYQA" 1726458096
+  "Py-BOBYQA.idx" 1726458094 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "Py-BOBYQA.ilg"
   "Py-BOBYQA.ind"
-["pdflatex"] 1725852570 "Py-BOBYQA.tex" "Py-BOBYQA.pdf" "Py-BOBYQA" 1725852577
+["pdflatex"] 1726458090 "Py-BOBYQA.tex" "Py-BOBYQA.pdf" "Py-BOBYQA" 1726458096
   "/etc/texmf/web2c/texmf.cnf" 1712803173 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -171,13 +171,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1712803388 4234243 4a42437c56f0785ccfd4e39da48c38dc ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1712803393 1405649 09028a54f5e9b3274f4344c937e7ff76 ""
-  "Py-BOBYQA.aux" 1725852577 13093 d976bcaa1edfdca9463f6e127bea169b "pdflatex"
+  "Py-BOBYQA.aux" 1726458096 13102 fe3c48df0a1188ce7d598103bfe19ae7 "pdflatex"
   "Py-BOBYQA.ind" 1725497670 0 d41d8cd98f00b204e9800998ecf8427e "makeindex Py-BOBYQA.idx"
-  "Py-BOBYQA.out" 1725852577 8412 04df048d458e49a52639cffc88db43bf "pdflatex"
-  "Py-BOBYQA.tex" 1725852567 85863 fcf9396052285dce1db139de9e7db879 ""
-  "Py-BOBYQA.toc" 1725852577 4230 39339219baa0a358578c9d53b9fb3c7f "pdflatex"
+  "Py-BOBYQA.out" 1726458096 8427 6b1b345f82cffc2d0fe36bfd7064b373 "pdflatex"
+  "Py-BOBYQA.tex" 1726458083 85873 584efc5d48381ffcd8600fd89c2fbb46 ""
+  "Py-BOBYQA.toc" 1726458096 4233 9a8bd0f7eab55b0b5cb6eebb91fdcd1a "pdflatex"
   "sphinx.sty" 1725497883 50659 6d393be3f369a7862f0b19a359f1ab89 ""
-  "sphinxhighlight.sty" 1725852569 7553 83fb52292c17957d9f4aadcb28c57a87 ""
+  "sphinxhighlight.sty" 1726458084 7553 83fb52292c17957d9f4aadcb28c57a87 ""
   "sphinxlatexadmonitions.sty" 1725497883 18222 f3bfd316b630ed188fcc20bf320acafe ""
   "sphinxlatexcontainers.sty" 1725497671 901 d3a3a1b7b2547f47ade2499350b5c420 ""
   "sphinxlatexgraphics.sty" 1725497671 4840 a9578332b6f3b35e198751fb632c9b79 ""
@@ -192,7 +192,7 @@
   "sphinxlatexstyletext.sty" 1725497883 6881 543f3cecccc7dccac396b5720cccf443 ""
   "sphinxlatextables.sty" 1725497883 57644 2253ce149b29042948a000d2dbf50b50 ""
   "sphinxmanual.cls" 1725497671 4241 7b0d7a37df7b5715fb0dbd585c52ecdb ""
-  "sphinxmessages.sty" 1725852570 745 3f5fcd6cdd7964ed608767954a8ced6f ""
+  "sphinxmessages.sty" 1726458084 745 3f5fcd6cdd7964ed608767954a8ced6f ""
   "sphinxoptionsgeometry.sty" 1725497671 2061 47bb34b8ed8a78823eb0c886abfb9f4d ""
   "sphinxoptionshyperref.sty" 1725497671 1094 79beb8b8a3f10784f8cce804e0f9d3aa ""
   "sphinxpackageboxes.sty" 1725497883 36106 1be2053eb1cb9b083b3a75e3657bcb24 ""
