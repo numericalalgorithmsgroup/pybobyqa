@@ -28,8 +28,9 @@ More details about Py-BOBYQA and its enhancements over BOBYQA can be found in ou
 
 1. Coralia Cartis, Jan Fiala, Benjamin Marteau and Lindon Roberts, `Improving the Flexibility and Robustness of Model-Based Derivative-Free Optimization Solvers <https://doi.org/10.1145/3338517>`_, *ACM Transactions on Mathematical Software*, 45:3 (2019), pp. 32:1-32:41 [`arXiv preprint: 1804.00154 <https://arxiv.org/abs/1804.00154>`_] 
 2. Coralia Cartis, Lindon Roberts and Oliver Sheridan-Methven, `Escaping local minima with derivative-free methods: a numerical investigation <https://doi.org/10.1080/02331934.2021.1883015>`_, *Optimization*, 71:8 (2022), pp. 2343-2373. [`arXiv preprint: 1812.11343 <https://arxiv.org/abs/1812.11343>`_] 
+3. Lindon Roberts, `Model Construction for Convex-Constrained Derivative-Free Optimization <https://arxiv.org/abs/2403.14960>`_, *arXiv preprint arXiv:2403.14960* (2024).
 
-Please cite [1] when using Py-BOBYQA for local optimization, and [1,2] when using Py-BOBYQA's global optimization heuristic functionality. For reproducibility of all figures, please feel free to contact the authors.
+Please cite [1] when using Py-BOBYQA for local optimization, [1,2] when using Py-BOBYQA's global optimization heuristic functionality, and [1,3] if using the general convex constraints functionality.
 
 The original paper by Powell is: M. J. D. Powell, The BOBYQA algorithm for bound constrained optimization without derivatives, technical report DAMTP 2009/NA06, University of Cambridge (2009), and the original Fortran implementation is available `here <http://mat.uc.pt/~zhang/software.html>`_.
 
