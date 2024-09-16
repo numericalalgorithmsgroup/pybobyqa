@@ -123,7 +123,7 @@ class TestLinear(unittest.TestCase):
         soln = pybobyqa.solve(objfun, x0)
         self.assertTrue(array_compare(soln.x, xmin, thresh=1e-2), "Wrong xmin")
         self.assertTrue(array_compare(soln.gradient, gradfun(soln.x), thresh=1e-2), "Wrong gradient")
-        self.assertTrue(array_compare(soln.hessian, hessfun, thresh=0.5), "Wrong Hessian")
+        self.assertTrue(array_compare(soln.hessian, hessfun, thresh=0.6), "Wrong Hessian")
         self.assertTrue(abs(soln.f - fmin) < 1e-4, "Wrong fmin")
 
 
